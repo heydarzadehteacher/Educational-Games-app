@@ -1,0 +1,183 @@
+<meta name='viewport' content='width=device-width, initial-scale=1'/><!DOCTYPE html>
+<html lang="fa">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>🎯 بازی جدول ضرب</title>
+
+<style>
+*{box-sizing:border-box;}
+
+body{
+  font-family: Tahoma, Vazir, sans-serif;
+  direction: rtl;
+  text-align: center;
+  margin:0;
+  min-height:100vh;
+  background: linear-gradient(135deg,#6c5ce7,#74b9ff);
+  display:flex;
+  justify-content:center;
+  align-items:center;
+}
+
+.box{
+  background:#ffffffee;
+  padding:25px 20px;
+  border-radius:22px;
+  width:94%;
+  max-width:420px;
+  box-shadow:0 12px 28px rgba(0,0,0,0.3);
+  animation:fade 0.6s;
+}
+
+h1,h2{
+  margin:10px 0 20px;
+}
+
+input{
+  width:100%;
+  padding:16px;
+  font-size:1.3em;
+  border-radius:16px;
+  border:1px solid #ccc;
+  margin-bottom:16px;
+  text-align:center;
+}
+
+button{
+  width:100%;
+  padding:18px;
+  margin:10px 0;
+  font-size:1.2em;
+  border:none;
+  border-radius:18px;
+  cursor:pointer;
+  background:#00b894;
+  color:white;
+  font-weight:bold;
+  transition:0.25s;
+}
+button:active{
+  transform:scale(0.97);
+}
+
+.modeBtn{
+  background:#0984e3;
+}
+
+#timer{
+  font-size:1.3em;
+  font-weight:bold;
+  color:#000;
+  margin-bottom:10px;
+}
+
+#question{
+  font-size:2.4em;
+  font-weight:bold;
+  margin:20px 0;
+}
+
+#answer{
+  font-size:1.6em;
+}
+
+@keyframes fade{
+  from{opacity:0; transform:scale(0.9);}
+  to{opacity:1; transform:scale(1);}
+}
+</style>
+</head>
+
+<body>
+
+<div class="box" id="start">
+  <h1>🎲 بازی جدول ضرب</h1>
+  <input id="nameInput" placeholder="نام و نام خانوادگی">
+  <button class="modeBtn" onclick="chooseMode(1)">
+    یک‌رقمی × یک‌رقمی
+  </button>
+  <button class="modeBtn" onclick="chooseMode(2)">
+    یک‌رقمی × دو‌رقمی
+  </button>
+</div>
+
+<div class="box" id="game" style="display:none;">
+  <div id="timer">⏱ ۶۰ ثانیه</div>
+  <div id="question"></div>
+  <input id="answer" type="number" placeholder="جواب">
+</div>
+
+<div class="box" id="end" style="display:none;">
+  <h2 id="endText"></h2>
+  <button onclick="restart()">🔁 دوباره امتحان می‌کنم</button>
+</div>
+
+<script>
+let name="";
+let mode=1;
+let score=0;
+let time=60;
+let correct=0;
+let interval;
+
+function chooseMode(m){
+  const n=document.getElementById("nameInput").value.trim();
+  if(!n){ alert("نام را وارد کن 😊"); return; }
+  name=n;
+  mode=m;
+  score=0;
+  time=60;
+  document.getElementById("start").style.display="none";
+  document.getElementById("game").style.display="block";
+  startTimer();
+  newQ();
+}
+
+function rand(min,max){
+  return Math.floor(Math.random()*(max-min+1))+min;
+}
+
+function newQ(){
+  let a=rand(1,9);
+  let b= mode===1 ? rand(1,9) : rand(10,99);
+  correct=a*b;
+  document.getElementById("question").innerText=`${a} × ${b}`;
+  const ans=document.getElementById("answer");
+  ans.value="";
+  ans.focus();
+}
+
+function startTimer(){
+  document.getElementById("timer").innerText="⏱ ۶۰ ثانیه";
+  interval=setInterval(()=>{
+    time--;
+    document.getElementById("timer").innerText="⏱ "+time+" ثانیه";
+    if(time<=0) endGame();
+  },1000);
+}
+
+document.getElementById("answer").addEventListener("input",function(){
+  if(parseInt(this.value)===correct){
+    score++;
+    newQ();
+  }
+});
+
+function endGame(){
+  clearInterval(interval);
+  document.getElementById("game").style.display="none";
+  document.getElementById("end").style.display="block";
+  document.getElementById("endText").innerHTML=
+    `🌟 خسته نباشی ${name} عزیز 🌟<br><br>
+     امتیاز تو: <b>${score}</b>`;
+}
+
+function restart(){
+  document.getElementById("end").style.display="none";
+  document.getElementById("start").style.display="block";
+}
+</script>
+
+</body>
+</html>

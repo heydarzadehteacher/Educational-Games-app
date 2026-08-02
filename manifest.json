@@ -1,0 +1,10 @@
+{
+  "name": "بازی‌های آموزشی حیدرزاده",
+  "short_name": "حیدرزاده",
+  "start_url": "index.html",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#4caf50",
+  "lang": "fa",
+  "dir": "rtl"
+}

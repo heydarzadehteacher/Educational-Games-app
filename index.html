@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>بازی‌های آموزشی | حیدرزاده</title>
+
+    <link rel="stylesheet" href="style.css">
+
+<link rel="manifest" href="manifest.json">
+
+</head>
+
+
+<body>
+
+<header class="main-header">
+
+
+    <div class="header-icon">
+
+        🎮
+
+    </div>
+
+
+
+    <h1>
+
+        بازی‌های آموزشی حیدرزاده
+
+    </h1>
+
+
+
+    <p>
+
+        <p>
+
+     یادگیری، تمرین و سرگرمی با بازی‌های آموزشی 🌱
+
+</p>
+
+    </p>
+
+
+
+    <button class="profile-btn" onclick="showProfileMessage()">
+
+    👤 پروفایل من
+
+</button>
+
+
+
+</header>
+
+<section class="profile-section">
+
+
+    <div class="profile-card">
+
+
+        <div class="profile-avatar">
+
+            👤
+
+        </div>
+
+
+
+<div class="profile-info">
+
+
+    <h3>
+
+        سلام، خوش آمدید 🌱
+
+    </h3>
+
+
+   <button class="name-btn main-btn">
+    ✏️ ثبت نام
+</button>
+
+<div class="profile-stat">
+
+    <span>
+       🎮 تعداد بازی‌های انجام شده:
+    </span>
+
+    <strong id="played-count">
+    ۰
+</strong>
+
+</div>
+
+
+<div class="profile-stat">
+
+    <span>
+    ⭐ تعداد بازی‌های مورد علاقه:
+</span>
+
+    <strong id="favorite-count">
+    ۰
+</strong>
+
+</div>
+
+
+    <div class="profile-stat">
+
+    <span>
+        🔥 پرتکرارترین بازی‌ها:
+    </span>
+
+    <small id="popular-games">
+    هنوز اطلاعاتی ثبت نشده
+</small>
+
+</div>
+
+
+</div>
+
+
+</section>
+
+    <main>
+
+<section class="home-card notice-section">
+
+    <h2>📢 اطلاع‌رسانی</h2>
+
+    <p>
+        🌱 بازی‌های آموزشی جدید به‌زودی اضافه خواهند شد.
+        <br>
+        برای اطلاع از آخرین تغییرات همراه ما باشید.
+    </p>
+
+    <button class="main-btn">
+    مشاهده اطلاعیه‌ها
+</button>
+
+</section>
+
+<section class="home-card recent-section">
+
+    <h2>
+        🕹 آخرین بازی‌های اجرا شده
+    </h2>
+
+    <div class="recent-container">
+
+    </div>
+
+</section>
+
+<section class="favorites-section">
+
+
+<section class="home-card favorites-section">
+
+    <h2>
+        ⭐ بازی‌های مورد علاقه
+    </h2>
+
+    <div class="favorites-container">
+
+    </div>
+
+</section>
+
+<section class="home-card new-games-section">
+
+    <h2>
+        🆕 بازی‌های جدید
+    </h2>
+
+
+    <div class="new-games-container">
+
+    </div>
+
+
+</section>
+
+
+        <section class="home-card grade-section">
+
+            <h2>
+                🎓 انتخاب پایه تحصیلی
+            </h2>
+
+
+           <div class="grades-container">
+
+    <button class="grade-btn grade-1" data-grade="1">
+        اول
+    </button>
+
+    <button class="grade-btn grade-2" data-grade="2">
+        دوم
+    </button>
+
+    <button class="grade-btn grade-3" data-grade="3">
+        سوم
+    </button>
+
+    <button class="grade-btn grade-4" data-grade="4">
+        چهارم
+    </button>
+
+    <button class="grade-btn grade-5" data-grade="5">
+        پنجم
+    </button>
+
+    <button class="grade-btn grade-6" data-grade="6">
+        ششم
+    </button>
+
+    <button class="grade-btn grade-other" data-grade="other">
+        سایر
+    </button>
+
+</div>
+
+
+        </section>
+
+
+
+
+
+        <section class="home-card games-section">
+
+            <h2>
+            🎮 بازی‌ها
+            </h2>
+
+
+            <div class="games-container">
+
+            </div>
+
+
+        </section>
+
+
+    </main>
+
+
+
+<script src="games-data.js"></script>
+<script src="app.js"></script>
+
+
+</body>
+
+</html>

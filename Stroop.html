@@ -1,0 +1,322 @@
+<!DOCTYPE html><html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>چالش دقت و تمرکز</title>
+<style>
+body{
+    margin:0;
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+    background:linear-gradient(135deg,#a8edea,#fed6e3);
+    min-height:100vh;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+}
+.container{
+    width:100%;
+    max-width:420px;
+    border-radius:25px;
+    overflow:hidden;
+    padding:20px;
+    text-align:center;
+    background: rgba(255,255,255,0.15);
+    backdrop-filter: blur(10px);
+}
+header{
+    font-size:2em;
+    font-weight:bold;
+    margin-bottom:20px;
+}
+.rules{
+    text-align:right;
+    font-size:1em;
+    line-height:1.6;
+    background: rgba(255,255,255,0.25);
+    padding:15px;
+    border-radius:15px;
+    backdrop-filter: blur(5px);
+    margin-bottom:20px;
+    color:#000;
+}
+.rules p span.inline{
+    display:inline-block;
+}
+.btn{
+    width:100%;
+    padding:20px;
+    margin:10px 0;
+    border:none;
+    border-radius:20px;
+    font-size:1.5em;
+    font-weight:bold;
+    cursor:pointer;
+    background:#4caf50;
+    color:#fff;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+.btn:hover{
+    transform: translateY(-5px) scale(1.03);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+}
+.btn:active{
+    transform: translateY(0) scale(1);
+}
+/* ===== بازی بخش ۳ ===== */
+#section3{
+    display:none;
+    margin-top:20px;
+    background: rgba(144, 238, 144, 0.25);
+    backdrop-filter: blur(10px);
+    border-radius:25px;
+    padding:15px;
+}
+.stats{
+    display:flex;
+    justify-content:space-between;
+    font-weight:bold;
+    margin-bottom:10px;
+}
+.shapeBox{
+    margin:15px auto;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-weight:bold;
+    font-size:1.2em;
+    text-align:center;
+    color:black;
+}
+select{
+    width:100%;
+    padding:12px;
+    font-size:1em;
+    margin:6px 0;
+    border-radius:10px;
+}
+.correct{background:#4caf50!important;color:#fff;}
+.wrong{background:#f44336!important;color:#fff;}
+.answerBtn{
+    width:100%;
+    padding:15px;
+    margin:8px 0;
+    border:none;
+    border-radius:15px;
+    font-size:1.1em;
+    font-weight:bold;
+    cursor:pointer;
+    background:#2196f3;
+    color:#fff;
+}
+/* ===== FINISH POPUP ===== */
+#finishPopup{
+    display:none;
+    position:fixed;
+    top:50%;
+    left:50%;
+    transform:translate(-50%,-50%);
+    width:90%;
+    max-width:360px;
+    background:#fff;
+    border-radius:20px;
+    box-shadow:0 10px 25px rgba(0,0,0,0.3);
+    padding:20px;
+    text-align:center;
+    z-index:100;
+}
+#finishPopup h2{
+    margin-bottom:15px;
+}
+#finishPopup p{
+    font-size:1.2em;
+    margin:8px 0;
+}
+.finishBtn{
+    width:45%;
+    padding:12px;
+    margin:8px 2%;
+    border:none;
+    border-radius:15px;
+    font-size:1em;
+    font-weight:bold;
+    cursor:pointer;
+    background:#4caf50;
+    color:#fff;
+}
+</style>
+</head>
+<body><div class="container">
+<header>🎯 چالش دقت و تمرکز</header><div id="intro">
+<div class="rules">
+<p>در هر مرحله از بازی یک شکل هندسی با رنگ مشخص ظاهر می‌شود و داخلش یک نوشته شامل اسم یک شکل هندسی و یک رنگ وجود دارد که ممکن است با شکل و رنگ متفاوت باشد.</p>
+<p>شکل به مدت <strong>۵ ثانیه</strong> نمایش داده می‌شود و پس از آن، سوالی مطرح می‌شود و شما باید پاسخ صحیح را از منوهای کشویی انتخاب کنید.</p>
+<p>زمان کل بازی <strong>120 ثانیه</strong> است. پس کافی است فقط شکل هندسی، رنگ آن و نوشته‌ی داخلش را به خاطر بسپارید. امیدوارم لذت‌بخش باشد برایتان.</p>
+<p><span class="inline">🧠 هدف بازی افزایش تمرکز، دقت و هماهنگی چشم و مغز است.</span></p>
+</div><button class="btn" id="startBtn">شروع بازی</button>
+
+</div><div id="section3">
+<div class="stats">
+    <span>⏱ <span id="time3">120</span></span>
+    <span>✔ <span id="c3">0</span></span>
+    <span>✖ <span id="w3">0</span></span>
+</div>
+<div id="shapeArea" class="shapeBox"></div>
+<div id="question3"></div>
+<div id="answerArea">
+    <select id="shapeSelect">
+        <option value="">انتخاب شکل</option>
+    </select>
+    <select id="colorSelect">
+        <option value="">انتخاب رنگ</option>
+    </select>
+    <button class="answerBtn" onclick="submitAnswer()">ثبت پاسخ</button>
+</div>
+</div><!-- FINISH POPUP --><div id="finishPopup">
+<h2>⏰ زمان تمام شد!</h2>
+<p>✔ تعداد پاسخ‌های درست: <span id="finalCorrect">0</span></p>
+<p>✖ تعداد پاسخ‌های غلط: <span id="finalWrong">0</span></p>
+<button class="finishBtn" id="restartBtn">شروع دوباره</button>
+<button class="finishBtn" id="menuBtn">صفحه اصلی</button>
+</div></div><script>
+const shapes=["دایره","مربع","مستطیل","مثلث","متوازی‌الاضلاع","ذوزنقه","لوزی"];
+const colors=[
+ {name:"آبی",code:"blue"},
+ {name:"قرمز",code:"red"},
+ {name:"زرد",code:"yellow"},
+ {name:"سفید",code:"white"},
+ {name:"مشکی",code:"black"}
+];
+
+let realShape, realColor, textShape, textColor, questionType;
+let t3=120, correct3=0, wrong3=0, timer3;
+
+const startBtn=document.getElementById("startBtn");
+const intro=document.getElementById("intro");
+const section3=document.getElementById("section3");
+const shapeArea=document.getElementById("shapeArea");
+const question3=document.getElementById("question3");
+const answerArea=document.getElementById("answerArea");
+const shapeSelect=document.getElementById("shapeSelect");
+const colorSelect=document.getElementById("colorSelect");
+const time3=document.getElementById("time3");
+const c3=document.getElementById("c3");
+const w3=document.getElementById("w3");
+const finishPopup=document.getElementById('finishPopup');
+const restartBtn=document.getElementById('restartBtn');
+const menuBtn=document.getElementById('menuBtn');
+const finalCorrect=document.getElementById('finalCorrect');
+const finalWrong=document.getElementById('finalWrong');
+
+startBtn.onclick=function(){
+    intro.style.display="none";
+    section3.style.display="block";
+
+    shapes.forEach(s=>shapeSelect.innerHTML+=`<option>${s}</option>`);
+    colors.forEach(c=>colorSelect.innerHTML+=`<option>${c.name}</option>`);
+
+    clearInterval(timer3);
+    t3=120; correct3=0; wrong3=0;
+    time3.innerText=t3; c3.innerText=0; w3.innerText=0;
+
+    timer3=setInterval(()=>{
+        time3.innerText=--t3;
+        if(t3<=0){
+            clearInterval(timer3);
+            showFinishPopup();
+        }
+    },1000);
+
+    nextRound();
+}
+
+function nextRound(){
+    shapeArea.style.display="flex";
+    question3.style.display="none";
+    answerArea.style.display="none";
+    shapeSelect.value=""; colorSelect.value="";
+
+    realShape = rnd(shapes);
+    realColor = rnd(colors);
+
+    do { textShape = rnd(shapes); } while(textShape===realShape);
+    do { textColor = rnd(colors); } while(textColor.name===realColor.name);
+
+    questionType = Math.random()<0.5 ? "real":"text";
+
+    let svgHTML="";
+    switch(realShape){
+        case "دایره": svgHTML=`<svg width="160" height="160"><circle cx="80" cy="80" r="80" fill="${realColor.code}"/></svg>`; break;
+        case "مربع": svgHTML=`<svg width="160" height="160"><rect width="160" height="160" fill="${realColor.code}"/></svg>`; break;
+        case "مستطیل": svgHTML=`<svg width="200" height="120"><rect width="200" height="120" fill="${realColor.code}"/></svg>`; break;
+        case "مثلث": svgHTML=`<svg width="160" height="140"><polygon points="80,0 0,140 160,140" fill="${realColor.code}"/></svg>`; break;
+        case "متوازی‌الاضلاع": svgHTML=`<svg width="160" height="100"><polygon points="30,0 160,0 130,100 0,100" fill="${realColor.code}"/></svg>`; break;
+        case "ذوزنقه": svgHTML=`<svg width="160" height="100"><polygon points="20,0 140,0 160,100 0,100" fill="${realColor.code}"/></svg>`; break;
+        case "لوزی": svgHTML=`<svg width="140" height="90"><polygon points="70,0 140,45 70,90 0,45" fill="${realColor.code}"/></svg>`; break;
+    }
+
+    shapeArea.innerHTML=svgHTML+`<div style="position:absolute;color:${["آبی","قرمز","زرد","سفید"].includes(realColor.name)?"black":"white"};font-weight:bold;font-size:16px;">${textShape} ${textColor.name}</div>`;
+
+    setTimeout(()=>{
+        shapeArea.style.display="none";
+        question3.style.display="block";
+        answerArea.style.display="block";
+        question3.innerText= questionType==="real" ? "👁️ شکل و رنگ واقعی چه بود؟" : "📝 نوشته‌ی داخل شکل چه بود؟";
+    },5000);
+}
+
+function submitAnswer(){
+    const s=shapeSelect.value;
+    const c=colorSelect.value;
+    if(!s || !c) return;
+
+    let correctShape, correctColor;
+    if(questionType==="real"){ correctShape=realShape; correctColor=realColor.name; }
+    else { correctShape=textShape; correctColor=textColor.name; }
+
+    if(s===correctShape && c===correctColor){
+        correct3++; c3.innerText=correct3;
+        answerArea.classList.add("correct");
+    } else {
+        wrong3++; w3.innerText=wrong3;
+        answerArea.classList.add("wrong");
+    }
+
+    setTimeout(()=>{
+        answerArea.classList.remove("correct","wrong");
+        nextRound();
+    },800);
+}
+
+function rnd(a){return a[Math.floor(Math.random()*a.length)];}
+
+function showFinishPopup(){
+    finishPopup.style.display='block';
+    finalCorrect.innerText=correct3;
+    finalWrong.innerText=wrong3;
+}
+
+restartBtn.onclick=()=>{
+    finishPopup.style.display='none';
+    clearInterval(timer3);
+    t3=120; correct3=0; wrong3=0;
+    time3.innerText=t3; c3.innerText=0; w3.innerText=0;
+    answerArea.querySelector('button').disabled=false;
+    shapeSelect.disabled=false;
+    colorSelect.disabled=false;
+    timer3=setInterval(()=>{
+        time3.innerText=--t3;
+        if(t3<=0){
+            clearInterval(timer3);
+            showFinishPopup();
+        }
+    },1000);
+    nextRound();
+};
+
+menuBtn.onclick=()=>{
+    finishPopup.style.display='none';
+    section3.style.display='none';
+    intro.style.display='block';
+};
+</script></body>
+</html>
