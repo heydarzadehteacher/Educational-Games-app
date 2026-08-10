@@ -2453,3 +2453,169 @@ button:active{
     }
 
 }
+
+/* ========================= */
+/* شبکه‌های اجتماعی */
+/* ========================= */
+
+.social-section {
+
+    text-align: center;
+
+}
+
+
+.social-description {
+
+    text-align: center;
+
+    color: #555;
+
+    font-size: 15px;
+
+    line-height: 2;
+
+    margin-bottom: 20px;
+
+}
+
+
+.social-links {
+
+    display: grid;
+
+    grid-template-columns: repeat(2, 1fr);
+
+    gap: 12px;
+
+}
+
+
+.social-link {
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    gap: 8px;
+
+    min-height: 55px;
+
+    padding: 10px;
+
+    border-radius: 18px;
+
+    text-decoration: none;
+
+    color: white;
+
+    font-size: 15px;
+
+    font-weight: bold;
+
+    box-shadow:
+
+        0 5px 12px rgba(0,0,0,0.12);
+
+    transition:
+
+        transform 0.2s ease,
+
+        box-shadow 0.2s ease,
+
+        filter 0.2s ease;
+
+}
+
+
+.social-icon {
+
+    font-size: 22px;
+
+    line-height: 1;
+
+}
+
+
+/* اینستاگرام */
+
+.social-link.instagram {
+
+    background:
+
+        linear-gradient(
+            135deg,
+            #833ab4,
+            #fd1d1d,
+            #fcb045
+        );
+
+}
+
+
+/* تلگرام */
+
+.social-link.telegram {
+
+    background: #229ED9;
+
+}
+
+
+/* آپارات */
+
+.social-link.aparat {
+
+    background: #ed1c24;
+
+}
+
+
+/* وب‌سایت */
+
+.social-link.website {
+
+    background: #009688;
+
+}
+
+
+/* افکت لمس / کلیک */
+
+.social-link:active {
+
+    transform: scale(0.95);
+
+    filter: brightness(0.9);
+
+    box-shadow:
+
+        0 3px 8px rgba(0,0,0,0.18);
+
+}
+
+
+/* افکت hover */
+
+.social-link:hover {
+
+    transform: translateY(-3px);
+
+    box-shadow:
+
+        0 8px 18px rgba(0,0,0,0.18);
+
+}
+
+
+@media(max-width:600px){
+
+    .social-links {
+
+        grid-template-columns: repeat(2, 1fr);
+
+    }
+
+    }
