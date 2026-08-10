@@ -1,0 +1,2332 @@
+<meta name='viewport' content='width=device-width, initial-scale=1'/><!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>🎯 بازی آموزشی چندمنظوره</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/vazirmatn@33.003/font.css">
+    <style>
+        /* ===== تمام استایل‌های قبلی بازی ===== */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            touch-action: manipulation;
+        }
+
+        body {
+            font-family: Vazirmatn, sans-serif;
+            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+            color: #333;
+            min-height: 100vh;
+            padding: 10px;
+            direction: rtl;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 100%;
+            margin: 0 auto;
+            padding: 5px;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 15px;
+            color: white;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+            padding: 10px 0;
+        }
+
+        h1 {
+            font-size: 1.8rem;
+            margin-bottom: 5px;
+        }
+
+        .subtitle {
+            font-size: 1rem;
+            opacity: 0.9;
+        }
+
+        .board-container {
+            background: white;
+            border-radius: 12px;
+            padding: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            margin-bottom: 15px;
+            overflow: auto;
+        }
+
+        .board {
+            display: grid;
+            grid-template-columns: repeat(10, 1fr);
+            gap: 3px;
+            margin: 0 auto;
+            position: relative;
+            border: 2px solid #4a5568;
+            border-radius: 8px;
+            padding: 5px;
+            background: #f7fafc;
+            min-width: 320px;
+        }
+
+        .cell {
+            aspect-ratio: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 0.7rem;
+            border-radius: 4px;
+            position: relative;
+            transition: all 0.3s;
+            user-select: none;
+            min-height: 25px;
+            flex-direction: column;
+        }
+
+        .cell-number {
+            background: #e2e8f0;
+            border: 1px solid #cbd5e0;
+        }
+
+        .cell-special {
+            background: linear-gradient(135deg, #f6d365 0%, #fda085 100%);
+            border: 2px solid #e53e3e;
+            color: #742a2a;
+            font-size: 0.6rem;
+        }
+
+        .cell-double {
+            background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+            border: 2px solid #4299e1;
+            color: #2c5282;
+            font-size: 0.6rem;
+        }
+
+        .cell-challenge {
+            background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
+            border: 2px solid #d69e2e;
+            color: #744210;
+            font-size: 0.6rem;
+        }
+
+        .cell-luck {
+            background: linear-gradient(135deg, #d4fc79 0%, #96e6a1 100%);
+            border: 2px solid #38a169;
+            color: #22543d;
+            font-size: 0.6rem;
+        }
+
+        .cell-bonus {
+            background: linear-gradient(135deg, #c6f6d5 0%, #9ae6b4 100%);
+            border: 2px solid #48bb78;
+            color: #22543d;
+            font-size: 0.6rem;
+        }
+
+        .cell-penalty {
+            background: linear-gradient(135deg, #fed7d7 0%, #feb2b2 100%);
+            border: 2px solid #f56565;
+            color: #742a2a;
+            font-size: 0.6rem;
+        }
+
+        .cell-void {
+            background: linear-gradient(135deg, #e2e8f0 0%, #cbd5e0 100%);
+            border: 2px solid #a0aec0;
+            color: #4a5568;
+            font-size: 0.6rem;
+        }
+
+        .cell-start {
+            background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
+            border: 2px solid #276749;
+            color: white;
+            font-size: 0.8rem;
+        }
+
+        .cell-finish {
+            background: linear-gradient(135deg, #9f7aea 0%, #805ad5 100%);
+            border: 2px solid #553c9a;
+            color: white;
+            font-size: 0.8rem;
+        }
+
+        .cell-farsi {
+            position: absolute;
+            bottom: 2px;
+            font-size: 0.5rem;
+            color: rgba(0, 0, 0, 0.7);
+            width: 100%;
+            text-align: center;
+            line-height: 1;
+        }
+
+        .cell-number-content {
+            font-size: 0.7rem;
+            font-weight: bold;
+            color: #2d3748;
+        }
+
+        .cell-special-sign {
+            position: absolute;
+            left: 3px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 0.7rem;
+            font-weight: bold;
+        }
+
+        .cell-bonus .cell-special-sign {
+            color: #22543d;
+        }
+
+        .cell-penalty .cell-special-sign {
+            color: #742a2a;
+        }
+
+        .token {
+            width: 65%;
+            height: 65%;
+            border-radius: 50%;
+            position: absolute;
+            top: 17%;
+            left: 17%;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+            z-index: 5;
+            transition: all 0.3s ease;
+        }
+
+        .token-p1 {
+            background: linear-gradient(135deg, #f56565 0%, #e53e3e 100%);
+            border: 2px solid #c53030;
+        }
+
+        .token-p2 {
+            background: linear-gradient(135deg, #4299e1 0%, #3182ce 100%);
+            border: 2px solid #2c5282;
+        }
+
+        .token-moving {
+            animation: bounce 0.5s infinite alternate;
+        }
+
+        @keyframes bounce {
+            from { transform: translateY(0); }
+            to { transform: translateY(-3px); }
+        }
+
+        .dice-container {
+            text-align: center;
+            padding: 15px;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            margin-bottom: 15px;
+        }
+
+        .dice {
+            width: 70px;
+            height: 70px;
+            margin: 0 auto 10px;
+            background: white;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.2rem;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s;
+            user-select: none;
+            border: 3px solid #4a5568;
+        }
+
+        .dice:hover {
+            transform: scale(1.05);
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .dice-disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .dice-rolling {
+            animation: roll 0.8s ease-in-out;
+        }
+
+        @keyframes roll {
+            0% { transform: rotate(0deg) scale(1); }
+            25% { transform: rotate(90deg) scale(1.1); }
+            50% { transform: rotate(180deg) scale(1); }
+            75% { transform: rotate(270deg) scale(1.1); }
+            100% { transform: rotate(360deg) scale(1); }
+        }
+
+        .dice-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            font-size: 1rem;
+            border-radius: 50px;
+            cursor: pointer;
+            font-family: Vazirmatn, sans-serif;
+            transition: all 0.3s;
+            width: 100%;
+            margin-top: 10px;
+            min-height: 44px;
+        }
+
+        .dice-btn:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 12px rgba(0, 0, 0, 0.2);
+        }
+
+        .dice-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .players-panel {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .player-info {
+            padding: 12px;
+            border-radius: 10px;
+            transition: all 0.3s;
+            min-height: 140px;
+        }
+
+        .player-active {
+            border: 3px solid;
+            transform: scale(1.02);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .player1-info {
+            background: linear-gradient(135deg, #fed7d7 0%, #feb2b2 100%);
+            border-color: #f56565;
+        }
+
+        .player2-info {
+            background: linear-gradient(135deg, #bee3f8 0%, #90cdf4 100%);
+            border-color: #4299e1;
+        }
+
+        .player-name {
+            font-size: 1.1rem;
+            font-weight: bold;
+            margin-bottom: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .player-score {
+            font-size: 1.3rem;
+            color: #2d3748;
+        }
+
+        .progress-bar {
+            height: 6px;
+            background: #e2e8f0;
+            border-radius: 3px;
+            margin: 8px 0;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #48bb78 0%, #38a169 100%);
+            width: 0%;
+            transition: width 0.5s ease;
+        }
+
+        .player-stats {
+            font-size: 0.85rem;
+            margin-top: 5px;
+        }
+
+        .player-stats div {
+            margin: 3px 0;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            animation: fadeIn 0.3s ease;
+            padding: 10px;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .modal-content {
+            background: white;
+            padding: 20px;
+            border-radius: 15px;
+            width: 100%;
+            max-width: 500px;
+            max-height: 85vh;
+            overflow-y: auto;
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.4);
+            animation: slideUp 0.4s ease;
+        }
+
+        @keyframes slideUp {
+            from { transform: translateY(50px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .question-title {
+            font-size: 1.3rem;
+            color: #2d3748;
+            margin-bottom: 15px;
+            text-align: center;
+            padding-bottom: 8px;
+            border-bottom: 2px solid #e2e8f0;
+        }
+
+        .question-text {
+            font-size: 1.1rem;
+            margin-bottom: 20px;
+            line-height: 1.5;
+            text-align: center;
+        }
+
+        .options-container {
+            display: grid;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .option {
+            padding: 12px;
+            background: #f7fafc;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 1rem;
+            text-align: center;
+            min-height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .option:hover {
+            background: #edf2f7;
+            transform: translateX(-3px);
+        }
+
+        .option.selected {
+            background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+            border-color: #2196f3;
+        }
+
+        .option.correct {
+            background: linear-gradient(135deg, #c6f6d5 0%, #9ae6b4 100%);
+            border-color: #48bb78;
+            color: #22543d;
+        }
+
+        .option.wrong {
+            background: linear-gradient(135deg, #fed7d7 0%, #feb2b2 100%);
+            border-color: #f56565;
+            color: #742a2a;
+        }
+
+        .modal-buttons {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+        }
+
+        .modal-btn {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 50px;
+            font-family: Vazirmatn, sans-serif;
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            flex: 1;
+            min-height: 44px;
+        }
+
+        .modal-btn-primary {
+            background: linear-gradient(135deg, #4299e1 0%, #3182ce 100%);
+            color: white;
+        }
+
+        .modal-btn-secondary {
+            background: #e2e8f0;
+            color: #4a5568;
+        }
+
+        .modal-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .timer-container {
+            margin: 15px 0;
+            text-align: center;
+        }
+
+        .timer-bar {
+            height: 8px;
+            background: #e2e8f0;
+            border-radius: 4px;
+            overflow: hidden;
+            margin-bottom: 8px;
+        }
+
+        .timer-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #4caf50 0%, #8bc34a 100%);
+            width: 100%;
+            transition: width 1s linear;
+        }
+
+        .timer-text {
+            font-weight: bold;
+            color: #333;
+            font-size: 1.1rem;
+        }
+
+        .timer-warning {
+            color: #ff9800;
+        }
+
+        .timer-danger {
+            color: #f44336;
+        }
+
+        .status-message {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: white;
+            padding: 12px 20px;
+            border-radius: 50px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+            font-weight: bold;
+            z-index: 100;
+            animation: slideInUp 0.5s ease;
+            display: none;
+            max-width: 90%;
+            text-align: center;
+            font-size: 0.9rem;
+        }
+
+        @keyframes slideInUp {
+            from { transform: translateX(-50%) translateY(100px); opacity: 0; }
+            to { transform: translateX(-50%) translateY(0); opacity: 1; }
+        }
+
+        .status-success {
+            background: linear-gradient(135deg, #c6f6d5 0%, #68d391 100%);
+            color: #22543d;
+            border: 2px solid #38a169;
+        }
+
+        .status-warning {
+            background: linear-gradient(135deg, #feebc8 0%, #fbd38d 100%);
+            color: #744210;
+            border: 2px solid #d69e2e;
+        }
+
+        .status-error {
+            background: linear-gradient(135deg, #fed7d7 0%, #fc8181 100%);
+            color: #742a2a;
+            border: 2px solid #f56565;
+        }
+
+        .status-info {
+            background: linear-gradient(135deg, #bee3f8 0%, #90cdf4 100%);
+            color: #2c5282;
+            border: 2px solid #4299e1;
+        }
+
+        .instructions {
+            background: white;
+            border-radius: 12px;
+            padding: 15px;
+            margin-top: 15px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .instructions h3 {
+            color: #4a5568;
+            margin-bottom: 12px;
+            font-size: 1.3rem;
+            text-align: center;
+        }
+
+        .instructions-list {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 10px;
+        }
+
+        .instruction-item {
+            background: #f7fafc;
+            padding: 12px;
+            border-radius: 8px;
+            border-right: 4px solid #4299e1;
+        }
+
+        .instruction-item h4 {
+            color: #2d3748;
+            margin-bottom: 6px;
+            font-size: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .instruction-item p {
+            color: #718096;
+            line-height: 1.4;
+            font-size: 0.9rem;
+        }
+
+        .score-animation {
+            position: absolute;
+            font-weight: bold;
+            font-size: 1rem;
+            z-index: 100;
+            animation: floatUp 1s ease forwards;
+            pointer-events: none;
+        }
+
+        @keyframes floatUp {
+            0% { transform: translateY(0); opacity: 1; }
+            100% { transform: translateY(-40px); opacity: 0; }
+        }
+
+        .big-score-animation {
+            position: absolute;
+            font-weight: bold;
+            font-size: 1.5rem !important;
+            z-index: 100;
+            animation: floatUpBig 1.2s ease forwards;
+            pointer-events: none;
+            opacity: 0.9;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        @keyframes floatUpBig {
+            0% { transform: translateY(0) scale(1); opacity: 1; }
+            50% { transform: translateY(-20px) scale(1.2); opacity: 0.9; }
+            100% { transform: translateY(-50px) scale(1); opacity: 0; }
+        }
+
+        .turn-info {
+            background: white;
+            padding: 10px 15px;
+            border-radius: 10px;
+            margin-bottom: 10px;
+            text-align: center;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            font-weight: bold;
+            font-size: 1.1rem;
+        }
+
+        .game-controls {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .control-btn {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 10px;
+            font-family: Vazirmatn, sans-serif;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            min-height: 44px;
+        }
+
+        .restart-btn {
+            background: linear-gradient(135deg, #f56565 0%, #e53e3e 100%);
+            color: white;
+        }
+
+        .help-btn {
+            background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
+            color: white;
+        }
+
+        @media (max-width: 480px) {
+            h1 { font-size: 1.5rem; }
+            .subtitle { font-size: 0.9rem; }
+            .board {
+                grid-template-columns: repeat(10, 1fr);
+                gap: 2px;
+                padding: 3px;
+                min-width: 300px;
+            }
+            .cell { font-size: 0.6rem; min-height: 22px; }
+            .players-panel { grid-template-columns: 1fr; gap: 8px; }
+            .player-info { min-height: 120px; }
+            .dice { width: 60px; height: 60px; font-size: 1.8rem; }
+            .modal-content { padding: 15px; margin: 10px; }
+            .question-title { font-size: 1.2rem; }
+            .question-text { font-size: 1rem; }
+            .option { padding: 10px; font-size: 0.9rem; min-height: 45px; }
+        }
+
+        @media (max-width: 350px) {
+            .board { min-width: 280px; }
+            .cell { font-size: 0.55rem; }
+            .cell-farsi { font-size: 0.45rem; }
+        }
+
+        /* ===== استایل‌های منوی شبکه‌های اجتماعی ===== */
+        :root {
+            --neon-primary: #0ff;
+            --neon-secondary: #f0f;
+            --bg-dark: #121212;
+        }
+
+        .circular-menu {
+            position: fixed;
+            bottom: 25px;
+            left: 25px;
+            width: 60px;
+            height: 60px;
+            z-index: 9999;
+        }
+
+        .circular-menu .menu-button {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 58px;
+            height: 58px;
+            border-radius: 50%;
+            background-color: var(--bg-dark);
+            color: var(--neon-primary);
+            border: 2px solid var(--neon-primary);
+            cursor: pointer;
+            z-index: 2;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 0 8px var(--neon-primary),
+                0 0 15px var(--neon-primary),
+                0 0 30px var(--neon-primary),
+                inset 0 0 15px rgba(0, 255, 255, 0.2);
+            transition: all 0.4s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .circular-menu .menu-button:focus-visible {
+            outline: 3px solid #fff;
+            outline-offset: 3px;
+        }
+
+        .circular-menu.active .menu-button {
+            background-color: #1a0a1a;
+            color: var(--neon-secondary);
+            border-color: var(--neon-secondary);
+            transform: rotate(135deg);
+            box-shadow: 0 0 10px var(--neon-secondary),
+                0 0 20px var(--neon-secondary),
+                0 0 40px var(--neon-secondary),
+                inset 0 0 20px rgba(255, 0, 255, 0.3);
+        }
+
+        .circular-menu .menu-item {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 52px;
+            height: 52px;
+            border-radius: 50%;
+            background-color: #ffffff;
+            color: #2c3e50;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            transform: scale(0);
+            z-index: -1;
+            text-decoration: none;
+            -webkit-tap-highlight-color: transparent;
+            pointer-events: none;
+            visibility: hidden;
+        }
+
+        .circular-menu.active .menu-item {
+            pointer-events: auto;
+            visibility: visible;
+        }
+
+        .menu-item:focus-visible {
+            outline: 3px solid #fff;
+            outline-offset: 2px;
+        }
+
+        .menu-item.instagram:hover,
+        .menu-item.instagram:focus-visible {
+            background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888);
+            color: white;
+        }
+        .menu-item.telegram:hover,
+        .menu-item.telegram:focus-visible {
+            background: #0088cc;
+            color: white;
+        }
+        .menu-item.aparat:hover,
+        .menu-item.aparat:focus-visible {
+            background: #ed1c24;
+            color: white;
+        }
+        .menu-item.website:hover,
+        .menu-item.website:focus-visible {
+            background: #4facfe;
+            color: white;
+        }
+        .menu-item.webapp:hover,
+        .menu-item.webapp:focus-visible {
+            background: #6c5ce7;
+            color: white;
+        }
+
+        .circular-menu.ready.active .menu-item {
+            animation-duration: 0.45s;
+            animation-timing-function: cubic-bezier(0.68, -0.55, 0.27, 1.55);
+            animation-fill-mode: forwards;
+        }
+        .circular-menu.ready.active .menu-item:nth-child(1) {
+            animation-name: expand1;
+            animation-delay: 0.00s;
+        }
+        .circular-menu.ready.active .menu-item:nth-child(2) {
+            animation-name: expand2;
+            animation-delay: 0.07s;
+        }
+        .circular-menu.ready.active .menu-item:nth-child(3) {
+            animation-name: expand3;
+            animation-delay: 0.14s;
+        }
+        .circular-menu.ready.active .menu-item:nth-child(4) {
+            animation-name: expand4;
+            animation-delay: 0.21s;
+        }
+        .circular-menu.ready.active .menu-item:nth-child(5) {
+            animation-name: expand5;
+            animation-delay: 0.28s;
+        }
+
+        .circular-menu.ready:not(.active) .menu-item {
+            animation-duration: 0.35s;
+            animation-timing-function: ease-in;
+            animation-fill-mode: forwards;
+        }
+        .circular-menu.ready:not(.active) .menu-item:nth-child(1) {
+            animation-name: collapse1;
+            animation-delay: 0.28s;
+        }
+        .circular-menu.ready:not(.active) .menu-item:nth-child(2) {
+            animation-name: collapse2;
+            animation-delay: 0.21s;
+        }
+        .circular-menu.ready:not(.active) .menu-item:nth-child(3) {
+            animation-name: collapse3;
+            animation-delay: 0.14s;
+        }
+        .circular-menu.ready:not(.active) .menu-item:nth-child(4) {
+            animation-name: collapse4;
+            animation-delay: 0.07s;
+        }
+        .circular-menu.ready:not(.active) .menu-item:nth-child(5) {
+            animation-name: collapse5;
+            animation-delay: 0.00s;
+        }
+
+        @keyframes expand1 {
+            0% {
+                opacity: 0;
+                transform: scale(0);
+                z-index: 1;
+            }
+            100% {
+                opacity: 1;
+                transform: translate(0, -150px) scale(1);
+                z-index: 1;
+            }
+        }
+        @keyframes expand2 {
+            0% {
+                opacity: 0;
+                transform: scale(0);
+                z-index: 1;
+            }
+            100% {
+                opacity: 1;
+                transform: translate(57px, -139px) scale(1);
+                z-index: 1;
+            }
+        }
+        @keyframes expand3 {
+            0% {
+                opacity: 0;
+                transform: scale(0);
+                z-index: 1;
+            }
+            100% {
+                opacity: 1;
+                transform: translate(106px, -106px) scale(1);
+                z-index: 1;
+            }
+        }
+        @keyframes expand4 {
+            0% {
+                opacity: 0;
+                transform: scale(0);
+                z-index: 1;
+            }
+            100% {
+                opacity: 1;
+                transform: translate(139px, -57px) scale(1);
+                z-index: 1;
+            }
+        }
+        @keyframes expand5 {
+            0% {
+                opacity: 0;
+                transform: scale(0);
+                z-index: 1;
+            }
+            100% {
+                opacity: 1;
+                transform: translate(150px, 0) scale(1);
+                z-index: 1;
+            }
+        }
+
+        @keyframes collapse1 {
+            0% {
+                opacity: 1;
+                transform: translate(0, -150px) scale(1);
+                z-index: 1;
+            }
+            100% {
+                opacity: 0;
+                transform: translate(0, -150px) scale(0);
+                z-index: -1;
+            }
+        }
+        @keyframes collapse2 {
+            0% {
+                opacity: 1;
+                transform: translate(57px, -139px) scale(1);
+                z-index: 1;
+            }
+            100% {
+                opacity: 0;
+                transform: translate(57px, -139px) scale(0);
+                z-index: -1;
+            }
+        }
+        @keyframes collapse3 {
+            0% {
+                opacity: 1;
+                transform: translate(106px, -106px) scale(1);
+                z-index: 1;
+            }
+            100% {
+                opacity: 0;
+                transform: translate(106px, -106px) scale(0);
+                z-index: -1;
+            }
+        }
+        @keyframes collapse4 {
+            0% {
+                opacity: 1;
+                transform: translate(139px, -57px) scale(1);
+                z-index: 1;
+            }
+            100% {
+                opacity: 0;
+                transform: translate(139px, -57px) scale(0);
+                z-index: -1;
+            }
+        }
+        @keyframes collapse5 {
+            0% {
+                opacity: 1;
+                transform: translate(150px, 0) scale(1);
+                z-index: 1;
+            }
+            100% {
+                opacity: 0;
+                transform: translate(150px, 0) scale(0);
+                z-index: -1;
+            }
+        }
+
+        .circular-menu svg {
+            width: 24px;
+            height: 24px;
+            fill: currentColor;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🎯 بازی آموزشی چندمنظوره</h1>
+            <p class="subtitle">یادگیری مفاهیم مختلف به شیوه‌ای جذاب و تعاملی</p>
+        </header>
+
+        <div class="turn-info">
+            <span>نوبت: <span id="currentPlayer">بازیکن ۱</span></span>
+            <span style="margin-right: 15px;"> | امتیاز هدف: <span id="targetScore">200</span></span>
+        </div>
+
+        <div class="dice-container">
+            <div class="dice" id="dice">🎲</div>
+            <button class="dice-btn" id="rollDice">ریختن تاس</button>
+        </div>
+
+        <div class="board-container">
+            <div class="board" id="board"></div>
+        </div>
+
+        <div class="players-panel">
+            <div class="player-info player1-info" id="player1Info">
+                <div class="player-name">
+                    <span>👤 بازیکن ۱</span>
+                    <span class="player-score" id="player1Score">0</span>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="player1Progress"></div>
+                </div>
+                <div class="player-stats">
+                    <div>تعداد پاسخ صحیح: <span id="player1Correct">0</span></div>
+                    <div>موقعیت: خانه <span id="player1Position">1</span></div>
+                </div>
+            </div>
+
+            <div class="player-info player2-info" id="player2Info">
+                <div class="player-name">
+                    <span>👤 بازیکن ۲</span>
+                    <span class="player-score" id="player2Score">0</span>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="player2Progress"></div>
+                </div>
+                <div class="player-stats">
+                    <div>تعداد پاسخ صحیح: <span id="player2Correct">0</span></div>
+                    <div>موقعیت: خانه <span id="player2Position">1</span></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="game-controls">
+            <button class="control-btn restart-btn" id="restartBtn">شروع مجدد</button>
+            <button class="control-btn help-btn" id="helpBtn">راهنما</button>
+        </div>
+
+        <div class="instructions" id="instructions" style="display: none;">
+            <h3>📚 راهنمای بازی چندمنظوره</h3>
+            <div class="instructions-list">
+                <div class="instruction-item">
+                    <h4>🎲 حرکت در بازی</h4>
+                    <p>بازیکنان به نوبت تاس می‌ریزند و مهره خود را به تعداد عدد تاس حرکت می‌دهند.</p>
+                </div>
+                <div class="instruction-item">
+                    <h4>❓ سوالات مختلف</h4>
+                    <p>هر سوال ۲۰ ثانیه زمان دارد. پاسخ صحیح: +۱۰ امتیاز، پاسخ غلط: -۵ امتیاز</p>
+                </div>
+                <div class="instruction-item">
+                    <h4>⭐ خانه‌های ویژه</h4>
+                    <p>🔵 آبی (۲×امتیاز) - 🟠 نارنجی (ریاضی) - 🟡 زرد (شانس) - 🟢 سبز (+۸) - 🔴 قرمز (-۸) - ⚫ خاکستری (پوچ)</p>
+                </div>
+                <div class="instruction-item">
+                    <h4>⚠️ قانون خانه‌های ویژه</h4>
+                    <p>خانه‌های +۸/-۸: بدون سوال، پوچ: نوبت به حریف، شانس: دو گزینه‌ای، چالشی: ریاضی</p>
+                </div>
+                <div class="instruction-item">
+                    <h4>🏆 برنده بازی</h4>
+                    <p>اولین بازیکنی که به ۲۰۰ امتیاز برسد یا زودتر به خانه ۱۰۰ برسد، برنده می‌شود.</p>
+                </div>
+                <div class="instruction-item">
+                    <h4>📚 موضوعات سوالات</h4>
+                    <p>علوم، ریاضی، دینی، فارسی، مطالعات اجتماعی، بهداشت و مهارت‌های زندگی</p>
+                </div>
+                <div class="instruction-item">
+                    <h4>⚖️ قانون امتیاز منفی</h4>
+                    <p>امتیاز هیچ‌گاه منفی نمی‌شود. حداقل امتیاز همیشه صفر است.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal" id="questionModal">
+        <div class="modal-content">
+            <h3 class="question-title" id="questionType">سوال</h3>
+            <p class="question-text" id="questionText">سوال اینجا نمایش داده می‌شود</p>
+            <div class="timer-container">
+                <div class="timer-bar">
+                    <div class="timer-fill" id="timerFill"></div>
+                </div>
+                <div class="timer-text" id="timerText">زمان باقی‌مانده: ۲۰ ثانیه</div>
+            </div>
+            <div class="options-container" id="optionsContainer"></div>
+            <div class="modal-buttons">
+                <button class="modal-btn modal-btn-primary" id="submitAnswer">ثبت پاسخ</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="status-message" id="statusMessage"></div>
+
+    <!-- ===== منوی شبکه‌های اجتماعی ===== -->
+    <div class="circular-menu" id="circularMenu">
+        <!-- ۱. اینستاگرام -->
+        <a href="https://instagram.com/heydarzadehteacher" target="_blank" rel="noopener noreferrer"
+           class="menu-item instagram" title="اینستاگرام" aria-label="صفحه‌ی اینستاگرام" tabindex="-1">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.204-.012 3.583-.069 4.849-.148 3.227-1.664 4.771-4.919 4.919-1.266.058-1.645.069-4.849.069-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.791-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.209-1.791 4-4 4zm6.406-11.845c-.796 0-1.44.645-1.44 1.44s.644 1.44 1.44 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
+        </a>
+
+        <!-- ۲. تلگرام -->
+        <a href="https://t.me/bazieamouzeshi" target="_blank" rel="noopener noreferrer"
+           class="menu-item telegram" title="تلگرام" aria-label="کانال تلگرام" tabindex="-1">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.38-.94-2.23-1.5-.99-.65-.35-1.01.22-1.59.15-.15 2.71-2.48 2.76-2.69.01-.03.01-.14-.07-.2-.08-.06-.19-.04-.27-.02-.12.02-1.96 1.25-5.54 3.66-.52.36-1 .53-1.42.52-.47-.01-1.37-.26-2.03-.48-.82-.27-1.47-.42-1.41-.88.03-.24.37-.49 1.02-.74 3.98-1.73 6.63-2.87 7.96-3.42 3.79-1.58 4.58-1.85 5.09-1.86.11 0 .37.03.53.16.14.11.18.25.2.39-.01.06.01.23-.02.37z"/></svg>
+        </a>
+
+        <!-- ۳. آپارات -->
+        <a href="https://www.aparat.com/heydarzadehteacher" target="_blank" rel="noopener noreferrer"
+           class="menu-item aparat" title="آپارات" aria-label="صفحه‌ی آپارات" tabindex="-1">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 8.64v6.72L15.27 12 10 8.64zM12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z"/></svg>
+        </a>
+
+        <!-- ۴. وب‌سایت -->
+        <a href="https://sites.google.com/view/heydarzadehteacher" target="_blank" rel="noopener noreferrer"
+           class="menu-item website" title="وب‌سایت" aria-label="وب‌سایت" tabindex="-1">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/></svg>
+        </a>
+
+        <!-- ۵. وب‌اپ -->
+        <a href="https://heydarzadehteacher.github.io/Educational-Games-app/index.html" target="_blank" rel="noopener noreferrer"
+           class="menu-item webapp" title="وب‌اپ" aria-label="وب‌اپ آموزشی" tabindex="-1">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M17 1.01L7 1c-1.1 0-2 .9-2 2v18c0 1.1.9 2 2 2h10c1.1 0 2-.9 2-2V3c0-1.1-.9-1.99-2-1.99zM17 19H7V5h10v14z"/></svg>
+        </a>
+
+        <button class="menu-button" title="شبکه‌های اجتماعی" aria-label="باز کردن منوی شبکه‌های اجتماعی"
+                aria-haspopup="true" aria-expanded="false">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92 1.61 0 2.92-1.31 2.92-2.92s-1.31-2.92-2.92-2.92z"/></svg>
+        </button>
+    </div>
+
+    <script>
+        // ============================================================
+        // ===== اسکریپت بازی (بدون تغییر) =====
+        // ============================================================
+
+        // ===== متغیرهای بازی =====
+        let currentPlayer = 0;
+        let playerPositions = [1, 1];
+        let playerScores = [0, 0];
+        let playerCorrectAnswers = [0, 0];
+        let targetScore = 200;
+        let isDiceRolling = false;
+        let isQuestionActive = false;
+        let selectedOption = null;
+        let currentQuestion = null;
+        let gameActive = true;
+        let timerInterval = null;
+        let timeLeft = 20;
+
+        const CORRECT_SCORE = 10;
+        const WRONG_PENALTY = 5;
+        const QUESTION_TIME = 20;
+        const BONUS_SCORE = 8;
+        const PENALTY_SCORE = 8;
+
+        const playerColors = ['#e53e3e', '#3182ce'];
+        const playerNames = ['بازیکن ۱', 'بازیکن ۲'];
+
+        const specialCells = {
+            5: { type: 'double', name: '۲×امتیاز' },
+            15: { type: 'double', name: '۲×امتیاز' },
+            25: { type: 'double', name: '۲×امتیاز' },
+            35: { type: 'double', name: '۲×امتیاز' },
+            45: { type: 'double', name: '۲×امتیاز' },
+            55: { type: 'double', name: '۲×امتیاز' },
+            65: { type: 'double', name: '۲×امتیاز' },
+            75: { type: 'double', name: '۲×امتیاز' },
+            85: { type: 'double', name: '۲×امتیاز' },
+            95: { type: 'double', name: '۲×امتیاز' },
+            3: { type: 'luck', name: 'شانس' },
+            12: { type: 'luck', name: 'شانس' },
+            21: { type: 'luck', name: 'شانس' },
+            30: { type: 'luck', name: 'شانس' },
+            39: { type: 'luck', name: 'شانس' },
+            48: { type: 'luck', name: 'شانس' },
+            57: { type: 'luck', name: 'شانس' },
+            66: { type: 'luck', name: 'شانس' },
+            78: { type: 'luck', name: 'شانس' },
+            87: { type: 'luck', name: 'شانس' },
+            8: { type: 'challenge', name: 'ریاضی' },
+            18: { type: 'challenge', name: 'ریاضی' },
+            28: { type: 'challenge', name: 'ریاضی' },
+            38: { type: 'challenge', name: 'ریاضی' },
+            49: { type: 'challenge', name: 'ریاضی' },
+            59: { type: 'challenge', name: 'ریاضی' },
+            69: { type: 'challenge', name: 'ریاضی' },
+            79: { type: 'challenge', name: 'ریاضی' },
+            89: { type: 'challenge', name: 'ریاضی' },
+            98: { type: 'challenge', name: 'ریاضی' },
+            4: { type: 'bonus', name: '+۸' },
+            14: { type: 'bonus', name: '+۸' },
+            24: { type: 'bonus', name: '+۸' },
+            34: { type: 'bonus', name: '+۸' },
+            44: { type: 'bonus', name: '+۸' },
+            54: { type: 'bonus', name: '+۸' },
+            64: { type: 'bonus', name: '+۸' },
+            74: { type: 'bonus', name: '+۸' },
+            84: { type: 'bonus', name: '+۸' },
+            94: { type: 'bonus', name: '+۸' },
+            7: { type: 'penalty', name: '-۸' },
+            17: { type: 'penalty', name: '-۸' },
+            27: { type: 'penalty', name: '-۸' },
+            37: { type: 'penalty', name: '-۸' },
+            47: { type: 'penalty', name: '-۸' },
+            58: { type: 'penalty', name: '-۸' },
+            68: { type: 'penalty', name: '-۸' },
+            77: { type: 'penalty', name: '-۸' },
+            86: { type: 'penalty', name: '-۸' },
+            96: { type: 'penalty', name: '-۸' },
+            9: { type: 'void', name: 'پوچ' },
+            19: { type: 'void', name: 'پوچ' },
+            29: { type: 'void', name: 'پوچ' },
+            41: { type: 'void', name: 'پوچ' },
+            51: { type: 'void', name: 'پوچ' },
+            61: { type: 'void', name: 'پوچ' },
+            71: { type: 'void', name: 'پوچ' },
+            81: { type: 'void', name: 'پوچ' },
+            91: { type: 'void', name: 'پوچ' },
+            99: { type: 'void', name: 'پوچ' },
+            1: { type: 'start', name: 'شروع' },
+            100: { type: 'finish', name: 'پایان' }
+        };
+
+        // ===== بانک سوالات =====
+        const testQuestions = [
+            {
+                text: 'در کاوش علمی کدام دیرتر اتفاق می‌افتد؟',
+                options: ['فرضیه‌سازی', 'طرح پرسش', 'آزمایش', 'نتیجه‌گیری'],
+                correct: 3,
+                type: 'تستی'
+            },
+            {
+                text: 'برای این که بدانیم چه خاکی برای رشد گیاه مناسب‌تر است باید چه چیزی را تغییر دهیم؟',
+                options: ['نوع گیاه', 'نوع خاک', 'مقدار خاک', 'محل گیاه'],
+                correct: 1,
+                type: 'تستی'
+            },
+            {
+                text: 'متضاد "استقلال" کدام است؟',
+                options: ['وابستگی', 'مستقل', 'برتری', 'پیروزی'],
+                correct: 0,
+                type: 'تستی'
+            },
+            {
+                text: 'کدام‌مورد از عوامل جذب کننده‌ی جمعیت نیست؟',
+                options: ['وجود دانشگاه', 'کمبود درآمد', 'شغل بیشتر', 'بیمارستان های مجهز'],
+                correct: 1,
+                type: 'تستی'
+            },
+            {
+                text: 'کدام تغییر با بقیه تفاوت بیشتری دارد؟',
+                options: ['فاسد شدن میوه', 'پختن غذا', 'ترش شدن شیر', 'خرد کردن میوه'],
+                correct: 3,
+                type: 'تستی'
+            },
+            {
+                text: 'در کدام مورد تغییر شیمیایی آهسته‌تر اتفاق می‌افتد؟',
+                options: ['سوختن بنزین', 'سوختن چوب کبریت', 'زنگ زدن آهن', 'شکستن شیشه'],
+                correct: 2,
+                type: 'تستی'
+            },
+            {
+                text: 'کدام تغییر شیمیایی تند است؟',
+                options: ['تبدیل گل به میوه', 'سوختن بنزین', 'زنگ زدن آهن', 'پاره کردن کاغذ'],
+                correct: 1,
+                type: 'تستی'
+            },
+            {
+                text: 'معنی هلاک؟',
+                options: ['حرص و طمع', 'فقیر', 'نابودی', 'حادثه'],
+                correct: 2,
+                type: 'تستی'
+            },
+            {
+                text: 'پاسخ های احتمالی به سوالات یا پیشنهاد راه حل قابل آزمایش درباره‌ی یک مسئله چه نام دارد؟',
+                options: ['نظریه', 'فرضیه', 'آزمایش', 'مشاهده'],
+                correct: 1,
+                type: 'تستی'
+            },
+            {
+                text: 'منشور نور را ..... می‌کند.',
+                options: ['متمرکز', 'بازتاب', 'جذب', 'تجزیه'],
+                correct: 3,
+                type: 'تستی'
+            },
+            {
+                text: 'نقش قطرات آب در تشکیل رنگین‌کمان مثل ..... است.',
+                options: ['ذره‌بین', 'کانون', 'عدسی', 'منشور'],
+                correct: 3,
+                type: 'تستی'
+            },
+            {
+                text: 'نماز جمعه چند رکعت است؟',
+                options: ['یک', 'دو', 'سه', 'چهار'],
+                correct: 1,
+                type: 'تستی'
+            },
+            {
+                text: 'کدام مورد محیط بهتری برای تشکیل فسیل است؟',
+                options: ['دریا', 'بیابان', 'جنگل', 'دامنه‌ی کوه'],
+                correct: 0,
+                type: 'تستی'
+            },
+            {
+                text: 'فرمانده بدن کدام است؟',
+                options: ['نخاع', 'رشته‌های عصبی', 'مغز', 'گیرنده‌های حسی'],
+                correct: 2,
+                type: 'تستی'
+            },
+            {
+                text: 'در بین اعضای خانواده، کدام مورد حریم شخصی محسوب می‌شود؟',
+                options: ['آشپزخانه', 'اتاق خواب', 'پذیرایی', 'حیاط'],
+                correct: 1,
+                type: 'تستی'
+            },
+            {
+                text: 'کدام یک از موارد زیر مرکز پردازش و درک تصویر است؟',
+                options: ['شبکیه', 'عدسی', 'عصب بینایی', 'مغز'],
+                correct: 3,
+                type: 'تستی'
+            },
+            {
+                text: 'کدام دو حس ارتباط نزدیکی با هم دارند؟',
+                options: ['بینایی – چشایی', 'بویایی – بینایی', 'بویایی – چشایی', 'لامسه – بویایی'],
+                correct: 2,
+                type: 'تستی'
+            },
+            {
+                text: 'افراد نابینا از کدام حس برای خواندن استفاده می‌کنند؟',
+                options: ['بینایی', 'لامسه', 'چشایی', 'بویایی'],
+                correct: 1,
+                type: 'تستی'
+            },
+            {
+                text: 'کدام‌مورد ترس نابه‌جا است؟',
+                options: ['ترس از حیوانات موذی و درنده', 'ترس از بلندی و ارتفاع', 'ترس از صدای انفجار', 'ترس از امتحان'],
+                correct: 3,
+                type: 'تستی'
+            },
+            {
+                text: 'مفهوم کدام آیه به کم‌فروشی اشاره دارد؟',
+                options: ['ویل للمصلین', 'ویل للمطففین', 'ویل لکل همزه لمزه', 'اهدنا الصراط المستقیم'],
+                correct: 1,
+                type: 'تستی'
+            },
+            {
+                text: 'چه کسانی اولین بار با کندن قنات، از آب‌های زیرزمینی استفاده کردند؟',
+                options: ['مصریان', 'چینی‌ها', 'ایرانیان', 'اعراب'],
+                correct: 2,
+                type: 'تستی'
+            },
+            {
+                text: 'بلندترین سوره قرآن؟',
+                options: ['انبیا', 'بقره', 'آل عمران', 'یس'],
+                correct: 1,
+                type: 'تستی'
+            },
+            {
+                text: 'کتاب آسمانی حضرت عیسی؟',
+                options: ['انجیل', 'تورات', 'زبور', 'قرآن'],
+                correct: 0,
+                type: 'تستی'
+            },
+            {
+                text: 'کدام مورد گروه نیست؟',
+                options: ['افراد منتظر در بانک', 'گروه سرود کلاس پنجم', 'دانش‌آموزانی که به اردو می‌روند', 'تیم فوتبال مدرسه'],
+                correct: 0,
+                type: 'تستی'
+            }
+        ];
+
+        const twoOptionQuestions = [
+            {
+                text: 'وقتی شرایط آزمایش مناسب باشد، نیازی به تکرار آزمایش نیست.',
+                answer: false,
+                type: 'دو گزینه‌ای'
+            },
+            {
+                text: 'برای دیدن رنگین کمان باید رو به آفتاب بایستیم.',
+                answer: false,
+                type: 'دو گزینه‌ای'
+            },
+            {
+                text: 'ما حق کنجکاوی در حریم شخصی دیگران را نداریم.',
+                answer: true,
+                type: 'دو گزینه‌ای'
+            },
+            {
+                text: 'عنبیه در وسط مردمک قرار دارد.',
+                answer: false,
+                type: 'دو گزینه‌ای'
+            },
+            {
+                text: 'غفلت به معنی بی‌خبری و نا‌آگاهی است.',
+                answer: true,
+                type: 'دو گزینه‌ای'
+            },
+            {
+                text: 'حضرت عیسی فرزند حضرت مریم است.',
+                answer: true,
+                type: 'دو گزینه‌ای'
+            },
+            {
+                text: 'آیه‌ی و قولوا للناس حسنا به موضوع گفتار نیک اشاره دارد.',
+                answer: true,
+                type: 'دو گزینه‌ای'
+            },
+            {
+                text: 'رودها مهم‌ترین منبع آب شیرین هستند.',
+                answer: true,
+                type: 'دو گزینه‌ای'
+            },
+            {
+                text: 'همه‌ی افراد در هر سنی می‌توانند با اهدای خون به بقیه کمک کنند.',
+                answer: false,
+                type: 'دو گزینه‌ای'
+            },
+            {
+                text: 'واژه‌های درس، سرد و سرود هم‌خانواده هستند.',
+                answer: false,
+                type: 'دو گزینه‌ای'
+            }
+        ];
+
+        const mathQuestions = [
+            {
+                text: 'عدد نه میلیارد و نود و نه میلیون و نهصد هزار و نهصد و نه',
+                options: ['999,900,909', '9,099,900,909', '90,990,090,099', '9,999,900,908'],
+                correct: 1,
+                type: 'ریاضی'
+            },
+            {
+                text: 'عدد 1,000,000 از ..... تشکیل شده است.',
+                options: ['1000 تا هزارتایی', '100 تا ده‌هزارتایی', '10 تا صدهزارتایی', 'همه‌ی موارد'],
+                correct: 3,
+                type: 'ریاضی'
+            },
+            {
+                text: '78,850,000 با تقریب رقم یک میلیون و حذف رقم‌های بعد از آن؟',
+                options: ['۷۸ میلیون', '۷۹ میلیون', '۸۰ میلیون', '۸۰۰ میلیون'],
+                correct: 0,
+                type: 'ریاضی'
+            },
+            {
+                text: '۱ ساعت و ۴۵ دقیقه بعد از ساعت ۱۴:۴۵ چه ساعتی می‌شود؟',
+                options: ['۱۶:۳۰', '۱۵:۵۵', '۱۶:۱۵', '۱۷:۱۵'],
+                correct: 0,
+                type: 'ریاضی'
+            },
+            {
+                text: '۲ متر و ۴۰ سانتی‌متر و ۷ میلی‌متر چند میلی‌متر است؟',
+                options: ['2047', '2407', '24007', '247'],
+                correct: 1,
+                type: 'ریاضی'
+            },
+            {
+                text: 'کدام عدد بزرگتر است؟',
+                options: ['یک پنجم عدد ۲۰', 'یک سوم عدد ۱۸', 'یک چهارم عدد ۲۴', 'یک دوم عدد ۱۴'],
+                correct: 3,
+                type: 'ریاضی'
+            },
+            {
+                text: 'پژمان ۴۲۰۰۰ تومان پول دارد. او سه هفتم از پولش را خرج کرد. حالا چقدر پول دارد؟',
+                options: ['۱۸ هزار تومان', '۲۴ هزار تومان', '۲۷ هزار تومان', '۱۴ هزار تومان'],
+                correct: 1,
+                type: 'ریاضی'
+            },
+            {
+                text: 'یک چهارم تقسیم بر ۳ برابر است با:',
+                options: ['یک دوازدهم', 'دوازده', 'سه چهارم', 'چهار سوم'],
+                correct: 0,
+                type: 'ریاضی'
+            },
+            {
+                text: '۱۲ به ۵۴ مثل... است.',
+                options: ['۶ به ۸', '۴ به ۱۷', '۲۴ به ۱۰۴', '۲ به ۹'],
+                correct: 3,
+                type: 'ریاضی'
+            },
+            {
+                text: '۴۰٪ از عددی ۶۰ است. آن عدد کدام است؟',
+                options: ['۱۲۰', '۱۵۰', '۲۴', '۴۸'],
+                correct: 1,
+                type: 'ریاضی'
+            }
+        ];
+
+        // ===== DOM Elements =====
+        const boardElement = document.getElementById('board');
+        const diceElement = document.getElementById('dice');
+        const rollDiceButton = document.getElementById('rollDice');
+        const restartBtn = document.getElementById('restartBtn');
+        const helpBtn = document.getElementById('helpBtn');
+        const instructionsElement = document.getElementById('instructions');
+        const player1Info = document.getElementById('player1Info');
+        const player2Info = document.getElementById('player2Info');
+        const player1ScoreElement = document.getElementById('player1Score');
+        const player2ScoreElement = document.getElementById('player2Score');
+        const player1ProgressElement = document.getElementById('player1Progress');
+        const player2ProgressElement = document.getElementById('player2Progress');
+        const player1CorrectElement = document.getElementById('player1Correct');
+        const player2CorrectElement = document.getElementById('player2Correct');
+        const player1PositionElement = document.getElementById('player1Position');
+        const player2PositionElement = document.getElementById('player2Position');
+        const currentPlayerElement = document.getElementById('currentPlayer');
+        const questionModal = document.getElementById('questionModal');
+        const questionTypeElement = document.getElementById('questionType');
+        const questionTextElement = document.getElementById('questionText');
+        const optionsContainer = document.getElementById('optionsContainer');
+        const submitAnswerButton = document.getElementById('submitAnswer');
+        const statusMessageElement = document.getElementById('statusMessage');
+        const targetScoreElement = document.getElementById('targetScore');
+        const timerFillElement = document.getElementById('timerFill');
+        const timerTextElement = document.getElementById('timerText');
+
+        let questionDistribution = {};
+
+        // ============================================================
+        // ===== توابع اصلی =====
+        // ============================================================
+        function initGame() {
+            createBoard();
+            distributeQuestions();
+            updatePlayerInfo();
+            updateCurrentPlayerDisplay();
+            gameActive = true;
+
+            rollDiceButton.addEventListener('click', rollDice);
+            submitAnswerButton.addEventListener('click', submitAnswer);
+
+            restartBtn.addEventListener('click', function() {
+                if (confirm('آیا مطمئنید می‌خواهید بازی را از اول شروع کنید؟')) {
+                    resetGame();
+                }
+            });
+
+            helpBtn.addEventListener('click', toggleInstructions);
+
+            showStatusMessage('🎮 بازی چندمنظوره شروع شد! نوبت بازیکن ۱ است.', 'info', 3000);
+        }
+
+        // ============================================================
+        // ===== توزیع سوالات =====
+        // ============================================================
+        function distributeQuestions() {
+            questionDistribution = {};
+
+            let testCells = [];
+            for (let i = 1; i <= 100; i++) {
+                if (!specialCells[i] || specialCells[i].type === 'double') {
+                    testCells.push(i);
+                }
+            }
+            testCells = testCells.filter(cell => cell !== 1 && cell !== 100);
+
+            if (testCells.length !== 48) {
+                console.error(`⚠️ تعداد خانه‌های نیازمند سوال تستی ${testCells.length} است (باید ۴۸ باشد). در حال اصلاح...`);
+                testCells = [];
+                for (let i = 1; i <= 100; i++) {
+                    if (!specialCells[i]) {
+                        testCells.push(i);
+                    } else if (specialCells[i].type === 'double') {
+                        testCells.push(i);
+                    }
+                }
+                testCells = testCells.filter(cell => cell !== 1 && cell !== 100);
+                console.log(`✅ پس از اصلاح: ${testCells.length} خانه`);
+            }
+
+            if (testCells.length > 48) {
+                testCells = testCells.slice(0, 48);
+            }
+
+            const shuffledQuestions = [...testQuestions].sort(() => Math.random() - 0.5);
+            const shuffledCells = [...testCells].sort(() => Math.random() - 0.5);
+
+            let questionIndex = 0;
+            let housesPerQuestion = 2;
+
+            for (let i = 0; i < shuffledCells.length; i += housesPerQuestion) {
+                if (questionIndex >= shuffledQuestions.length) {
+                    questionIndex = 0;
+                }
+                const question = shuffledQuestions[questionIndex];
+                for (let j = 0; j < housesPerQuestion; j++) {
+                    if (shuffledCells[i + j]) {
+                        questionDistribution[shuffledCells[i + j]] = {
+                            question: question,
+                            isDouble: specialCells[shuffledCells[i + j]] &&
+                                      specialCells[shuffledCells[i + j]].type === 'double'
+                        };
+                    }
+                }
+                questionIndex++;
+            }
+
+            for (let i = 0; i < shuffledCells.length; i++) {
+                if (!questionDistribution[shuffledCells[i]]) {
+                    const randomQuestion = testQuestions[Math.floor(Math.random() * testQuestions.length)];
+                    questionDistribution[shuffledCells[i]] = {
+                        question: randomQuestion,
+                        isDouble: specialCells[shuffledCells[i]] &&
+                                  specialCells[shuffledCells[i]].type === 'double'
+                    };
+                }
+            }
+
+            if (Object.keys(questionDistribution).length < 48) {
+                console.error(`⚠️ توزیع سوالات ناقص! فقط ${Object.keys(questionDistribution).length} خانه پر شد.`);
+            } else {
+                console.log(`✅ توزیع سوالات تکمیل شد: ${Object.keys(questionDistribution).length} خانه`);
+            }
+        }
+
+        // ============================================================
+        // ===== بقیه توابع (بدون تغییر) =====
+        // ============================================================
+        function createBoard() {
+            boardElement.innerHTML = '';
+            for (let i = 1; i <= 100; i++) {
+                const cell = document.createElement('div');
+                cell.className = 'cell cell-number';
+                cell.dataset.index = i;
+
+                const numberContent = document.createElement('div');
+                numberContent.className = 'cell-number-content';
+                numberContent.textContent = i;
+                cell.appendChild(numberContent);
+
+                const farsiText = document.createElement('div');
+                farsiText.className = 'cell-farsi';
+                cell.appendChild(farsiText);
+
+                const specialSign = document.createElement('div');
+                specialSign.className = 'cell-special-sign';
+                cell.appendChild(specialSign);
+
+                if (specialCells[i]) {
+                    const cellType = specialCells[i].type;
+                    if (cellType === 'start') {
+                        cell.className = 'cell cell-start';
+                        numberContent.textContent = 'شروع';
+                        farsiText.textContent = '';
+                    } else if (cellType === 'finish') {
+                        cell.className = 'cell cell-finish';
+                        numberContent.textContent = 'پایان';
+                        farsiText.textContent = '';
+                    } else if (cellType === 'double') {
+                        cell.className = 'cell cell-double';
+                        farsiText.textContent = '۲×امتیاز';
+                    } else if (cellType === 'challenge') {
+                        cell.className = 'cell cell-challenge';
+                        farsiText.textContent = 'ریاضی';
+                    } else if (cellType === 'luck') {
+                        cell.className = 'cell cell-luck';
+                        farsiText.textContent = 'شانس';
+                    } else if (cellType === 'bonus') {
+                        cell.className = 'cell cell-bonus';
+                        numberContent.textContent = i;
+                        farsiText.textContent = '+۸';
+                        specialSign.textContent = '';
+                    } else if (cellType === 'penalty') {
+                        cell.className = 'cell cell-penalty';
+                        numberContent.textContent = i;
+                        farsiText.textContent = '-۸';
+                        specialSign.textContent = '';
+                    } else if (cellType === 'void') {
+                        cell.className = 'cell cell-void';
+                        farsiText.textContent = 'پوچ';
+                    }
+                } else {
+                    farsiText.textContent = 'سوال';
+                }
+                boardElement.appendChild(cell);
+            }
+            createTokens();
+        }
+
+        function createTokens() {
+            document.querySelectorAll('.token').forEach(token => token.remove());
+            for (let i = 0; i < 2; i++) {
+                const position = playerPositions[i];
+                const cell = document.querySelector(`.cell[data-index="${position}"]`);
+                if (cell) {
+                    const token = document.createElement('div');
+                    token.className = `token token-p${i+1}`;
+                    token.dataset.player = i;
+                    cell.appendChild(token);
+                }
+            }
+        }
+
+        function rollDice() {
+            if (isDiceRolling || isQuestionActive || !gameActive) return;
+
+            isDiceRolling = true;
+            rollDiceButton.disabled = true;
+            diceElement.classList.add('dice-rolling');
+
+            let rollCount = 0;
+            const rollInterval = setInterval(() => {
+                diceElement.textContent = getRandomDiceFace();
+                rollCount++;
+                if (rollCount > 8) {
+                    clearInterval(rollInterval);
+                    finishRoll();
+                }
+            }, 100);
+        }
+
+        function finishRoll() {
+            const diceValue = Math.floor(Math.random() * 6) + 1;
+            diceElement.textContent = getDiceFace(diceValue);
+            diceElement.classList.remove('dice-rolling');
+
+            showStatusMessage(`🎲 تاس ${diceValue} آمد!`, 'info', 2000);
+
+            const playerIndex = currentPlayer;
+            const currentPosition = playerPositions[playerIndex];
+            const remainingCells = 100 - currentPosition;
+
+            if (diceValue > remainingCells) {
+                setTimeout(() => {
+                    showStatusMessage(`⚠️ تاس ${diceValue} بیشتر از ${remainingCells} خانه باقیمانده است! نوبت به حریف می‌رسد.`, 'warning', 3000);
+                    isDiceRolling = false;
+                    switchTurn();
+                }, 1000);
+            } else {
+                setTimeout(() => {
+                    movePlayer(diceValue);
+                    isDiceRolling = false;
+                }, 800);
+            }
+        }
+
+        function movePlayer(steps) {
+            const playerIndex = currentPlayer;
+            let newPosition = playerPositions[playerIndex] + steps;
+
+            if (newPosition > 100) {
+                const overflow = newPosition - 100;
+                newPosition = 100 - overflow;
+                showStatusMessage('از خانه ۱۰۰ گذشتی! به عقب برگشتی.', 'warning', 2000);
+            }
+
+            playerPositions[playerIndex] = newPosition;
+            animateTokenMovement(playerIndex, steps);
+            updatePlayerInfo();
+
+            setTimeout(() => {
+                handleCellAction(newPosition);
+            }, steps * 200 + 500);
+        }
+
+        function animateTokenMovement(playerIndex, steps) {
+            const token = document.querySelector(`.token[data-player="${playerIndex}"]`);
+            if (!token) return;
+
+            token.classList.add('token-moving');
+            let stepCount = 0;
+            const currentPos = playerPositions[playerIndex] - steps;
+
+            const moveInterval = setInterval(() => {
+                stepCount++;
+                const tempPos = currentPos + stepCount;
+                const prevCell = document.querySelector(`.cell[data-index="${tempPos - 1}"]`);
+                if (prevCell && prevCell.contains(token)) {
+                    prevCell.removeChild(token);
+                }
+                const newCell = document.querySelector(`.cell[data-index="${tempPos}"]`);
+                if (newCell) {
+                    newCell.appendChild(token);
+                }
+                if (stepCount >= steps) {
+                    clearInterval(moveInterval);
+                    token.classList.remove('token-moving');
+                }
+            }, 200);
+        }
+
+        function showBigScoreAnimation(points, playerIndex, isNegative = false) {
+            const playerInfo = playerIndex === 0 ? player1Info : player2Info;
+            const rect = playerInfo.getBoundingClientRect();
+
+            const scoreAnim = document.createElement('div');
+            scoreAnim.className = 'big-score-animation';
+            scoreAnim.textContent = points;
+            scoreAnim.style.color = isNegative ? '#f44336' : '#38a169';
+            scoreAnim.style.left = `${rect.left + rect.width / 2}px`;
+            scoreAnim.style.top = `${rect.top - 20}px`;
+
+            document.body.appendChild(scoreAnim);
+            setTimeout(() => {
+                if (scoreAnim.parentNode) {
+                    document.body.removeChild(scoreAnim);
+                }
+            }, 1200);
+        }
+
+        function handleCellAction(cellIndex) {
+            const cellType = specialCells[cellIndex] ? specialCells[cellIndex].type : 'normal';
+            const playerIndex = currentPlayer;
+
+            if (cellType === 'bonus') {
+                playerScores[playerIndex] += BONUS_SCORE;
+                showBigScoreAnimation(`+${BONUS_SCORE}`, playerIndex, false);
+                setTimeout(() => {
+                    showStatusMessage(`🎉 +${BONUS_SCORE} امتیاز گرفتی!`, 'success', 2000);
+                }, 300);
+                updatePlayerInfo();
+                switchTurn();
+            } else if (cellType === 'penalty') {
+                const newScore = Math.max(0, playerScores[playerIndex] - PENALTY_SCORE);
+                const penaltyAmount = playerScores[playerIndex] - newScore;
+                playerScores[playerIndex] = newScore;
+                showBigScoreAnimation(`−${penaltyAmount}`, playerIndex, true);
+                setTimeout(() => {
+                    showStatusMessage(`⚠️ ${penaltyAmount} امتیاز از دست دادی!`, 'error', 2000);
+                }, 300);
+                updatePlayerInfo();
+                switchTurn();
+            } else if (cellType === 'void') {
+                showStatusMessage('⚫ خانه پوچ! نوبت به حریف می‌رسد.', 'warning', 2500);
+                setTimeout(() => {
+                    switchTurn();
+                }, 1500);
+            } else if (cellType === 'start' || cellType === 'finish') {
+                setTimeout(() => {
+                    switchTurn();
+                }, 1000);
+            } else {
+                showQuestionForCell(cellIndex);
+            }
+
+            if (checkWinCondition() !== -1) {
+                setTimeout(() => {
+                    endGame();
+                }, 500);
+            }
+        }
+
+        function showQuestionForCell(cellIndex) {
+            isQuestionActive = true;
+            timeLeft = QUESTION_TIME;
+            selectedOption = null;
+
+            let question;
+            let questionType = '';
+            const cellType = specialCells[cellIndex] ? specialCells[cellIndex].type : 'normal';
+
+            if (cellType === 'double') {
+                if (questionDistribution[cellIndex]) {
+                    question = questionDistribution[cellIndex].question;
+                    question.points = CORRECT_SCORE * 2;
+                    questionType = '۲× امتیاز: تستی';
+                } else {
+                    question = testQuestions[Math.floor(Math.random() * testQuestions.length)];
+                    question.points = CORRECT_SCORE * 2;
+                    questionType = '۲× امتیاز: تستی (تصادفی)';
+                    console.warn(`⚠️ خانه ${cellIndex} سوال توزیع‌شده نداشت، از سوال تصادفی استفاده شد.`);
+                }
+            } else if (cellType === 'challenge') {
+                const randomIndex = Math.floor(Math.random() * mathQuestions.length);
+                question = mathQuestions[randomIndex];
+                question.points = CORRECT_SCORE;
+                questionType = 'ریاضی';
+            } else if (cellType === 'luck') {
+                const randomIndex = Math.floor(Math.random() * twoOptionQuestions.length);
+                question = twoOptionQuestions[randomIndex];
+                question.points = CORRECT_SCORE;
+                questionType = 'شانس';
+            } else {
+                if (questionDistribution[cellIndex]) {
+                    question = questionDistribution[cellIndex].question;
+                    question.points = CORRECT_SCORE;
+                    questionType = 'تستی';
+                } else {
+                    question = testQuestions[Math.floor(Math.random() * testQuestions.length)];
+                    question.points = CORRECT_SCORE;
+                    questionType = 'تستی (تصادفی)';
+                    console.warn(`⚠️ خانه ${cellIndex} سوال توزیع‌شده نداشت، از سوال تصادفی استفاده شد.`);
+                }
+            }
+
+            currentQuestion = question;
+
+            questionTypeElement.textContent = questionType;
+            questionTextElement.textContent = question.text;
+
+            optionsContainer.innerHTML = '';
+            selectedOption = null;
+
+            if (question.type === 'دو گزینه‌ای') {
+                const trueOption = document.createElement('div');
+                trueOption.className = 'option';
+                trueOption.textContent = 'درست';
+                trueOption.dataset.index = 0;
+
+                const falseOption = document.createElement('div');
+                falseOption.className = 'option';
+                falseOption.textContent = 'نادرست';
+                falseOption.dataset.index = 1;
+
+                trueOption.addEventListener('click', () => selectOption(trueOption, 0));
+                falseOption.addEventListener('click', () => selectOption(falseOption, 1));
+
+                optionsContainer.appendChild(trueOption);
+                optionsContainer.appendChild(falseOption);
+            } else {
+                question.options.forEach((option, index) => {
+                    const optionElement = document.createElement('div');
+                    optionElement.className = 'option';
+                    optionElement.textContent = option;
+                    optionElement.dataset.index = index;
+
+                    optionElement.addEventListener('click', () => selectOption(optionElement, index));
+                    optionsContainer.appendChild(optionElement);
+                });
+            }
+
+            submitAnswerButton.disabled = true;
+            submitAnswerButton.textContent = 'ثبت پاسخ';
+
+            updateTimerDisplay();
+            clearInterval(timerInterval);
+            timerInterval = setInterval(updateTimer, 1000);
+
+            questionModal.style.display = 'flex';
+        }
+
+        function selectOption(optionElement, index) {
+            if (!isQuestionActive) return;
+            document.querySelectorAll('.option').forEach(opt => {
+                opt.classList.remove('selected');
+            });
+            optionElement.classList.add('selected');
+            selectedOption = index;
+            submitAnswerButton.disabled = false;
+        }
+
+        function updateTimer() {
+            timeLeft--;
+            updateTimerDisplay();
+            if (timeLeft <= 0) {
+                clearInterval(timerInterval);
+                timeOut();
+            }
+        }
+
+        function updateTimerDisplay() {
+            const percentage = (timeLeft / QUESTION_TIME) * 100;
+            timerFillElement.style.width = percentage + '%';
+
+            if (timeLeft > 10) {
+                timerFillElement.style.background = 'linear-gradient(90deg, #4caf50 0%, #8bc34a 100%)';
+                timerTextElement.className = 'timer-text';
+            } else if (timeLeft > 5) {
+                timerFillElement.style.background = 'linear-gradient(90deg, #ff9800 0%, #ffb74d 100%)';
+                timerTextElement.className = 'timer-text timer-warning';
+            } else {
+                timerFillElement.style.background = 'linear-gradient(90deg, #f44336 0%, #ef5350 100%)';
+                timerTextElement.className = 'timer-text timer-danger';
+            }
+            timerTextElement.textContent = `زمان باقی‌مانده: ${timeLeft} ثانیه`;
+        }
+
+        function timeOut() {
+            if (!isQuestionActive) return;
+
+            showStatusMessage('⏰ زمان پاسخگویی به پایان رسید!', 'error', 3000);
+
+            if (currentQuestion.type === 'دو گزینه‌ای') {
+                document.querySelectorAll('.option').forEach((option, index) => {
+                    if ((index === 0 && currentQuestion.answer === true) || 
+                        (index === 1 && currentQuestion.answer === false)) {
+                        option.classList.add('correct');
+                    }
+                    option.style.pointerEvents = 'none';
+                });
+            } else {
+                document.querySelectorAll('.option').forEach((option, index) => {
+                    if (index === currentQuestion.correct) {
+                        option.classList.add('correct');
+                    }
+                    option.style.pointerEvents = 'none';
+                });
+            }
+
+            submitAnswerButton.disabled = true;
+            submitAnswerButton.textContent = 'زمان تمام شد!';
+
+            const playerIndex = currentPlayer;
+            const newScore = Math.max(0, playerScores[playerIndex] - WRONG_PENALTY);
+            const penaltyAmount = playerScores[playerIndex] - newScore;
+            playerScores[playerIndex] = newScore;
+
+            if (penaltyAmount > 0) {
+                showScoreAnimation(-penaltyAmount, playerIndex, true);
+            }
+
+            updatePlayerInfo();
+
+            setTimeout(() => {
+                questionModal.style.display = 'none';
+                isQuestionActive = false;
+                switchTurn();
+                if (checkWinCondition() !== -1) {
+                    setTimeout(() => {
+                        endGame();
+                    }, 500);
+                }
+            }, 1500);
+        }
+
+        function submitAnswer() {
+            if (selectedOption === null || !currentQuestion || !isQuestionActive) return;
+
+            clearInterval(timerInterval);
+
+            let isCorrect = false;
+            const playerIndex = currentPlayer;
+
+            if (currentQuestion.type === 'دو گزینه‌ای') {
+                isCorrect = (selectedOption === 0 && currentQuestion.answer === true) || 
+                           (selectedOption === 1 && currentQuestion.answer === false);
+            } else {
+                isCorrect = selectedOption === currentQuestion.correct;
+            }
+
+            if (currentQuestion.type === 'دو گزینه‌ای') {
+                document.querySelectorAll('.option').forEach((option, index) => {
+                    if ((index === 0 && currentQuestion.answer === true) || 
+                        (index === 1 && currentQuestion.answer === false)) {
+                        option.classList.add('correct');
+                    } else if (index === selectedOption && !isCorrect) {
+                        option.classList.add('wrong');
+                    }
+                    option.style.pointerEvents = 'none';
+                });
+            } else {
+                document.querySelectorAll('.option').forEach((option, index) => {
+                    if (index === currentQuestion.correct) {
+                        option.classList.add('correct');
+                    } else if (index === selectedOption && !isCorrect) {
+                        option.classList.add('wrong');
+                    }
+                    option.style.pointerEvents = 'none';
+                });
+            }
+
+            submitAnswerButton.disabled = true;
+            submitAnswerButton.textContent = isCorrect ? 'پاسخ صحیح! ✓' : 'پاسخ نادرست! ✗';
+
+            let pointsEarned = 0;
+            if (isCorrect) {
+                pointsEarned = currentQuestion.points || CORRECT_SCORE;
+                playerScores[playerIndex] += pointsEarned;
+                playerCorrectAnswers[playerIndex]++;
+                setTimeout(() => {
+                    showStatusMessage(`✅ پاسخ صحیح! ${pointsEarned} امتیاز گرفتی.`, 'success', 3000);
+                }, 500);
+            } else {
+                pointsEarned = -WRONG_PENALTY;
+                const newScore = Math.max(0, playerScores[playerIndex] + pointsEarned);
+                const actualPenalty = playerScores[playerIndex] - newScore;
+                playerScores[playerIndex] = newScore;
+                pointsEarned = -actualPenalty;
+                setTimeout(() => {
+                    showStatusMessage(`❌ پاسخ نادرست! ${actualPenalty} امتیاز از دست دادی.`, 'error', 3000);
+                }, 500);
+            }
+
+            showScoreAnimation(pointsEarned, playerIndex, !isCorrect);
+            updatePlayerInfo();
+
+            setTimeout(() => {
+                questionModal.style.display = 'none';
+                isQuestionActive = false;
+                switchTurn();
+                if (checkWinCondition() !== -1) {
+                    setTimeout(() => {
+                        endGame();
+                    }, 500);
+                }
+            }, 1500);
+        }
+
+        function showScoreAnimation(points, playerIndex, isNegative = false) {
+            if (Math.abs(points) === BONUS_SCORE) return;
+
+            const playerInfo = playerIndex === 0 ? player1Info : player2Info;
+            const rect = playerInfo.getBoundingClientRect();
+
+            const scoreAnim = document.createElement('div');
+            scoreAnim.className = 'score-animation';
+            scoreAnim.textContent = `${points >= 0 ? '+' : ''}${points}`;
+            scoreAnim.style.color = isNegative ? '#f44336' : (playerIndex === 0 ? '#c53030' : '#2c5282');
+            scoreAnim.style.left = `${rect.left + rect.width / 2}px`;
+            scoreAnim.style.top = `${rect.top}px`;
+
+            document.body.appendChild(scoreAnim);
+            setTimeout(() => {
+                if (scoreAnim.parentNode) {
+                    document.body.removeChild(scoreAnim);
+                }
+            }, 1000);
+        }
+
+        function switchTurn() {
+            if (gameActive && checkWinCondition() !== -1) {
+                setTimeout(() => {
+                    endGame();
+                }, 500);
+                return;
+            }
+
+            currentPlayer = currentPlayer === 0 ? 1 : 0;
+            updateCurrentPlayerDisplay();
+            updatePlayerInfo();
+            rollDiceButton.disabled = false;
+
+            const playerName = playerNames[currentPlayer];
+            showStatusMessage(`👤 نوبت ${playerName}`, 'info', 2000);
+        }
+
+        function checkWinCondition() {
+            if (playerScores[0] >= targetScore) return 0;
+            if (playerScores[1] >= targetScore) return 1;
+            if (playerPositions[0] === 100) return 0;
+            if (playerPositions[1] === 100) return 1;
+            return -1;
+        }
+
+        function endGame() {
+            const winner = checkWinCondition();
+            if (winner !== -1) {
+                gameActive = false;
+                rollDiceButton.disabled = true;
+                const winnerName = playerNames[winner];
+                const winnerScore = playerScores[winner];
+                const winnerPosition = playerPositions[winner];
+
+                setTimeout(() => {
+                    let winMessage = '';
+                    if (winnerPosition === 100) {
+                        winMessage = `🎉 ${winnerName} برنده شد! اولین کسی بود که به خانه ۱۰۰ رسید.\n\n`;
+                    } else {
+                        winMessage = `🎉 ${winnerName} برنده شد! با ${winnerScore} امتیاز (هدف: ${targetScore} امتیاز).\n\n`;
+                    }
+
+                    if (confirm(winMessage + 'آیا می‌خواهید بازی جدیدی شروع کنید؟')) {
+                        resetGame();
+                    }
+                }, 500);
+            }
+        }
+
+        function resetGame() {
+            currentPlayer = 0;
+            playerPositions = [1, 1];
+            playerScores = [0, 0];
+            playerCorrectAnswers = [0, 0];
+            targetScore = 200;
+
+            clearInterval(timerInterval);
+            createTokens();
+            distributeQuestions();
+            updatePlayerInfo();
+            updateCurrentPlayerDisplay();
+
+            rollDiceButton.disabled = false;
+            isDiceRolling = false;
+            isQuestionActive = false;
+            gameActive = true;
+
+            showStatusMessage('🔄 بازی جدید شروع شد!', 'info', 3000);
+        }
+
+        function toggleInstructions() {
+            if (instructionsElement.style.display === 'none') {
+                instructionsElement.style.display = 'block';
+                helpBtn.textContent = 'بستن راهنما';
+            } else {
+                instructionsElement.style.display = 'none';
+                helpBtn.textContent = 'راهنما';
+            }
+        }
+
+        function updatePlayerInfo() {
+            player1ScoreElement.textContent = playerScores[0];
+            player2ScoreElement.textContent = playerScores[1];
+            player1ProgressElement.style.width = `${Math.min(100, (playerScores[0] / targetScore) * 100)}%`;
+            player2ProgressElement.style.width = `${Math.min(100, (playerScores[1] / targetScore) * 100)}%`;
+            player1CorrectElement.textContent = playerCorrectAnswers[0];
+            player2CorrectElement.textContent = playerCorrectAnswers[1];
+            player1PositionElement.textContent = playerPositions[0];
+            player2PositionElement.textContent = playerPositions[1];
+
+            if (currentPlayer === 0) {
+                player1Info.classList.add('player-active');
+                player2Info.classList.remove('player-active');
+            } else {
+                player1Info.classList.remove('player-active');
+                player2Info.classList.add('player-active');
+            }
+
+            targetScoreElement.textContent = targetScore;
+
+            if (gameActive && checkWinCondition() !== -1) {
+                setTimeout(() => {
+                    endGame();
+                }, 500);
+            }
+        }
+
+        function updateCurrentPlayerDisplay() {
+            currentPlayerElement.textContent = playerNames[currentPlayer];
+            currentPlayerElement.style.color = playerColors[currentPlayer];
+        }
+
+        function showStatusMessage(message, type, duration = 3000) {
+            statusMessageElement.textContent = message;
+            statusMessageElement.className = `status-message status-${type}`;
+            statusMessageElement.style.display = 'block';
+            setTimeout(() => {
+                statusMessageElement.style.display = 'none';
+            }, duration);
+        }
+
+        function getDiceFace(value) {
+            const diceFaces = ['⚀', '⚁', '⚂', '⚃', '⚄', '⚅'];
+            return diceFaces[value - 1] || '🎲';
+        }
+
+        function getRandomDiceFace() {
+            const diceFaces = ['⚀', '⚁', '⚂', '⚃', '⚄', '⚅'];
+            return diceFaces[Math.floor(Math.random() * diceFaces.length)];
+        }
+
+        window.addEventListener('DOMContentLoaded', initGame);
+
+        document.addEventListener('touchstart', function(event) {
+            if (event.touches.length > 1) {
+                event.preventDefault();
+            }
+        }, { passive: false });
+
+        let lastTouchEnd = 0;
+        document.addEventListener('touchend', function(event) {
+            const now = (new Date()).getTime();
+            if (now - lastTouchEnd <= 300) {
+                event.preventDefault();
+            }
+            lastTouchEnd = now;
+        }, false);
+
+        // ============================================================
+        // ===== اسکریپت منوی شبکه‌های اجتماعی (اضافه شده) =====
+        // ============================================================
+        (function() {
+            const menu = document.getElementById('circularMenu');
+            const menuButton = document.querySelector('.menu-button');
+            const menuItems = Array.from(document.querySelectorAll('.menu-item'));
+            let isMenuOpen = false;
+            let isInitialized = false;
+            let isAnimating = false;
+            const ANIMATION_LOCK_MS = 730;
+
+            function setMenuState(open) {
+                isMenuOpen = open;
+                menu.classList.toggle('active', open);
+                menuButton.setAttribute('aria-expanded', String(open));
+                menuItems.forEach(item => item.setAttribute('tabindex', open ? '0' : '-1'));
+            }
+
+            function toggleMenu() {
+                if (isAnimating) return;
+                if (!isInitialized) {
+                    menu.classList.add('ready');
+                    isInitialized = true;
+                }
+                isAnimating = true;
+                setMenuState(!isMenuOpen);
+                setTimeout(() => { isAnimating = false; }, ANIMATION_LOCK_MS);
+            }
+
+            menuButton.addEventListener('click', function(e) {
+                e.stopPropagation();
+                toggleMenu();
+            });
+
+            document.addEventListener('click', function(e) {
+                if (isMenuOpen && !menu.contains(e.target)) {
+                    setMenuState(false);
+                }
+            });
+
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape' && isMenuOpen) {
+                    setMenuState(false);
+                    menuButton.focus();
+                }
+            });
+
+            menu.addEventListener('click', function(e) {
+                e.stopPropagation();
+            });
+        })();
+    </script>
+</body>
+</html>

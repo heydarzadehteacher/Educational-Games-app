@@ -1,0 +1,783 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>⚔️ و 🎯 و 📊 نبرد کسرها</title>
+<style>
+/* استایل‌های عمومی */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+body {
+  margin: 0;
+  font-family: "Vazirmatn", Tahoma, sans-serif;
+  background: linear-gradient(135deg, #4facfe, #00f2fe);
+  min-height: 100vh;
+}
+.wrapper {
+  width: 92%;
+  max-width: 420px;
+  margin: 40px auto;
+}
+.header {
+  background: #fff;
+  border-radius: 20px;
+  padding: 18px;
+  text-align: center;
+  box-shadow: 0 12px 30px rgba(0,0,0,.25);
+  margin-bottom: 20px;
+}
+.header h1 {
+  margin: 0;
+  font-size: 26px;
+  color: #2c3e50;
+}
+.bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-radius: 16px;
+  padding: 15px 18px;
+  margin-bottom: 14px;
+  box-shadow: 0 10px 25px rgba(0,0,0,.2);
+  cursor: pointer;
+  transition: transform 0.3s ease;
+}
+.bar:hover {
+  transform: translateY(-3px);
+}
+.bar-content {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.icon {
+  font-size: 26px;
+}
+.title {
+  font-size: 18px;
+  font-weight: bold;
+  color: #fff;
+}
+.name-bar {
+  background: #fff;
+  cursor: default;
+}
+.name-input {
+  width: 100%;
+  border: none;
+  font-size: 16px;
+  outline: none;
+  background: transparent;
+  text-align: center;
+}
+.duel {
+  background: linear-gradient(135deg, #ff416c, #ff4b2b);
+}
+.hunter {
+  background: linear-gradient(135deg, #11998e, #38ef7d);
+}
+.queue {
+  background: linear-gradient(135deg, #7f00ff, #e100ff);
+}
+.hidden {
+  display: none;
+}
+.game-page {
+  padding: 20px;
+  max-width: 500px;
+  margin: auto;
+}
+.top-bar {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 20px;
+  gap: 10px;
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  padding-bottom: 5px;
+}
+.status {
+  background: #fff;
+  border-radius: 14px;
+  padding: 12px 15px;
+  box-shadow: 0 6px 18px rgba(0,0,0,.2);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-weight: bold;
+  min-width: 100px;
+  justify-content: center;
+  white-space: nowrap;
+  flex-shrink: 0;
+  font-size: 18px;
+}
+.arena {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 25px 0;
+  position: relative;
+}
+.circle {
+  width: 180px;
+  height: 180px;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 10px 30px rgba(0,0,0,.25);
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  padding: 0 15px;
+}
+.fraction {
+  text-align: center;
+  font-size: 22px;
+  font-weight: bold;
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+}
+.fraction .num {
+  display: block;
+  padding-bottom: 2px;
+}
+.fraction .line {
+  display: block;
+  width: 100%;
+  border-bottom: 3px solid #333;
+  margin: 2px 0;
+}
+.fraction .den {
+  display: block;
+  padding-top: 2px;
+}
+.duel-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  margin-top: 20px;
+}
+.duel-buttons button {
+  font-size: 32px;
+  padding: 15px 25px;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  box-shadow: 0 6px 18px rgba(0,0,0,.25);
+  transition: all 0.3s ease;
+  background: #3498db;
+  color: white;
+  min-width: 80px;
+  height: 70px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.duel-buttons button:hover {
+  transform: scale(1.05);
+}
+.buttons {
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+  margin-top: 20px;
+  flex-wrap: wrap;
+}
+.buttons button {
+  font-size: 20px;
+  padding: 10px 16px;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  box-shadow: 0 6px 18px rgba(0,0,0,.25);
+  transition: all 0.3s ease;
+  background: #3498db;
+  color: white;
+  min-width: 120px;
+}
+.buttons button:hover {
+  transform: scale(1.05);
+}
+.correct {
+  background: #2ecc71 !important;
+  color: #fff;
+  animation: correct 0.5s;
+}
+.wrong {
+  background: #e74c3c !important;
+  color: #fff;
+  animation: wrong 0.5s;
+}
+.selected {
+  background: #f1c40f !important;
+}
+.fraction-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 15px;
+  margin-top: 20px;
+}
+.fraction-box {
+  background: #fff;
+  padding: 20px;
+  border-radius: 14px;
+  text-align: center;
+  cursor: pointer;
+  box-shadow: 0 6px 18px rgba(0,0,0,.25);
+  transition: all 0.3s ease;
+}
+.fraction-box:hover {
+  transform: translateY(-5px);
+}
+.instruction {
+  text-align: center;
+  font-size: 20px;
+  font-weight: bold;
+  margin-top: 10px;
+  margin-bottom: 15px;
+  color: #fff;
+  text-shadow: 1px 1px 3px rgba(0,0,0,0.5);
+  padding: 10px;
+  background: rgba(0,0,0,0.1);
+  border-radius: 10px;
+}
+.result {
+  text-align: center;
+  font-size: 18px;
+  font-weight: bold;
+  margin-top: 25px;
+  padding: 15px;
+  border-radius: 10px;
+  background: rgba(255,255,255,0.9);
+}
+.endAnim {
+  animation: endAnim 1s forwards;
+  font-size: 24px;
+  font-weight: bold;
+}
+@keyframes correct {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.2); }
+  100% { transform: scale(1); }
+}
+@keyframes wrong {
+  0% { transform: translateX(0); }
+  25% { transform: translateX(-5px); }
+  50% { transform: translateX(5px); }
+  100% { transform: translateX(0); }
+}
+@keyframes endAnim {
+  0% { transform: scale(1); opacity: 0; }
+  50% { transform: scale(1.5); opacity: 1; }
+  100% { transform: scale(1); opacity: 1; }
+}
+</style>
+</head>
+<body>
+
+<!-- صفحه اصلی -->
+<div id="home" class="wrapper">
+  <div class="header">
+    <h1>⚔️ و 🎯 و 📊 نبرد کسرها</h1>
+    <p style="color: #666; margin-top: 8px; font-size: 14px;">سه بازی ریاضی جذاب برای تقویت مهارت کسرها</p>
+  </div>
+  <div class="bar name-bar">
+    <input class="name-input" placeholder="نام و نام خانوادگی خود را وارد کنید" id="playerName">
+  </div>
+  <div class="bar duel" onclick="startGame('duel')">
+    <div class="bar-content">
+      <span class="icon">⚔️</span>
+      <div>
+        <span class="title">دوئل کسرها</span>
+        <p style="margin:5px 0 0;font-size:14px;color:#f0f0f0;font-weight:normal;">مقایسه دو کسر ( > = < )</p>
+      </div>
+    </div>
+  </div>
+  <div class="bar hunter" onclick="startGame('hunter')">
+    <div class="bar-content">
+      <span class="icon">🎯</span>
+      <div>
+        <span class="title">شکارچی کسرها</span>
+        <p style="margin:5px 0 0;font-size:14px;color:#f0f0f0;font-weight:normal;">انتخاب بزرگترین کسر</p>
+      </div>
+    </div>
+  </div>
+  <div class="bar queue" onclick="startGame('queue')">
+    <div class="bar-content">
+      <span class="icon">📊</span>
+      <div>
+        <span class="title">صف‌ساز کسرها</span>
+        <p style="margin:5px 0 0;font-size:14px;color:#f0f0f0;font-weight:normal;">مرتب کردن از کوچک به بزرگ</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- بازی دوئل کسرها -->
+<div id="duel" class="game-page hidden">
+  <div class="top-bar">
+    <div class="status">⏱ <span id="timeDuel">۱۲۰</span></div>
+    <div class="status">⭐ <span id="scoreDuel">۰</span></div>
+    <div class="status">❤️ <span id="lifeDuel">۳</span></div>
+  </div>
+  <div class="instruction">کدام کسر بزرگتر است؟</div>
+  <div class="arena">
+    <div class="circle">
+      <div class="fraction" id="f1Duel">
+        <span class="num"></span>
+        <span class="line"></span>
+        <span class="den"></span>
+      </div>
+      <div class="fraction" id="f2Duel">
+        <span class="num"></span>
+        <span class="line"></span>
+        <span class="den"></span>
+      </div>
+    </div>
+  </div>
+  <div class="duel-buttons">
+    <button onclick="checkDuel('>')">&gt;</button>
+    <button onclick="checkDuel('=')">&equals;</button>
+    <button onclick="checkDuel('<')">&lt;</button>
+  </div>
+  <div id="resultDuel" class="result"></div>
+</div>
+
+<!-- بازی شکارچی کسرها -->
+<div id="hunter" class="game-page hidden">
+  <div class="top-bar">
+    <div class="status">⏱ <span id="timeHunter">۱۲۰</span></div>
+    <div class="status">⭐ <span id="scoreHunter">۰</span></div>
+    <div class="status">❤️ <span id="lifeHunter">۳</span></div>
+  </div>
+  <div class="instruction">کسر بزرگتر کدام است؟</div>
+  <div class="fraction-grid" id="fractionGridHunter"></div>
+  <div id="resultHunter" class="result"></div>
+</div>
+
+<!-- بازی صف‌ساز کسرها -->
+<div id="queue" class="game-page hidden">
+  <div class="top-bar">
+    <div class="status">⏱ <span id="timeQueue">۱۸۰</span></div>
+    <div class="status">⭐ <span id="scoreQueue">۰</span></div>
+    <div class="status">❤️ <span id="lifeQueue">۳</span></div>
+  </div>
+  <div class="instruction">کسرها را به ترتیب از کوچک به بزرگ انتخاب کنید</div>
+  <div class="fraction-grid" id="fractionGridQueue"></div>
+  <div id="resultQueue" class="result"></div>
+</div>
+
+<script>
+// ---------- تبدیل اعداد به فارسی ----------
+function toPersianNumber(num) {
+  const persian = {
+    '0': '۰', '1': '۱', '2': '۲', '3': '۳', '4': '۴',
+    '5': '۵', '6': '۶', '7': '۷', '8': '۸', '9': '۹'
+  };
+  return String(num).replace(/\d/g, d => persian[d]);
+}
+
+// ---------- افکت‌های صوتی (Web Audio API) ----------
+let audioCtx = null;
+
+function initAudio() {
+  if (!audioCtx) {
+    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  }
+}
+
+function playSound(type) {
+  try {
+    initAudio();
+    if (audioCtx.state === 'suspended') {
+      audioCtx.resume();
+    }
+    const oscillator = audioCtx.createOscillator();
+    const gainNode = audioCtx.createGain();
+    oscillator.connect(gainNode);
+    gainNode.connect(audioCtx.destination);
+    gainNode.gain.value = 0.15;
+    const now = audioCtx.currentTime;
+    switch (type) {
+      case 'correct':
+        oscillator.frequency.setValueAtTime(600, now);
+        oscillator.frequency.setValueAtTime(800, now + 0.1);
+        gainNode.gain.exponentialRampToValueAtTime(0.01, now + 0.25);
+        oscillator.start(now);
+        oscillator.stop(now + 0.25);
+        break;
+      case 'wrong':
+        oscillator.frequency.setValueAtTime(300, now);
+        oscillator.frequency.setValueAtTime(200, now + 0.1);
+        gainNode.gain.exponentialRampToValueAtTime(0.01, now + 0.4);
+        oscillator.start(now);
+        oscillator.stop(now + 0.4);
+        break;
+      case 'start':
+        oscillator.frequency.setValueAtTime(400, now);
+        oscillator.frequency.setValueAtTime(600, now + 0.1);
+        oscillator.frequency.setValueAtTime(800, now + 0.2);
+        gainNode.gain.exponentialRampToValueAtTime(0.01, now + 0.35);
+        oscillator.start(now);
+        oscillator.stop(now + 0.35);
+        break;
+      case 'end':
+        oscillator.frequency.setValueAtTime(500, now);
+        oscillator.frequency.setValueAtTime(300, now + 0.2);
+        oscillator.frequency.setValueAtTime(200, now + 0.4);
+        gainNode.gain.exponentialRampToValueAtTime(0.01, now + 0.6);
+        oscillator.start(now);
+        oscillator.stop(now + 0.6);
+        break;
+      default:
+        oscillator.disconnect();
+        return;
+    }
+  } catch (e) {
+    // در صورت عدم پشتیبانی صدا، کاری نمی‌کنیم
+  }
+}
+
+// ---------- متغیرهای عمومی ----------
+let playerName = '';
+let currentGame = '';
+
+function rand() { 
+  return Math.floor(Math.random() * 12) + 1; 
+}
+
+function validateName() {
+  const nameInput = document.getElementById('playerName');
+  if (!nameInput.value.trim()) {
+    alert('لطفاً نام و نام خانوادگی خود را وارد کنید');
+    nameInput.focus();
+    return false;
+  }
+  playerName = nameInput.value.trim();
+  return true;
+}
+
+function goHome() {
+  if (window.gameTimerDuel) clearInterval(window.gameTimerDuel);
+  if (window.gameTimerHunter) clearInterval(window.gameTimerHunter);
+  if (window.gameTimerQueue) clearInterval(window.gameTimerQueue);
+  document.getElementById('duel').classList.add('hidden');
+  document.getElementById('hunter').classList.add('hidden');
+  document.getElementById('queue').classList.add('hidden');
+  document.getElementById('home').classList.remove('hidden');
+  playSound('end');
+}
+
+function startGame(gameType) {
+  if (!validateName()) return;
+  currentGame = gameType;
+  document.getElementById('home').classList.add('hidden');
+  document.getElementById('duel').classList.add('hidden');
+  document.getElementById('hunter').classList.add('hidden');
+  document.getElementById('queue').classList.add('hidden');
+  document.getElementById(gameType).classList.remove('hidden');
+  playSound('start');
+  switch(gameType) {
+    case 'duel':  startDuel();  break;
+    case 'hunter': startHunter(); break;
+    case 'queue': startQueue(); break;
+  }
+}
+
+// ---------- بازی دوئل کسرها ----------
+let timeDuel = 120, scoreDuel = 0, lifeDuel = 3;
+let aD, bD, cD, dD;
+
+function startDuel() {
+  const eb = document.getElementById('endButtonsDuel');
+  if (eb) eb.remove();
+  timeDuel = 120; scoreDuel = 0; lifeDuel = 3;
+  document.getElementById('timeDuel').innerText = toPersianNumber(timeDuel);
+  document.getElementById('scoreDuel').innerText = toPersianNumber(scoreDuel);
+  document.getElementById('lifeDuel').innerText = toPersianNumber(lifeDuel);
+  document.getElementById('resultDuel').innerText = '';
+  document.getElementById('resultDuel').className = 'result';
+  newFractionsDuel();
+  if (window.gameTimerDuel) clearInterval(window.gameTimerDuel);
+  window.gameTimerDuel = setInterval(() => {
+    timeDuel--;
+    document.getElementById('timeDuel').innerText = toPersianNumber(timeDuel);
+    if (timeDuel <= 0) {
+      clearInterval(window.gameTimerDuel);
+      endGameDuel('time');
+    }
+  }, 1000);
+}
+
+function newFractionsDuel() {
+  aD = rand(); bD = rand(); cD = rand(); dD = rand();
+  document.querySelector('#f1Duel .num').innerText = toPersianNumber(aD);
+  document.querySelector('#f1Duel .den').innerText = toPersianNumber(bD);
+  document.querySelector('#f2Duel .num').innerText = toPersianNumber(cD);
+  document.querySelector('#f2Duel .den').innerText = toPersianNumber(dD);
+}
+
+function checkDuel(op) {
+  if (timeDuel <= 0 || lifeDuel <= 0) return;
+  const v1 = aD / bD, v2 = cD / dD;
+  const correct = (v1 > v2 && op === '>') || (v1 < v2 && op === '<') || (Math.abs(v1 - v2) < 0.001 && op === '=');
+  const res = document.getElementById('resultDuel');
+  if (correct) {
+    scoreDuel++;
+    res.innerText = '✔️ پاسخ درست';
+    res.className = 'result correct';
+    playSound('correct');
+  } else {
+    lifeDuel--;
+    res.innerText = '❌ پاسخ نادرست';
+    res.className = 'result wrong';
+    playSound('wrong');
+  }
+  document.getElementById('scoreDuel').innerText = toPersianNumber(scoreDuel);
+  document.getElementById('lifeDuel').innerText = toPersianNumber(lifeDuel);
+  if (lifeDuel <= 0) {
+    clearInterval(window.gameTimerDuel);
+    endGameDuel('life');
+    return;
+  }
+  newFractionsDuel();
+}
+
+function endGameDuel(reason) {
+  const res = document.getElementById('resultDuel');
+  res.innerText = (reason === 'life') ? '💔 جان‌ها تمام شد!' : '⏱ زمان تمام شد!';
+  res.className = 'result endAnim';
+  playSound('end');
+  setTimeout(() => {
+    res.innerText = `${playerName} عزیز، بازی به پایان رسید! امتیاز شما: ${toPersianNumber(scoreDuel)}`;
+    addEndButtons('duel');
+  }, 1000);
+}
+
+// ---------- بازی شکارچی کسرها ----------
+let timeHunter = 120, scoreHunter = 0, lifeHunter = 3;
+let fractionsHunter = [], correctIndexHunter;
+
+function startHunter() {
+  const eb = document.getElementById('endButtonsHunter');
+  if (eb) eb.remove();
+  timeHunter = 120; scoreHunter = 0; lifeHunter = 3;
+  document.getElementById('timeHunter').innerText = toPersianNumber(timeHunter);
+  document.getElementById('scoreHunter').innerText = toPersianNumber(scoreHunter);
+  document.getElementById('lifeHunter').innerText = toPersianNumber(lifeHunter);
+  document.getElementById('resultHunter').innerText = '';
+  document.getElementById('resultHunter').className = 'result';
+  newFractionsHunter();
+  if (window.gameTimerHunter) clearInterval(window.gameTimerHunter);
+  window.gameTimerHunter = setInterval(() => {
+    timeHunter--;
+    document.getElementById('timeHunter').innerText = toPersianNumber(timeHunter);
+    if (timeHunter <= 0) {
+      clearInterval(window.gameTimerHunter);
+      endGameHunter('time');
+    }
+  }, 1000);
+}
+
+function newFractionsHunter() {
+  fractionsHunter = [];
+  for (let i = 0; i < 4; i++) {
+    const num = rand(), den = rand();
+    fractionsHunter.push({ num, den, value: num / den });
+  }
+  correctIndexHunter = fractionsHunter.reduce((maxIdx, cur, i, arr) => 
+    cur.value > arr[maxIdx].value ? i : maxIdx, 0);
+  renderFractionsHunter();
+}
+
+function renderFractionsHunter() {
+  const grid = document.getElementById('fractionGridHunter');
+  grid.innerHTML = '';
+  fractionsHunter.forEach((f, i) => {
+    const div = document.createElement('div');
+    div.className = 'fraction-box';
+    div.innerHTML = `
+      <div class="fraction">
+        <span class="num">${toPersianNumber(f.num)}</span>
+        <span class="line"></span>
+        <span class="den">${toPersianNumber(f.den)}</span>
+      </div>
+    `;
+    div.onclick = () => selectFractionHunter(i, div);
+    grid.appendChild(div);
+  });
+}
+
+function selectFractionHunter(index, div) {
+  if (timeHunter <= 0 || lifeHunter <= 0) return;
+  const boxes = document.querySelectorAll('#fractionGridHunter .fraction-box');
+  boxes.forEach(b => b.onclick = null);
+  if (index === correctIndexHunter) {
+    scoreHunter++;
+    div.classList.add('correct');
+    playSound('correct');
+  } else {
+    lifeHunter--;
+    div.classList.add('wrong');
+    boxes[correctIndexHunter].classList.add('correct');
+    playSound('wrong');
+  }
+  document.getElementById('scoreHunter').innerText = toPersianNumber(scoreHunter);
+  document.getElementById('lifeHunter').innerText = toPersianNumber(lifeHunter);
+  if (lifeHunter <= 0) {
+    clearInterval(window.gameTimerHunter);
+    endGameHunter('life');
+    return;
+  }
+  setTimeout(() => {
+    if (lifeHunter > 0 && timeHunter > 0) newFractionsHunter();
+  }, 1000);
+}
+
+function endGameHunter(reason) {
+  const res = document.getElementById('resultHunter');
+  res.innerText = (reason === 'life') ? '💔 جان‌ها تمام شد!' : '⏱ زمان تمام شد!';
+  res.className = 'result endAnim';
+  playSound('end');
+  setTimeout(() => {
+    res.innerText = `${playerName} عزیز، بازی به پایان رسید! امتیاز شما: ${toPersianNumber(scoreHunter)}`;
+    addEndButtons('hunter');
+  }, 1000);
+}
+
+// ---------- بازی صف‌ساز کسرها ----------
+let timeQueue = 180, scoreQueue = 0, lifeQueue = 3;
+let fractionsQueue = [], selectedQueue = [];
+
+function startQueue() {
+  const eb = document.getElementById('endButtonsQueue');
+  if (eb) eb.remove();
+  timeQueue = 180; scoreQueue = 0; lifeQueue = 3;
+  document.getElementById('timeQueue').innerText = toPersianNumber(timeQueue);
+  document.getElementById('scoreQueue').innerText = toPersianNumber(scoreQueue);
+  document.getElementById('lifeQueue').innerText = toPersianNumber(lifeQueue);
+  document.getElementById('resultQueue').innerText = '';
+  document.getElementById('resultQueue').className = 'result';
+  newFractionsQueue();
+  if (window.gameTimerQueue) clearInterval(window.gameTimerQueue);
+  window.gameTimerQueue = setInterval(() => {
+    timeQueue--;
+    document.getElementById('timeQueue').innerText = toPersianNumber(timeQueue);
+    if (timeQueue <= 0) {
+      clearInterval(window.gameTimerQueue);
+      endGameQueue('time');
+    }
+  }, 1000);
+}
+
+function newFractionsQueue() {
+  fractionsQueue = [];
+  selectedQueue = [];
+  while (fractionsQueue.length < 4) {
+    const num = rand(), den = rand(), value = num / den;
+    const isUnique = !fractionsQueue.some(f => Math.abs(f.value - value) < 0.001);
+    if (isUnique) fractionsQueue.push({ num, den, value });
+  }
+  renderFractionsQueue();
+}
+
+function renderFractionsQueue() {
+  const grid = document.getElementById('fractionGridQueue');
+  grid.innerHTML = '';
+  fractionsQueue.forEach((f, i) => {
+    const div = document.createElement('div');
+    div.className = 'fraction-box';
+    div.innerHTML = `
+      <div class="fraction">
+        <span class="num">${toPersianNumber(f.num)}</span>
+        <span class="line"></span>
+        <span class="den">${toPersianNumber(f.den)}</span>
+      </div>
+    `;
+    div.onclick = () => selectFractionQueue(i, div);
+    grid.appendChild(div);
+  });
+}
+
+function selectFractionQueue(index, div) {
+  if (timeQueue <= 0 || lifeQueue <= 0) return;
+  if (selectedQueue.includes(index)) return;
+  div.classList.add('selected');
+  selectedQueue.push(index);
+  if (selectedQueue.length === fractionsQueue.length) {
+    checkOrderQueue();
+  }
+}
+
+function checkOrderQueue() {
+  const boxes = document.querySelectorAll('#fractionGridQueue .fraction-box');
+  const sorted = fractionsQueue.map((_, i) => i)
+    .sort((a, b) => fractionsQueue[a].value - fractionsQueue[b].value);
+  let correct = true;
+  for (let i = 0; i < selectedQueue.length; i++) {
+    if (selectedQueue[i] !== sorted[i]) { correct = false; break; }
+  }
+  const res = document.getElementById('resultQueue');
+  if (correct) {
+    selectedQueue.forEach(i => boxes[i].classList.add('correct'));
+    scoreQueue++;
+    document.getElementById('scoreQueue').innerText = toPersianNumber(scoreQueue);
+    res.innerText = '✔️ پاسخ درست';
+    res.className = 'result correct';
+    playSound('correct');
+  } else {
+    selectedQueue.forEach(i => boxes[i].classList.add('wrong'));
+    sorted.forEach(i => boxes[i].classList.add('correct'));
+    lifeQueue--;
+    document.getElementById('lifeQueue').innerText = toPersianNumber(lifeQueue);
+    res.innerText = '❌ پاسخ نادرست';
+    res.className = 'result wrong';
+    playSound('wrong');
+  }
+  if (lifeQueue <= 0) {
+    clearInterval(window.gameTimerQueue);
+    endGameQueue('life');
+    return;
+  }
+  setTimeout(() => {
+    if (lifeQueue > 0 && timeQueue > 0) newFractionsQueue();
+  }, 1000);
+}
+
+function endGameQueue(reason) {
+  const res = document.getElementById('resultQueue');
+  res.innerText = (reason === 'life') ? '💔 جان‌ها تمام شد!' : '⏱ زمان تمام شد!';
+  res.className = 'result endAnim';
+  playSound('end');
+  setTimeout(() => {
+    res.innerText = `${playerName} عزیز، بازی به پایان رسید! امتیاز شما: ${toPersianNumber(scoreQueue)}`;
+    addEndButtons('queue');
+  }, 1000);
+}
+
+// ---------- دکمه‌های پایان ----------
+function addEndButtons(gameType) {
+  const container = document.getElementById(gameType);
+  const div = document.createElement('div');
+  div.id = `endButtons${gameType.charAt(0).toUpperCase() + gameType.slice(1)}`;
+  div.className = 'buttons';
+  div.innerHTML = `
+    <button onclick="startGame('${gameType}')">🔄 شروع مجدد</button>
+    <button onclick="goHome()">🏠 صفحه اصلی</button>
+  `;
+  container.appendChild(div);
+}
+
+// ---------- مقداردهی اولیه ----------
+document.addEventListener('DOMContentLoaded', function() {
+  document.getElementById('playerName').focus();
+});
+</script>
+
+</body>
+</html>

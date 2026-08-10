@@ -1,0 +1,1091 @@
+<meta name='viewport' content='width=device-width, initial-scale=1'/>
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ماجراجویی با داستان‌ها + شبکه‌های اجتماعی</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;700&display=swap" rel="stylesheet">
+
+<style>
+/* ===== استایل‌های بازی ===== */
+body{
+    margin:0;
+    font-family:'Vazirmatn', sans-serif;
+    background: linear-gradient(180deg,#e0f2fe,#fef9c3);
+}
+
+.container{
+    max-width:420px;
+    margin:auto;
+    padding:16px;
+}
+
+.main-menu {
+    display: block;
+}
+
+.header{
+    background:#ffffff;
+    border-radius:20px;
+    padding:20px;
+    text-align:center;
+    box-shadow:0 8px 20px rgba(0,0,0,0.08);
+}
+
+.header h1{
+    margin:0;
+    font-size:22px;
+    color:#1e3a8a;
+}
+
+.header p{
+    margin-top:8px;
+    font-size:13px;
+    color:#475569;
+}
+
+/* ردیف نام + دکمه سطل */
+.name-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 15px;
+}
+
+.name-box {
+    flex: 1;
+}
+
+.name-box input {
+    width: 100%;
+    padding: 10px 14px;
+    font-size: 14px;
+    border-radius: 14px;
+    border: 2px solid #c7d2fe;
+    box-sizing: border-box;
+}
+
+.name-box input:focus {
+    outline: none;
+    border-color: #6366f1;
+}
+
+.reset-btn {
+    background: none;
+    border: none;
+    font-size: 26px;
+    cursor: pointer;
+    padding: 6px 10px;
+    border-radius: 30px;
+    transition: 0.3s;
+    color: #94a3b8;
+    background: rgba(255,255,255,0.6);
+    backdrop-filter: blur(4px);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    flex-shrink: 0;
+    line-height: 1;
+}
+
+.reset-btn:hover {
+    background: #fee2e2;
+    color: #dc2626;
+    transform: scale(1.1);
+}
+
+.reset-btn:active {
+    transform: scale(0.9);
+}
+
+.story-list{
+    margin-top:20px;
+    display:grid;
+    grid-template-columns:1fr;
+    gap:14px;
+}
+
+.story-card{
+    background:linear-gradient(135deg,#c7d2fe,#e0e7ff);
+    border-radius:18px;
+    padding:16px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    cursor:pointer;
+    transition:0.3s;
+}
+
+.story-card h3{
+    margin:0;
+    font-size:16px;
+    color:#1e3a8a;
+}
+
+.story-card span{
+    font-size:12px;
+    color:#334155;
+}
+
+.story-card.active:hover{
+    transform:translateY(-3px);
+    box-shadow:0 6px 12px rgba(99, 102, 241, 0.2);
+}
+
+.story-card.active:active{
+    transform:scale(0.97);
+}
+
+.story-card.completed {
+    background: linear-gradient(135deg, #bbf7d0, #dcfce7);
+    border: 2px solid #22c55e;
+}
+
+.story-card.completed::after {
+    content: "✅";
+    font-size: 20px;
+}
+
+.story-card.locked{
+    background:#e5e7eb;
+    opacity:0.6;
+    cursor:not-allowed;
+}
+
+.story-card.locked::after{
+    content:"🔒";
+    font-size:20px;
+}
+
+.footer{
+    margin-top:20px;
+    text-align:center;
+    font-size:12px;
+    color:#64748b;
+}
+
+.game-screen {
+    display: none;
+}
+
+.game-header{background:#fff;border-radius:18px;padding:16px;text-align:center;box-shadow:0 6px 18px rgba(0,0,0,0.08);}
+.game-header h1{margin:0;font-size:19px;color:#1e3a8a;}
+.game-header p{margin:4px 0;font-size:13px;color:#64748b;}
+.lives{font-size:18px;margin-top:10px;text-align:center;}
+.card, .question{background:#fff;border-radius:16px;padding:14px;margin-top:12px;box-shadow:0 4px 10px rgba(0,0,0,0.08);}
+.card.correct{border:2px solid #22c55e;}
+.card.wrong{border:2px solid #ef4444;}
+.card p, .question p{margin:0 0 10px;font-size:14px;}
+select{width:100%;padding:10px;border-radius:12px;border:2px solid #c7d2fe;font-size:14px;}
+.game-button{width:100%;margin-top:18px;padding:14px;border:none;border-radius:16px;font-size:15px;background:#6366f1;color:#fff;cursor:pointer;transition:0.3s;}
+.game-button.correctBtn{background:#22c55e;color:#fff;}
+.game-button.wrongBtn{background:#ef4444;color:#fff;}
+.timer{font-size:16px;margin-top:8px;text-align:center;}
+.message{text-align:center;margin-top:12px;font-size:14px;}
+.complete-message{text-align:center;font-size:20px;color:#22c55e;margin-top:20px;opacity:0;transform:scale(0.5) rotate(-10deg);transition: all 0.8s ease-out;}
+.complete-message.show{opacity:1;transform:scale(1) rotate(0deg);}
+
+.return-btn {
+    background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+    color: white;
+    border: none;
+    border-radius: 16px;
+    padding: 16px;
+    font-size: 16px;
+    font-weight: bold;
+    width: 100%;
+    margin-top: 20px;
+    cursor: pointer;
+    box-shadow: 0 6px 15px rgba(59, 130, 246, 0.3);
+    transition: all 0.3s ease;
+}
+
+.return-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(59, 130, 246, 0.4);
+    background: linear-gradient(135deg, #2563eb, #1e40af);
+}
+
+.return-btn:active {
+    transform: scale(0.98);
+}
+
+.next-story-btn {
+    background: linear-gradient(135deg, #10b981, #059669);
+    color: white;
+    border: none;
+    border-radius: 16px;
+    padding: 16px;
+    font-size: 16px;
+    font-weight: bold;
+    width: 100%;
+    margin-top: 15px;
+    cursor: pointer;
+    box-shadow: 0 6px 15px rgba(16, 185, 129, 0.3);
+    transition: all 0.3s ease;
+}
+
+.next-story-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(16, 185, 129, 0.4);
+    background: linear-gradient(135deg, #0da271, #047857);
+}
+
+/* ===== استایل‌های منوی شبکه‌های اجتماعی ===== */
+:root {
+  --neon-primary: #0ff;
+  --neon-secondary: #f0f;
+  --bg-dark: #121212;
+}
+
+.circular-menu {
+  position: fixed;
+  bottom: 25px;
+  left: 25px;
+  width: 60px;
+  height: 60px;
+  z-index: 9999;
+  pointer-events: none;
+}
+.circular-menu * {
+  pointer-events: auto;
+}
+
+.circular-menu .menu-button {
+  position: absolute;
+  top: 0; left: 0;
+  width: 58px; height: 58px;
+  border-radius: 50%;
+  background-color: var(--bg-dark);
+  color: var(--neon-primary);
+  border: 2px solid var(--neon-primary);
+  cursor: pointer;
+  z-index: 2;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  box-shadow: 0 0 8px var(--neon-primary),
+              0 0 15px var(--neon-primary),
+              0 0 30px var(--neon-primary),
+              inset 0 0 15px rgba(0, 255, 255, 0.2);
+  transition: all 0.4s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+  -webkit-tap-highlight-color: transparent;
+}
+
+.circular-menu .menu-button:focus-visible {
+  outline: 3px solid #fff;
+  outline-offset: 3px;
+}
+
+.circular-menu.active .menu-button {
+  background-color: #1a0a1a;
+  color: var(--neon-secondary);
+  border-color: var(--neon-secondary);
+  transform: rotate(135deg);
+  box-shadow: 0 0 10px var(--neon-secondary),
+              0 0 20px var(--neon-secondary),
+              0 0 40px var(--neon-secondary),
+              inset 0 0 20px rgba(255, 0, 255, 0.3);
+}
+
+.circular-menu .menu-item {
+  position: absolute;
+  top: 0; left: 0;
+  width: 52px; height: 52px;
+  border-radius: 50%;
+  background-color: #ffffff;
+  color: #2c3e50;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  opacity: 0;
+  transform: scale(0);
+  z-index: -1;
+  text-decoration: none;
+  -webkit-tap-highlight-color: transparent;
+  pointer-events: none;
+  visibility: hidden;
+  transition: all 0.3s ease;
+}
+
+.circular-menu.active .menu-item {
+  pointer-events: auto;
+  visibility: visible;
+}
+
+.menu-item:focus-visible {
+  outline: 3px solid #fff;
+  outline-offset: 2px;
+}
+
+.menu-item.instagram:hover, .menu-item.instagram:focus-visible { background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888); color: white; }
+.menu-item.telegram:hover, .menu-item.telegram:focus-visible { background: #0088cc; color: white; }
+.menu-item.aparat:hover, .menu-item.aparat:focus-visible { background: #ed1c24; color: white; }
+.menu-item.website:hover, .menu-item.website:focus-visible { background: #4facfe; color: white; }
+.menu-item.webapp:hover, .menu-item.webapp:focus-visible { background: #6c5ce7; color: white; }
+
+.circular-menu.ready.active .menu-item {
+  animation-duration: 0.45s;
+  animation-timing-function: cubic-bezier(0.68, -0.55, 0.27, 1.55);
+  animation-fill-mode: forwards;
+}
+.circular-menu.ready.active .menu-item:nth-child(1) { animation-name: expand1; animation-delay: 0.00s; }
+.circular-menu.ready.active .menu-item:nth-child(2) { animation-name: expand2; animation-delay: 0.07s; }
+.circular-menu.ready.active .menu-item:nth-child(3) { animation-name: expand3; animation-delay: 0.14s; }
+.circular-menu.ready.active .menu-item:nth-child(4) { animation-name: expand4; animation-delay: 0.21s; }
+.circular-menu.ready.active .menu-item:nth-child(5) { animation-name: expand5; animation-delay: 0.28s; }
+
+.circular-menu.ready:not(.active) .menu-item {
+  animation-duration: 0.35s;
+  animation-timing-function: ease-in;
+  animation-fill-mode: forwards;
+}
+.circular-menu.ready:not(.active) .menu-item:nth-child(1) { animation-name: collapse1; animation-delay: 0.28s; }
+.circular-menu.ready:not(.active) .menu-item:nth-child(2) { animation-name: collapse2; animation-delay: 0.21s; }
+.circular-menu.ready:not(.active) .menu-item:nth-child(3) { animation-name: collapse3; animation-delay: 0.14s; }
+.circular-menu.ready:not(.active) .menu-item:nth-child(4) { animation-name: collapse4; animation-delay: 0.07s; }
+.circular-menu.ready:not(.active) .menu-item:nth-child(5) { animation-name: collapse5; animation-delay: 0.00s; }
+
+@keyframes expand1 { 0% { opacity:0; transform:scale(0); z-index:1; } 100% { opacity:1; transform:translate(0,-150px) scale(1); z-index:1; } }
+@keyframes expand2 { 0% { opacity:0; transform:scale(0); z-index:1; } 100% { opacity:1; transform:translate(57px,-139px) scale(1); z-index:1; } }
+@keyframes expand3 { 0% { opacity:0; transform:scale(0); z-index:1; } 100% { opacity:1; transform:translate(106px,-106px) scale(1); z-index:1; } }
+@keyframes expand4 { 0% { opacity:0; transform:scale(0); z-index:1; } 100% { opacity:1; transform:translate(139px,-57px) scale(1); z-index:1; } }
+@keyframes expand5 { 0% { opacity:0; transform:scale(0); z-index:1; } 100% { opacity:1; transform:translate(150px,0) scale(1); z-index:1; } }
+
+@keyframes collapse1 { 0% { opacity:1; transform:translate(0,-150px) scale(1); z-index:1; } 100% { opacity:0; transform:translate(0,-150px) scale(0); z-index:-1; } }
+@keyframes collapse2 { 0% { opacity:1; transform:translate(57px,-139px) scale(1); z-index:1; } 100% { opacity:0; transform:translate(57px,-139px) scale(0); z-index:-1; } }
+@keyframes collapse3 { 0% { opacity:1; transform:translate(106px,-106px) scale(1); z-index:1; } 100% { opacity:0; transform:translate(106px,-106px) scale(0); z-index:-1; } }
+@keyframes collapse4 { 0% { opacity:1; transform:translate(139px,-57px) scale(1); z-index:1; } 100% { opacity:0; transform:translate(139px,-57px) scale(0); z-index:-1; } }
+@keyframes collapse5 { 0% { opacity:1; transform:translate(150px,0) scale(1); z-index:1; } 100% { opacity:0; transform:translate(150px,0) scale(0); z-index:-1; } }
+
+.circular-menu svg { width: 24px; height: 24px; fill: currentColor; }
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <!-- صفحه اصلی (منو) -->
+    <div class="main-menu" id="mainMenu">
+        <div class="header">
+            <h1>📚 ماجراجویی با داستان‌ها</h1>
+            <p>جمله‌های داستان را مرتب کن و بعد به سوالات درک مطلب آن پاسخ بده</p>
+
+            <!-- ردیف نام + سطل زباله -->
+            <div class="name-row">
+                <div class="name-box">
+                    <input type="text" id="fullName" placeholder="نام و نام خانوادگی">
+                </div>
+                <button class="reset-btn" id="resetDataBtn" title="حذف اطلاعات ذخیره‌شده" aria-label="حذف اطلاعات ذخیره‌شده">
+                    🗑️
+                </button>
+            </div>
+        </div>
+
+        <div class="story-list">
+            <div class="story-card active" id="story1">
+                <div>
+                    <h3>داستان ۱: مهربانی، مهربانی می‌آورد</h3>
+                    <span>۵ جان | برای شروع کلیک کنید</span>
+                </div>
+                👉
+            </div>
+
+            <div class="story-card locked" id="story2">
+                <div>
+                    <h3>داستان ۲: پروژه‌ی گروهی</h3>
+                    <span>🔒 ابتدا داستان ۱ را کامل کنید</span>
+                </div>
+                🔒
+            </div>
+
+            <div class="story-card locked" id="story3">
+                <div>
+                    <h3>داستان ۳: دانش‌آموز فعال کلاس</h3>
+                    <span>🔒 ابتدا داستان ۲ را کامل کنید</span>
+                </div>
+                🔒
+            </div>
+
+            <div class="story-card locked" id="story4">
+                <div>
+                    <h3>داستان ۴: آرامش در بازی فوتبال</h3>
+                    <span>🔒 ابتدا داستان ۳ را کامل کنید</span>
+                </div>
+                🔒
+            </div>
+
+            <div class="story-card locked" id="story5">
+                <div>
+                    <h3>داستان ۵: باغچه‌ی مدرسه</h3>
+                    <span>🔒 ابتدا داستان ۴ را کامل کنید</span>
+                </div>
+                🔒
+            </div>
+        </div>
+
+        <div class="footer">
+            🔹 هر داستان دو مرحله دارد | 🔹 داستان‌ها به ترتیب باز می‌شوند
+        </div>
+    </div>
+
+    <!-- صفحه بازی (مخفی در ابتدا) -->
+    <div class="game-screen" id="gameScreen">
+        <div class="game-header" id="headerBox">
+            <h1 id="storyTitle"></h1>
+            <p id="studentNameDisplay"></p>
+        </div>
+
+        <div class="lives" id="lives"></div>
+
+        <div id="contentBox"></div>
+        <div class="message" id="message"></div>
+    </div>
+
+</div>
+
+<!-- ===== منوی شبکه‌های اجتماعی ===== -->
+<div class="circular-menu" id="circularMenu">
+  <a href="https://instagram.com/heydarzadehteacher" target="_blank" rel="noopener noreferrer"
+     class="menu-item instagram" title="اینستاگرام" aria-label="صفحه‌ی اینستاگرام" tabindex="-1">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.204-.012 3.583-.069 4.849-.148 3.227-1.664 4.771-4.919 4.919-1.266.058-1.645.069-4.849.069-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.791-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.209-1.791 4-4 4zm6.406-11.845c-.796 0-1.44.645-1.44 1.44s.644 1.44 1.44 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
+  </a>
+
+  <a href="https://t.me/bazieamouzeshi" target="_blank" rel="noopener noreferrer"
+     class="menu-item telegram" title="تلگرام" aria-label="کانال تلگرام" tabindex="-1">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.38-.94-2.23-1.5-.99-.65-.35-1.01.22-1.59.15-.15 2.71-2.48 2.76-2.69.01-.03.01-.14-.07-.2-.08-.06-.19-.04-.27-.02-.12.02-1.96 1.25-5.54 3.66-.52.36-1 .53-1.42.52-.47-.01-1.37-.26-2.03-.48-.82-.27-1.47-.42-1.41-.88.03-.24.37-.49 1.02-.74 3.98-1.73 6.63-2.87 7.96-3.42 3.79-1.58 4.58-1.85 5.09-1.86.11 0 .37.03.53.16.14.11.18.25.2.39-.01.06.01.23-.02.37z"/></svg>
+  </a>
+
+  <a href="https://www.aparat.com/heydarzadehteacher" target="_blank" rel="noopener noreferrer"
+     class="menu-item aparat" title="آپارات" aria-label="صفحه‌ی آپارات" tabindex="-1">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 8.64v6.72L15.27 12 10 8.64zM12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z"/></svg>
+  </a>
+
+  <a href="https://sites.google.com/view/heydarzadehteacher" target="_blank" rel="noopener noreferrer"
+     class="menu-item website" title="وب‌سایت" aria-label="وب‌سایت" tabindex="-1">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/></svg>
+  </a>
+
+  <a href="https://heydarzadehteacher.github.io/Educational-Games-app/index.html" target="_blank" rel="noopener noreferrer"
+     class="menu-item webapp" title="وب‌اپ" aria-label="وب‌اپ آموزشی" tabindex="-1">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M17 1.01L7 1c-1.1 0-2 .9-2 2v18c0 1.1.9 2 2 2h10c1.1 0 2-.9 2-2V3c0-1.1-.9-1.99-2-1.99zM17 19H7V5h10v14z"/></svg>
+  </a>
+
+  <button class="menu-button" title="شبکه‌های اجتماعی" aria-label="باز کردن منوی شبکه‌های اجتماعی"
+          aria-haspopup="true" aria-expanded="false">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92 1.61 0 2.92-1.31 2.92-2.92s-1.31-2.92-2.92-2.92z"/></svg>
+  </button>
+</div>
+
+<script>
+// ========== سیستم پیشرفت ==========
+let progress = {
+    1: { unlocked: true, completed: false },
+    2: { unlocked: false, completed: false },
+    3: { unlocked: false, completed: false },
+    4: { unlocked: false, completed: false },
+    5: { unlocked: false, completed: false }
+};
+
+// ========== توابع ذخیره‌سازی ==========
+function saveProgress() {
+    localStorage.setItem('majarajuibadastanha_progress', JSON.stringify(progress));
+}
+
+function loadProgress() {
+    const saved = localStorage.getItem('majarajuibadastanha_progress');
+    if (saved) {
+        try {
+            const parsed = JSON.parse(saved);
+            for (let key in parsed) {
+                if (progress[key]) {
+                    progress[key] = parsed[key];
+                }
+            }
+        } catch (e) {}
+    }
+}
+
+function saveName(name) {
+    localStorage.setItem('majarajuibadastanha_name', name);
+}
+
+function loadName() {
+    return localStorage.getItem('majarajuibadastanha_name') || '';
+}
+
+// ========== حذف اطلاعات ==========
+function resetAllData() {
+    if (confirm("آیا مطمئن هستید که می‌خواهید تمام اطلاعات ذخیره‌شده (پیشرفت و نام) را حذف کنید؟ این عمل قابل بازگشت نیست.")) {
+        localStorage.removeItem('majarajuibadastanha_progress');
+        localStorage.removeItem('majarajuibadastanha_name');
+        progress = {
+            1: { unlocked: true, completed: false },
+            2: { unlocked: false, completed: false },
+            3: { unlocked: false, completed: false },
+            4: { unlocked: false, completed: false },
+            5: { unlocked: false, completed: false }
+        };
+        document.getElementById('fullName').value = '';
+        updateStoryCards();
+        alert('✅ اطلاعات با موفقیت حذف شد.');
+    }
+}
+
+// ========== داده‌های کامل ۵ داستان ==========
+const storiesData = {
+    1: {
+        title: "📖 داستان ۱: مهربانی، مهربانی می‌آورد",
+        initialLives: 5,
+        quizLives: 3,
+        sentences: [
+            {text:"الهام وقتی یکی از دوستانش ناراحت بود، بی‌تفاوت می‌ماند و توجهی نمی‌کرد.",order:1},
+            {text:"یک روز مشکلی برای خودش پیش آمد و خیلی ناراحت شد.",order:2},
+            {text:"او به شدت احساس تنهایی کرد.",order:3},
+            {text:"اما کسی کنارش ننشست.",order:4},
+            {text:"یک لحظه به یاد رفتار خودش با دوستانش افتاد.",order:5},
+            {text:"فهمید که رفتار خوبی با دوستانش نداشته است.",order:6},
+            {text:"او تصمیم گرفت مهربان‌تر باشد و به دوستانش توجه بیشتری کند.",order:7},
+            {text:"با این کار او حتی رفته رفته دوستان بیشتری پیدا کرد.",order:8},
+            {text:"آنها همیشه به هم توجه می‌کردند و فهمیدند مهربانی، مهربانی می‌آورد.",order:9}
+        ],
+        questions: [
+            {q:"وقتی مشکلی برای الهام‌ پیش آمد، چه اتفاقی افتاد؟", 
+             options:["دوستانش کنارش نشستند","کسی کنارش ننشست","الهام گریه کرد","همه ناراحت شدند"], 
+             answer:1},
+            {q:"الهام بعد از متوجه شدن اشتباهش چه تصمیمی گرفت؟", 
+             options:["مهربان‌تر باشد و به دوستانش توجه کند","دوستان زیادی پیدا کند","دیگر با دوستانش حرف نزند","تنهایی بازی کند"], 
+             answer:0},
+            {q:"کدام جمله درست است؟", 
+             options:["الهام دوستان خوبی نداشت","الهام تنهایی را دوست داشت","الهام همیشه به دوستانش توجه می‌کرد","هیچکدام"], 
+             answer:3},
+            {q:"پیام داستان چه بود؟", 
+             options:["مهربانی بی‌فایده است","مهربانی، مهربانی می‌آورد","تنها بودن بهتر است","بی تفاوت بودن خوب است"], 
+             answer:1}
+        ]
+    },
+    2: {
+        title: "📖 داستان ۲: پروژه‌ی گروهی",
+        initialLives: 4,
+        quizLives: 3,
+        sentences: [
+            {text:"زهرا علاقه‌ای به کار در گروه نداشت",order:1},
+            {text:"و دوست داشت همه‌ چیز را خودش به تنهایی انجام دهد.",order:2},
+            {text:"او به تنهایی مشغول کار شد اما پروژه خیلی سخت و پیچیده به نظر می‌رسید.",order:3},
+            {text:"زهرا به مرور خسته و ناراحت شد.",order:4},
+            {text:"او تصمیم گرفت از دوستانش کمک بگیرد.",order:5},
+            {text:"در نتیجه هرکس بخشی از کار را انجام داد.",order:6},
+            {text:"پروژه عالی پیش رفت.",order:7},
+            {text:"و کار زودتر تمام شد.",order:8},
+            {text:"زهرا فهمید همکاری و کار گروهی خیلی مفید است.",order:9}
+        ],
+        questions: [
+            {q:"نتیجه‌ی تنها کار کردن زهرا چه شد؟", 
+             options:["پروژه عالی پیش رفت","پروژه زود تمام شد","پروژه دیر تمام شد","زهرا خسته و ناراحت شد"], 
+             answer:3},
+            {q:"زهرا بعد از اینکه خسته شد چه تصمیمی گرفت؟", 
+             options:["معلم را صدا زد","پروژه را نیمه کاره رها کرد","از دوستانش کمک خواست","دوباره از اول کار را شروع کرد"], 
+             answer:2},
+            {q:"وقتی هر کس بخشی از کار را انجام داد، چه اتفاقی افتاد؟", 
+             options:["پروژه عالی پیش رفت","پروژه شکست خورد","زهرا عصبانی شد","اتفاق خاصی رخ نداد"], 
+             answer:0},
+            {q:"زهرا در پایان به چه چیزی پی برد؟", 
+             options:["فهمید کار انفرادی همیشه جواب می‌دهد","فهمید نباید با دیگران دعوا کند","فهمید که همکاری و کار گروهی مفید است","فهمید باید از معلم کمک بگیرد"], 
+             answer:2},
+            {q:"نتیجه‌ی نهایی پروژه چه بود؟", 
+             options:["کار عالی پیش رفت و زودتر تمام شد","به طور کامل شکست خورد","به نتیجه‌ی خاصی نرسید","خیلی دیر تمام شد"], 
+             answer:0}
+        ]
+    },
+    3: {
+        title: "📖 داستان ۳: دانش‌آموز فعال کلاس",
+        initialLives: 3,
+        quizLives: 3,
+        sentences: [
+            {text:"رضا در کلاس خیلی کم صحبت می‌کرد.",order:1},
+            {text:"او همیشه از اشتباه کردن می‌ترسید.",order:2},
+            {text:"معلم در یکی از زنگ های تفریح با او صحبت کرد و به او گفت: اشتباه بخشی از یادگیری است و ایرادی ندارد",order:3},
+            {text:"رضا در زنگ بعدی یک بار دستش را بالا برد و به سوال معلم جواب داد.",order:4},
+            {text:"جواب او کامل نبود.",order:5},
+            {text:"اما معلم او را تشویق کرد.",order:6},
+            {text:"همین تشویق موجب شد رضا احساس خوبی داشته باشد.",order:7},
+            {text:"او کم‌کم مشارکت بیشتری در فعالیت های کلاسی داشت.",order:8},
+            {text:"و به مرور، یادگیری برایش جذاب شد و او دیگر یکی از فعال‌ترین دانش‌آموزان کلاس شد.",order:9}
+        ],
+        questions: [
+            {q:"رضا از چه چیزی می‌ترسید؟", 
+             options:["امتحان دادن","اشتباه کردن","معلم","بازی"], 
+             answer:1},
+            {q:"معلم بعد از پاسخ دادن رضا به سوال چه کار کرد؟", 
+             options:["او را تنبیه کرد","او را از کلاس اخراج کرد","او را تشویق کرد","سوال دیگری پرسید"], 
+             answer:2},
+            {q:"جوابی که رضا به سوال معلم داد چگونه بود؟", 
+             options:["کامل بود","کاملا درست بود","غلط بود","کامل نبود"], 
+             answer:3},
+            {q:"رضا در کلاس چگونه رفتار می‌کرد؟", 
+             options:["خیلی کم صحبت می کرد","زیاد می‌خندید","با بچه‌ها دعوا می‌کرد","خیلی پرحرف بود"], 
+             answer:0},
+            {q:"نتیجه‌ی تشویق معلم چه شد؟", 
+             options:["موجب شد رضا احساس خوبی داشته باشد","موجب شد رضا احساس بدی پیدا کند","موجب شد رضا در کلاس ساکت بنشیند","موجب شد رضا کلاس را ترک کند"], 
+             answer:0}
+        ]
+    },
+    4: {
+        title: "📖 داستان ۴: آرامش در بازی فوتبال",
+        initialLives: 2,
+        quizLives: 3,
+        sentences: [
+            {text:"امیر هنگام بازی فوتبال همیشه عصبانی می‌شد.",order:1},
+            {text:"و اگر می‌باخت، با دوستانش دعوا می‌کرد.",order:2},
+            {text:"یک روز کسی حاضر نشد با او بازی کند.",order:3},
+            {text:"امیر تنها ماند و خیلی ناراحت شد.",order:4},
+            {text:"او تصمیم گرفت رفتارش را تغییر دهد.",order:5},
+            {text:"دفعه‌ی بعد با آرامش بیشتری بازی کرد.",order:6},
+            {text:"حتی با اینکه باخت، لبخند می‌زد.",order:7},
+            {text:"دوستانش از این تغییر رفتار او خوشحال شدند.",order:8},
+            {text:"از آن روز بازی‌ها خیلی بیشتر از قبل برای امیر لذت‌بخش شد.",order:9}
+        ],
+        questions: [
+            {q:"عنوان داستان چه بود؟", 
+             options:["عصبانیت امیر","آرامش در بازی فوتبال","بازی فوتبال","آرامش امیر"], 
+             answer:1},
+            {q:"کدام کلمه در داستان به کار نرفته بود؟", 
+             options:["صدا","رفتار","تنها","تصمیم"], 
+             answer:0},
+            {q:"وقتی امیر می‌باخت، چه کاری انجام‌ می‌داد؟", 
+             options:["زمین را ترک می‌کرد","با دوستانش دعوا می کرد","به خانه می رفت","می‌خندید"], 
+             answer:1},
+            {q:"چرا یک روز کسی حاضر نشد با امیر بازی کند؟", 
+             options:["چون دیر آمده بود","چون امیر فوتبال بلد نبود","چون رفتار امیر مناسب نبود","چون هوا بد بود"], 
+             answer:2},
+            {q:"نتیجه‌ی تغییر رفتار امیر چه بود؟", 
+             options:["بازی ها برایش سخت‌تر شد","تنها ماند","دیگر فوتبال بازی نکرد","بازی‌ها برایش لذت‌بخش‌تر شد"], 
+             answer:3}
+        ]
+    },
+    5: {
+        title: "📖 داستان ۵: باغچه‌ی مدرسه",
+        initialLives: 1,
+        quizLives: 3,
+        sentences: [
+            {text:"علی هر روز از کنار باغچه‌ی مدرسه رد می‌شد و به گل‌های آن توجهی نمی‌کرد.",order:1},
+            {text:"یک روز دید که گل‌ها پژمرده شده‌اند و باغچه خیلی ناراحت‌کننده به نظر می‌رسد.",order:2},
+            {text:"معلم گفت هرکس می‌تواند برای بهتر شدن باغچه کاری انجام دهد.",order:3},
+            {text:"علی تصمیم گرفت هر روز کمی از وقتش را صرف آبیاری گل‌ها کند.",order:4},
+            {text:"چند نفر از دوستانش هم با دیدن کار علی به او کمک کردند.",order:5},
+            {text:"بعد از چند روز، گل‌ها کم‌کم سرحال و رنگارنگ شدند.",order:6},
+            {text:"حیاط مدرسه زیباتر شد و همه از دیدنش لذت می‌بردند.",order:7},
+            {text:"علی احساس خوبی داشت چون می‌دید تلاشش نتیجه داده است.",order:8},
+            {text:"او فهمید کارهای کوچک هم می‌توانند تغییرهای بزرگ ایجاد کنند.",order:9}
+        ],
+        questions: [
+            {q:"شخصیت اصلی داستان که بود؟", 
+             options:["امیر","علی","محمد","علی و امیر"], 
+             answer:1},
+            {q:"عنوان داستان چه بود؟", 
+             options:["باغچه‌ی مدرسه","گل‌های رنگارنگ باغچه","سخن معلم کلاس","گل‌های پژمرده"], 
+             answer:0},
+            {q:"این جمله را چه کسی گفت: هر کس می‌تواند برای بهتر شدن باغچه کاری انجام دهد.", 
+             options:["علی","دوست علی","معلم","گل"], 
+             answer:2},
+            {q:"گل‌های باغچه در نهایت ...", 
+             options:["پژمرده شدند","از بین رفتند","سر حال و رنگارنگ شدند","زیر پای بچه‌ها له شدند"], 
+             answer:2},
+            {q:"علی در انتهای داستان به چه نتیجه‌ای رسید؟", 
+             options:["فهمید کارهای کوچک می‌توانند تغییرهای بزرگ ایجاد کنند","فهمید کارهای کوچک بی‌اهمیت هستند","فهمید باغچه‌ی مدرسه برای کسی مهم‌ نیست","فهمید تلاش گاهی نتیجه نمی‌دهد"], 
+             answer:0}
+        ]
+    }
+};
+
+// ========== متغیرهای بازی ==========
+let currentStory = 1;
+let storyPhase = 1;
+let lives = 5;
+let currentQ = 0;
+let time = 25;
+let timerInterval;
+let studentName = "";
+
+// ========== عناصر DOM ==========
+const mainMenu = document.getElementById("mainMenu");
+const gameScreen = document.getElementById("gameScreen");
+const contentBox = document.getElementById("contentBox");
+const livesBox = document.getElementById("lives");
+const messageBox = document.getElementById("message");
+const studentNameDisplay = document.getElementById("studentNameDisplay");
+const storyTitle = document.getElementById("storyTitle");
+
+// ========== بارگذاری اولیه ==========
+window.onload = function() {
+    loadProgress();
+    const savedName = loadName();
+    if (savedName) {
+        document.getElementById('fullName').value = savedName;
+    }
+    updateStoryCards();
+
+    document.getElementById('resetDataBtn').addEventListener('click', resetAllData);
+};
+
+// ========== به‌روزرسانی نمایش داستان‌ها ==========
+function updateStoryCards() {
+    for (let i = 1; i <= 5; i++) {
+        const storyCard = document.getElementById(`story${i}`);
+        const storySpan = storyCard.querySelector("span");
+        
+        if (progress[i].completed) {
+            storyCard.className = "story-card completed";
+            storyCard.onclick = () => startStory(i);
+            storySpan.innerHTML = `✅ کامل شده | ${storiesData[i].initialLives} جان`;
+        } else if (progress[i].unlocked) {
+            storyCard.className = "story-card active";
+            storyCard.onclick = () => startStory(i);
+            storySpan.innerHTML = `${storiesData[i].initialLives} جان | برای شروع کلیک کنید`;
+        } else {
+            storyCard.className = "story-card locked";
+            storyCard.onclick = null;
+            if (i > 1) {
+                storySpan.innerHTML = `🔒 ابتدا داستان ${i-1} را کامل کنید`;
+            }
+        }
+    }
+}
+
+// ========== شروع داستان ==========
+function startStory(storyNumber) {
+    console.log('startStory called with', storyNumber); // خطایابی
+    const nameInput = document.getElementById("fullName");
+    const name = nameInput.value.trim();
+    
+    if (name === "") {
+        alert("لطفاً نام و نام خانوادگی خود را وارد کنید 🌸");
+        nameInput.focus();
+        return;
+    }
+    
+    if (!progress[storyNumber].unlocked) {
+        alert(`ابتدا باید داستان ${storyNumber-1} را کامل کنید! 🔒`);
+        return;
+    }
+    
+    studentName = name;
+    saveName(name);
+    currentStory = storyNumber;
+    
+    mainMenu.style.display = "none";
+    gameScreen.style.display = "block";
+    
+    storyTitle.textContent = storiesData[storyNumber].title;
+    studentNameDisplay.textContent = `نام دانش‌آموز: ${studentName}`;
+    
+    resetGame();
+    showSorting();
+}
+
+// ========== تنظیم مجدد بازی ==========
+function resetGame() {
+    storyPhase = 1;
+    lives = storiesData[currentStory].initialLives;
+    currentQ = 0;
+    time = 25;
+    updateLives();
+    contentBox.innerHTML = "";
+    messageBox.textContent = "";
+}
+
+// ========== نمایش جان‌ها ==========
+function updateLives() {
+    livesBox.textContent = "❤️".repeat(lives);
+}
+
+// ========== مرحله مرتب‌سازی ==========
+function showSorting() {
+    storyPhase = 1;
+    lives = storiesData[currentStory].initialLives;
+    updateLives();
+    contentBox.innerHTML = "";
+    
+    const sentences = storiesData[currentStory].sentences;
+    const shuffled = [...sentences].sort(() => Math.random() - 0.5);
+    
+    shuffled.forEach(s => {
+        const card = document.createElement("div");
+        card.className = "card";
+        card.innerHTML = `<p>${s.text}</p>
+          <select data-correct="${s.order}">
+            <option value="">شماره جمله</option>
+            ${[1,2,3,4,5,6,7,8,9].map(n => `<option>${n}</option>`).join("")}
+          </select>`;
+        contentBox.appendChild(card);
+    });
+    
+    const btn = document.createElement("button");
+    btn.className = "game-button";
+    btn.id = "checkBtn";
+    btn.textContent = "بررسی ترتیب";
+    btn.onclick = checkSorting;
+    contentBox.appendChild(btn);
+}
+
+// ========== بررسی مرتب‌سازی ==========
+function checkSorting() {
+    const selects = Array.from(document.querySelectorAll(".card select"));
+    const values = selects.map(sel => sel.value);
+    
+    if (values.includes("")) {
+        messageBox.textContent = "⚠️ لطفاً برای همه جمله‌ها شماره انتخاب کنید";
+        return;
+    }
+    
+    const unique = new Set(values);
+    if (unique.size !== values.length) {
+        messageBox.textContent = "⚠️ شماره‌ها تکراری انتخاب شده‌اند، لطفاً شماره‌ها را درست انتخاب کنید";
+        return;
+    }
+    
+    let ok = true;
+    document.querySelectorAll(".card").forEach(card => {
+        const sel = card.querySelector("select");
+        card.classList.remove("correct", "wrong");
+        if (sel.value === sel.dataset.correct) {
+            card.classList.add("correct");
+        } else {
+            card.classList.add("wrong");
+            ok = false;
+        }
+    });
+    
+    if (ok) {
+        document.getElementById("checkBtn").style.display = "none";
+        messageBox.textContent = "";
+        const msg = document.createElement("div");
+        msg.className = "complete-message";
+        msg.textContent = "🎉 ترتیب درست است!";
+        contentBox.appendChild(msg);
+        setTimeout(() => { msg.classList.add("show"); }, 50);
+        setTimeout(startQuiz, 1000);
+    } else {
+        lives--;
+        updateLives();
+        messageBox.textContent = "❌ دوباره تلاش کن";
+        if (lives === 0) {
+            document.getElementById("checkBtn").style.display = "none";
+            messageBox.textContent = "💔 جان‌ها تمام شد";
+            setTimeout(() => endGame(false, "مرتب‌سازی"), 1000);
+        }
+    }
+}
+
+// ========== مرحله درک مطلب ==========
+function startQuiz() {
+    storyPhase = 2;
+    currentQ = 0;
+    lives = storiesData[currentStory].quizLives;
+    updateLives();
+    messageBox.textContent = "";
+    showQuestion();
+}
+
+function showQuestion() {
+    if (currentQ >= storiesData[currentStory].questions.length) {
+        endGame(true, "درک مطلب");
+        return;
+    }
+    
+    const q = storiesData[currentStory].questions[currentQ];
+    contentBox.innerHTML = `<div class="question"><p>${q.q}</p>
+      <div class="options">
+        ${q.options.map((opt, i) => `<button class="game-button" onclick="checkAnswer(${i}, this)">${opt}</button>`).join("")}
+      </div>
+    </div>`;
+    
+    startTimer();
+}
+
+// ========== تایمر ==========
+function startTimer() {
+    clearInterval(timerInterval);
+    time = 25;
+    document.getElementById("timer")?.remove();
+    const t = document.createElement("div");
+    t.id = "timer";
+    t.className = "timer";
+    contentBox.prepend(t);
+    document.getElementById("timer").textContent = `⌛ ${time} ثانیه`;
+    
+    timerInterval = setInterval(() => {
+        time--;
+        document.getElementById("timer").textContent = `⌛ ${time} ثانیه`;
+        if (time <= 0) {
+            clearInterval(timerInterval);
+            lives--;
+            updateLives();
+            if (lives <= 0) {
+                endGame(false, "درک مطلب");
+            } else {
+                messageBox.textContent = "⏰ زمان تمام شد! دوباره تلاش کن";
+                showQuestion();
+            }
+        }
+    }, 1000);
+}
+
+// ========== بررسی پاسخ ==========
+function checkAnswer(idx, btn) {
+    clearInterval(timerInterval);
+    const correct = storiesData[currentStory].questions[currentQ].answer;
+    
+    if (idx === correct) {
+        btn.classList.add("correctBtn");
+        messageBox.textContent = "✅ درست!";
+        setTimeout(() => {
+            currentQ++;
+            showQuestion();
+            messageBox.textContent = "";
+        }, 800);
+    } else {
+        btn.classList.add("wrongBtn");
+        lives--;
+        updateLives();
+        messageBox.textContent = "❌ اشتباه!";
+        if (lives <= 0) {
+            endGame(false, "درک مطلب");
+        } else {
+            setTimeout(() => {
+                showQuestion();
+                messageBox.textContent = "";
+            }, 800);
+        }
+    }
+}
+
+// ========== پایان بازی ==========
+function endGame(success, phase) {
+    contentBox.innerHTML = "";
+    document.getElementById("timer")?.remove();
+    messageBox.textContent = "";
+    
+    const msg = document.createElement("div");
+    msg.className = "complete-message";
+    
+    if (success) {
+        if (phase === "مرتب‌سازی") {
+            msg.textContent = "🎉 مرتب‌سازی کامل شد!";
+            msg.style.color = "#22c55e";
+        } else {
+            msg.textContent = "🎉 آفرین! داستان با موفقیت کامل شد";
+            msg.style.color = "#22c55e";
+            
+            progress[currentStory].completed = true;
+            saveProgress();
+
+            if (currentStory < 5) {
+                progress[currentStory + 1].unlocked = true;
+                saveProgress();
+            }
+        }
+    } else {
+        if (phase === "مرتب‌سازی") {
+            msg.textContent = "💔 مرتب‌سازی ناموفق بود";
+            msg.style.color = "#ef4444";
+        } else {
+            msg.textContent = "💔 بازی پایان یافت";
+            msg.style.color = "#ef4444";
+        }
+    }
+    
+    contentBox.appendChild(msg);
+    setTimeout(() => { msg.classList.add("show"); }, 50);
+    
+    setTimeout(() => {
+        const returnBtn = document.createElement("button");
+        returnBtn.className = "return-btn";
+        returnBtn.textContent = "🏠 بازگشت به منوی اصلی";
+        returnBtn.onclick = returnToMenu;
+        contentBox.appendChild(returnBtn);
+        
+        if (success && phase === "درک مطلب" && currentStory < 5) {
+            const nextStoryBtn = document.createElement("button");
+            nextStoryBtn.className = "next-story-btn";
+            nextStoryBtn.textContent = `🔓 رفتن به داستان ${currentStory + 1}`;
+            nextStoryBtn.onclick = () => {
+                returnToMenu();
+                setTimeout(() => {
+                    if (progress[currentStory + 1].unlocked) {
+                        startStory(currentStory + 1);
+                    }
+                }, 100);
+            };
+            contentBox.appendChild(nextStoryBtn);
+        }
+    }, 1000);
+}
+
+// ========== بازگشت به منو ==========
+function returnToMenu() {
+    clearInterval(timerInterval);
+    mainMenu.style.display = "block";
+    gameScreen.style.display = "none";
+    document.getElementById("fullName").value = studentName;
+    updateStoryCards();
+}
+</script>
+
+<!-- ===== اسکریپت منوی شبکه‌های اجتماعی ===== -->
+<script>
+  (function() {
+    const menu = document.getElementById('circularMenu');
+    const menuButton = document.querySelector('.menu-button');
+    const menuItems = Array.from(document.querySelectorAll('.menu-item'));
+    let isMenuOpen = false;
+    let isInitialized = false;
+    let isAnimating = false;
+    const ANIMATION_LOCK_MS = 730;
+
+    function setMenuState(open) {
+      isMenuOpen = open;
+      menu.classList.toggle('active', open);
+      menuButton.setAttribute('aria-expanded', String(open));
+      menuItems.forEach(item => item.setAttribute('tabindex', open ? '0' : '-1'));
+    }
+
+    function toggleMenu() {
+      if (isAnimating) return;
+      if (!isInitialized) {
+        menu.classList.add('ready');
+        isInitialized = true;
+      }
+      isAnimating = true;
+      setMenuState(!isMenuOpen);
+      setTimeout(() => { isAnimating = false; }, ANIMATION_LOCK_MS);
+    }
+
+    menuButton.addEventListener('click', function(e) {
+      e.stopPropagation();
+      toggleMenu();
+    });
+
+    document.addEventListener('click', function(e) {
+      if (isMenuOpen && !menu.contains(e.target)) {
+        setMenuState(false);
+      }
+    });
+
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape' && isMenuOpen) {
+        setMenuState(false);
+        menuButton.focus();
+      }
+    });
+
+    menu.addEventListener('click', function(e) {
+      e.stopPropagation();
+    });
+  })();
+</script>
+
+</body>
+</html>

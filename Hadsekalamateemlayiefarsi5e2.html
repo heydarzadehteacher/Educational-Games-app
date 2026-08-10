@@ -1,0 +1,1228 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>قهرمانان املا</title>
+    <link href="https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.0.0/Vazirmatn-font-face.css" rel="stylesheet" type="text/css" />
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Vazirmatn', sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #74ebd5 0%, #9face6 100%);
+            height: 100vh;
+            height: -webkit-fill-available;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            position: relative;
+            padding: 10px;
+        }
+
+        .floating-letter {
+            position: absolute;
+            color: rgba(255, 255, 255, 0.4);
+            font-weight: bold;
+            font-size: 4rem;
+            animation: floatup 10s infinite linear;
+            z-index: 0;
+        }
+
+        @keyframes floatup {
+            0% { transform: translateY(100vh) rotate(0deg); opacity: 0; }
+            10% { opacity: 1; }
+            90% { opacity: 1; }
+            100% { transform: translateY(-10vh) rotate(360deg); opacity: 0; }
+        }
+
+        .l1 { left: 10%; animation-duration: 12s; animation-delay: 0s; }
+        .l2 { left: 30%; animation-duration: 9s; animation-delay: 2s; font-size: 6rem;}
+        .l3 { left: 60%; animation-duration: 14s; animation-delay: 1s; }
+        .l4 { left: 80%; animation-duration: 11s; animation-delay: 3s; font-size: 5rem;}
+
+        .game-container {
+            background: rgba(255, 255, 255, 0.25);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            border-radius: 20px;
+            padding: 20px;
+            width: 90%;
+            max-width: 650px;
+            height: 90vh;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+            z-index: 1;
+            position: relative;
+        }
+
+        #menu-page {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            width: 100%;
+            text-align: center;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .title {
+            color: #2c3e50;
+            font-size: clamp(1.8rem, 5vw, 2.2rem);
+            font-weight: 900;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(255,255,255,0.5);
+        }
+
+        .subtitle {
+            color: #34495e;
+            font-size: clamp(0.9rem, 3vw, 1.1rem);
+            margin-bottom: 20px;
+        }
+
+        .input-group {
+            width: 100%;
+            max-width: 320px;
+            margin-bottom: 15px;
+            position: relative;
+        }
+
+        .input-group input {
+            width: 100%;
+            padding: 15px;
+            border-radius: 12px;
+            border: 2px solid transparent;
+            font-size: 1rem;
+            background: rgba(255, 255, 255, 0.8);
+            transition: all 0.3s ease;
+            text-align: center;
+            color: #2c3e50;
+            font-weight: bold;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+        }
+
+        .input-group input:focus {
+            outline: none;
+            border-color: #3498db;
+            background: #fff;
+            box-shadow: 0 6px 15px rgba(52, 152, 219, 0.2);
+        }
+
+        .name-error {
+            color: #e74c3c;
+            font-size: 0.8rem;
+            font-weight: bold;
+            margin-top: 5px;
+            display: none;
+        }
+
+        .desc-box {
+            background: rgba(255, 255, 255, 0.6);
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 20px;
+            font-size: 0.85rem;
+            color: #2c3e50;
+            text-align: right;
+            line-height: 1.8;
+            max-width: 400px;
+            width: 100%;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+
+        .desc-box::-webkit-scrollbar {
+            width: 6px;
+        }
+        .desc-box::-webkit-scrollbar-track {
+            background: rgba(255,255,255,0.2);
+            border-radius: 3px;
+        }
+        .desc-box::-webkit-scrollbar-thumb {
+            background: rgba(0,0,0,0.2);
+            border-radius: 3px;
+        }
+
+        .start-btn {
+            background: linear-gradient(45deg, #ff6b6b, #ff8e53);
+            color: white;
+            border: none;
+            width: 100%;
+            max-width: 320px;
+            padding: 14px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            border-radius: 50px;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(255, 107, 107, 0.4);
+            transition: all 0.3s ease;
+        }
+
+        .start-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: 0 4px 10px rgba(255, 107, 107, 0.2);
+        }
+
+        .start-btn:not(:disabled):hover {
+            transform: translateY(-3px) scale(1.02);
+            box-shadow: 0 6px 20px rgba(255, 107, 107, 0.6);
+        }
+
+        .start-btn:not(:disabled):active {
+            transform: translateY(1px);
+        }
+
+        #game-page {
+            display: none;
+            flex-direction: column;
+            justify-content: space-between;
+            height: 100%;
+            width: 100%;
+        }
+
+        .status-bar {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            width: 100%;
+            margin-bottom: 12px;
+        }
+
+        .status-row {
+            display: flex;
+            gap: 8px;
+            width: 100%;
+        }
+
+        .status-card, .action-btn {
+            flex: 1;
+            background: linear-gradient(135deg, rgba(255,255,255,0.85), rgba(255,255,255,0.7));
+            border-radius: 14px;
+            padding: 10px 5px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.06), inset 0 1px 0 rgba(255,255,255,0.9);
+            border: 1px solid rgba(255,255,255,0.6);
+            backdrop-filter: blur(5px);
+            transition: all 0.3s ease;
+        }
+
+        .status-label {
+            font-size: 0.65rem;
+            color: #5a6c7d;
+            font-weight: 700;
+            margin-bottom: 2px;
+        }
+
+        .status-value {
+            font-size: 1rem;
+            font-weight: 900;
+            color: #1e293b;
+            text-overflow: ellipsis;
+            overflow: hidden;
+            white-space: nowrap;
+            max-width: 100%;
+        }
+
+        #timer.timer-danger {
+            color: #e74c3c;
+            animation: pulse 1s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        .action-btn {
+            cursor: pointer;
+            border: none;
+            font-family: inherit;
+            color: white;
+        }
+
+        .action-btn .status-label,
+        .action-btn .status-value {
+            color: white;
+        }
+
+        .action-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+
+        .action-btn:not(:disabled):hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 18px rgba(0,0,0,0.2);
+        }
+
+        .hint-btn {
+            background: linear-gradient(135deg, #f39c12, #e67e22);
+            box-shadow: 0 4px 12px rgba(243, 156, 18, 0.3), inset 0 1px 0 rgba(255,255,255,0.3);
+        }
+        .filter-btn {
+            background: linear-gradient(135deg, #9b59b6, #8e44ad);
+            box-shadow: 0 4px 12px rgba(155, 89, 182, 0.3), inset 0 1px 0 rgba(255,255,255,0.3);
+        }
+        .gharbaal-btn {
+            background: linear-gradient(135deg, #3498db, #2980b9);
+            box-shadow: 0 4px 12px rgba(52, 152, 219, 0.3), inset 0 1px 0 rgba(255,255,255,0.3);
+        }
+
+        .word-area {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 80px;
+        }
+
+        .word-display {
+            display: flex;
+            justify-content: center;
+            gap: clamp(5px, 1.5vw, 10px);
+            flex-wrap: nowrap;
+            overflow-x: auto;
+            max-width: 100%;
+            padding: 5px;
+            direction: rtl;
+        }
+
+        .letter-box { display: flex; flex-direction: column; align-items: center; min-width: clamp(30px, 7vw, 48px); }
+        .correct-letter { font-size: clamp(1.4rem, 5vw, 2.2rem); font-weight: bold; color: #27ae60; height: 35px; display: flex; align-items: flex-end; margin-bottom: 4px; text-shadow: 1px 1px 1px rgba(255,255,255,0.8); }
+        .dash { width: 100%; height: 4px; background-color: #34495e; border-radius: 2px; }
+        .dash.space { background-color: transparent; }
+        .wrong-letter { font-size: clamp(1rem, 3.5vw, 1.4rem); color: #e74c3c; height: 25px; margin-top: 6px; font-weight: bold; }
+
+        #message {
+            font-size: 1rem;
+            font-weight: 600;
+            min-height: 35px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            border-radius: 14px;
+            padding: 12px 15px;
+            margin: 8px 0;
+            width: 100%;
+            transition: all 0.3s;
+            line-height: 1.8;
+            text-align: center;
+            background: rgba(255,255,255,0.7);
+            color: #1e293b;
+        }
+
+        .keyboard {
+            display: grid;
+            grid-template-columns: repeat(9, 1fr);
+            gap: 6px;
+            width: 100%;
+            direction: rtl;
+            background: rgba(255, 255, 255, 0.15);
+            padding: 10px;
+            border-radius: 16px;
+        }
+
+        .key {
+            background: white;
+            border: none;
+            border-radius: 10px;
+            height: clamp(42px, 8vw, 52px);
+            font-size: clamp(1.1rem, 4vw, 1.4rem);
+            font-weight: bold;
+            color: #2c3e50;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 3px 5px rgba(0,0,0,0.08);
+            transition: all 0.2s;
+        }
+
+        .key:active { transform: scale(0.95); }
+        .key:disabled {
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .key.filtered-out {
+            opacity: 0.4;
+            background: #ddd;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 10px;
+            width: 100%;
+            margin-top: 8px;
+        }
+
+        .next-btn {
+            background: linear-gradient(45deg, #2ecc71, #27ae60);
+            color: white;
+            border: none;
+            flex: 1;
+            padding: 12px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            border-radius: 14px;
+            cursor: pointer;
+            display: none;
+            box-shadow: 0 4px 15px rgba(46, 204, 113, 0.3);
+            animation: fadeIn 0.3s ease;
+        }
+
+        .restart-btn {
+            background: linear-gradient(45deg, #e74c3c, #c0392b);
+            color: white;
+            border: none;
+            flex: 1;
+            padding: 12px;
+            font-size: 1rem;
+            font-weight: bold;
+            border-radius: 14px;
+            cursor: pointer;
+            display: none;
+            box-shadow: 0 4px 15px rgba(231, 76, 60, 0.3);
+        }
+
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-4px); } 75% { transform: translateX(4px); } }
+        .shake { animation: shake 0.3s ease-in-out; }
+
+        @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-6px); } }
+        .bounce { animation: bounce 0.3s ease-in-out; }
+
+        .score-pop {
+            position: absolute;
+            top: 30%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 3rem;
+            font-weight: 900;
+            z-index: 100;
+            pointer-events: none;
+            animation: floatUpScore 1.2s ease-out forwards;
+        }
+
+        @keyframes floatUpScore {
+            0% { transform: translate(-50%, 0) scale(0.6); opacity: 0; }
+            25% { transform: translate(-50%, -30px) scale(1.2); opacity: 1; }
+            100% { transform: translate(-50%, -80px) scale(0.8); opacity: 0; }
+        }
+
+        @media (max-width: 480px) {
+            body {
+                padding: 8px;
+            }
+            .game-container {
+                padding: 12px;
+                height: 100%;
+                min-height: 0;
+            }
+            .keyboard { gap: 4px; padding: 6px; }
+            .status-row { gap: 4px; }
+            .status-card, .action-btn { padding: 8px 3px; }
+            .desc-box { max-height: 150px; }
+        }
+
+        /* ===== استایل‌های منوی شبکه‌های اجتماعی ===== */
+        :root {
+            --neon-primary: #0ff;
+            --neon-secondary: #f0f;
+            --bg-dark: #121212;
+        }
+
+        .circular-menu {
+            position: fixed;
+            bottom: 25px;
+            left: 25px;
+            width: 60px;
+            height: 60px;
+            z-index: 9999;
+        }
+
+        .circular-menu .menu-button {
+            position: absolute;
+            top: 0; left: 0;
+            width: 58px; height: 58px;
+            border-radius: 50%;
+            background-color: var(--bg-dark);
+            color: var(--neon-primary);
+            border: 2px solid var(--neon-primary);
+            cursor: pointer;
+            z-index: 2;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 0 8px var(--neon-primary),
+                        0 0 15px var(--neon-primary),
+                        0 0 30px var(--neon-primary),
+                        inset 0 0 15px rgba(0, 255, 255, 0.2);
+            transition: all 0.4s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .circular-menu .menu-button:focus-visible {
+            outline: 3px solid #fff;
+            outline-offset: 3px;
+        }
+
+        .circular-menu.active .menu-button {
+            background-color: #1a0a1a;
+            color: var(--neon-secondary);
+            border-color: var(--neon-secondary);
+            transform: rotate(135deg);
+            box-shadow: 0 0 10px var(--neon-secondary),
+                        0 0 20px var(--neon-secondary),
+                        0 0 40px var(--neon-secondary),
+                        inset 0 0 20px rgba(255, 0, 255, 0.3);
+        }
+
+        .circular-menu .menu-item {
+            position: absolute;
+            top: 0; left: 0;
+            width: 52px; height: 52px;
+            border-radius: 50%;
+            background-color: #ffffff;
+            color: #2c3e50;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            transform: scale(0);
+            z-index: -1;
+            text-decoration: none;
+            -webkit-tap-highlight-color: transparent;
+            pointer-events: none;
+            visibility: hidden;
+        }
+
+        .circular-menu.active .menu-item {
+            pointer-events: auto;
+            visibility: visible;
+        }
+
+        .menu-item:focus-visible {
+            outline: 3px solid #fff;
+            outline-offset: 2px;
+        }
+
+        .menu-item.instagram:hover, .menu-item.instagram:focus-visible { background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888); color: white; }
+        .menu-item.telegram:hover, .menu-item.telegram:focus-visible { background: #0088cc; color: white; }
+        .menu-item.aparat:hover, .menu-item.aparat:focus-visible { background: #ed1c24; color: white; }
+        .menu-item.website:hover, .menu-item.website:focus-visible { background: #4facfe; color: white; }
+        .menu-item.webapp:hover, .menu-item.webapp:focus-visible { background: #6c5ce7; color: white; }
+
+        .circular-menu.ready.active .menu-item {
+            animation-duration: 0.45s;
+            animation-timing-function: cubic-bezier(0.68, -0.55, 0.27, 1.55);
+            animation-fill-mode: forwards;
+        }
+        .circular-menu.ready.active .menu-item:nth-child(1) { animation-name: expand1; animation-delay: 0.00s; }
+        .circular-menu.ready.active .menu-item:nth-child(2) { animation-name: expand2; animation-delay: 0.07s; }
+        .circular-menu.ready.active .menu-item:nth-child(3) { animation-name: expand3; animation-delay: 0.14s; }
+        .circular-menu.ready.active .menu-item:nth-child(4) { animation-name: expand4; animation-delay: 0.21s; }
+        .circular-menu.ready.active .menu-item:nth-child(5) { animation-name: expand5; animation-delay: 0.28s; }
+
+        .circular-menu.ready:not(.active) .menu-item {
+            animation-duration: 0.35s;
+            animation-timing-function: ease-in;
+            animation-fill-mode: forwards;
+        }
+        .circular-menu.ready:not(.active) .menu-item:nth-child(1) { animation-name: collapse1; animation-delay: 0.28s; }
+        .circular-menu.ready:not(.active) .menu-item:nth-child(2) { animation-name: collapse2; animation-delay: 0.21s; }
+        .circular-menu.ready:not(.active) .menu-item:nth-child(3) { animation-name: collapse3; animation-delay: 0.14s; }
+        .circular-menu.ready:not(.active) .menu-item:nth-child(4) { animation-name: collapse4; animation-delay: 0.07s; }
+        .circular-menu.ready:not(.active) .menu-item:nth-child(5) { animation-name: collapse5; animation-delay: 0.00s; }
+
+        @keyframes expand1 { 0% { opacity:0; transform:scale(0); z-index:1; } 100% { opacity:1; transform:translate(0,-150px) scale(1); z-index:1; } }
+        @keyframes expand2 { 0% { opacity:0; transform:scale(0); z-index:1; } 100% { opacity:1; transform:translate(57px,-139px) scale(1); z-index:1; } }
+        @keyframes expand3 { 0% { opacity:0; transform:scale(0); z-index:1; } 100% { opacity:1; transform:translate(106px,-106px) scale(1); z-index:1; } }
+        @keyframes expand4 { 0% { opacity:0; transform:scale(0); z-index:1; } 100% { opacity:1; transform:translate(139px,-57px) scale(1); z-index:1; } }
+        @keyframes expand5 { 0% { opacity:0; transform:scale(0); z-index:1; } 100% { opacity:1; transform:translate(150px,0) scale(1); z-index:1; } }
+
+        @keyframes collapse1 { 0% { opacity:1; transform:translate(0,-150px) scale(1); z-index:1; } 100% { opacity:0; transform:translate(0,-150px) scale(0); z-index:-1; } }
+        @keyframes collapse2 { 0% { opacity:1; transform:translate(57px,-139px) scale(1); z-index:1; } 100% { opacity:0; transform:translate(57px,-139px) scale(0); z-index:-1; } }
+        @keyframes collapse3 { 0% { opacity:1; transform:translate(106px,-106px) scale(1); z-index:1; } 100% { opacity:0; transform:translate(106px,-106px) scale(0); z-index:-1; } }
+        @keyframes collapse4 { 0% { opacity:1; transform:translate(139px,-57px) scale(1); z-index:1; } 100% { opacity:0; transform:translate(139px,-57px) scale(0); z-index:-1; } }
+        @keyframes collapse5 { 0% { opacity:1; transform:translate(150px,0) scale(1); z-index:1; } 100% { opacity:0; transform:translate(150px,0) scale(0); z-index:-1; } }
+
+        .circular-menu svg { width: 24px; height: 24px; fill: currentColor; }
+    </style>
+</head>
+<body>
+
+    <div class="floating-letter l1">الف</div>
+    <div class="floating-letter l2">پ</div>
+    <div class="floating-letter l3">ض</div>
+    <div class="floating-letter l4">ی</div>
+
+    <div class="game-container" id="game-card">
+        
+        <div id="menu-page">
+            <h1 class="title">قهرمانان املا 🏆</h1>
+            <p class="subtitle">ویژه‌ی دانش‌آموزان کلاس پنجم</p>
+
+            <div class="input-group">
+                <input type="text" id="player-name-input" placeholder="نام خود را وارد کنید..." maxlength="15" autocomplete="off">
+                <div class="name-error" id="name-error">⚠️ لطفاً نام خود را وارد کنید</div>
+            </div>
+
+            <div class="desc-box">
+                <strong>📜 قوانین بازی:</strong><br>
+                • کلمه‌ای پنهان با خط تیره نمایش داده می‌شود.<br>
+                • با کلیک روی حروف الفبا، حروف کلمه را حدس بزنید.<br>
+                • حروف حدس‌خوردهٔ درست، سبز و حروف اشتباه، قرمز می‌شوند و پایین خط تیره قرار می‌گیرند.<br>
+                • تعداد تلاش‌های اشتباه مجاز برای هر کلمه = تعداد حروف آن کلمه.<br>
+                • <strong>۳ راهنمایی</strong> 💡 دارید که یک حرف تصادفی از کلمه را آشکار می‌کند (هر کلمه یک‌بار).<br>
+                • <strong>۱ فیلتر</strong> 🔍 دارید که تمام حروف غیرمرتبط را غیرفعال می‌کند.<br>
+                • <strong>۲ غربال</strong> 🧹 دارید که ۱۰ حرف اشتباه را حذف می‌کند (هر کلمه یک‌بار).<br>
+                • ⏳ <strong>۵ دقیقه</strong> زمان کل بازی است.
+            </div>
+
+            <button class="start-btn" id="start-btn" disabled onclick="handleStartGame()">شروع بازی 🚀</button>
+        </div>
+
+        <div id="game-page">
+            <div class="status-bar">
+                <div class="status-row">
+                    <div class="status-card" style="flex:2;">
+                        <span class="status-label">👤 قهرمان</span>
+                        <span id="player-name" class="status-value">بازیکن</span>
+                    </div>
+                    <div class="status-card" style="flex:2;">
+                        <span class="status-label">⏳ زمان</span>
+                        <span id="timer" class="status-value">05:00</span>
+                    </div>
+                </div>
+                <div class="status-row">
+                    <button class="action-btn hint-btn" id="hint-btn" onclick="useHint()">
+                        <span class="status-label">💡 راهنما</span>
+                        <span id="hint-count" class="status-value">3</span>
+                    </button>
+                    <button class="action-btn filter-btn" id="filter-btn" onclick="useFilter()">
+                        <span class="status-label">🔍 فیلتر</span>
+                        <span id="filter-status" class="status-value">1</span>
+                    </button>
+                    <button class="action-btn gharbaal-btn" id="gharbaal-btn" onclick="useGharbaal()">
+                        <span class="status-label">🧹 غربال</span>
+                        <span id="gharbaal-count" class="status-value">2</span>
+                    </button>
+                </div>
+                <div class="status-row">
+                    <div class="status-card">
+                        <span class="status-label">✅ کلمه درست</span>
+                        <span id="words-correct" class="status-value">0</span>
+                    </div>
+                    <div class="status-card">
+                        <span class="status-label">❌ کلمه اشتباه</span>
+                        <span id="words-wrong" class="status-value">0</span>
+                    </div>
+                    <div class="status-card">
+                        <span class="status-label">🌟 امتیاز</span>
+                        <span id="score" class="status-value">0</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="word-area">
+                <div class="word-display" id="word-display"></div>
+                <div id="message"></div>
+            </div>
+
+            <div style="width: 100%;">
+                <div class="keyboard" id="keyboard"></div>
+                <div class="button-group">
+                    <button class="next-btn" id="next-btn" onclick="nextWord()">کلمه‌ی بعدی ➡️</button>
+                    <button class="restart-btn" id="restart-btn" onclick="restartGame()">🔄 شروع دوباره</button>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- ===== منوی شبکه‌های اجتماعی ===== -->
+    <div class="circular-menu" id="circularMenu">
+        <!-- ۱. اینستاگرام -->
+        <a href="https://instagram.com/heydarzadehteacher" target="_blank" rel="noopener noreferrer"
+           class="menu-item instagram" title="اینستاگرام" aria-label="صفحه‌ی اینستاگرام" tabindex="-1">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.204-.012 3.583-.069 4.849-.148 3.227-1.664 4.771-4.919 4.919-1.266.058-1.645.069-4.849.069-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.791-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.209-1.791 4-4 4zm6.406-11.845c-.796 0-1.44.645-1.44 1.44s.644 1.44 1.44 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
+        </a>
+
+        <!-- ۲. تلگرام -->
+        <a href="https://t.me/bazieamouzeshi" target="_blank" rel="noopener noreferrer"
+           class="menu-item telegram" title="تلگرام" aria-label="کانال تلگرام" tabindex="-1">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.38-.94-2.23-1.5-.99-.65-.35-1.01.22-1.59.15-.15 2.71-2.48 2.76-2.69.01-.03.01-.14-.07-.2-.08-.06-.19-.04-.27-.02-.12.02-1.96 1.25-5.54 3.66-.52.36-1 .53-1.42.52-.47-.01-1.37-.26-2.03-.48-.82-.27-1.47-.42-1.41-.88.03-.24.37-.49 1.02-.74 3.98-1.73 6.63-2.87 7.96-3.42 3.79-1.58 4.58-1.85 5.09-1.86.11 0 .37.03.53.16.14.11.18.25.2.39-.01.06.01.23-.02.37z"/></svg>
+        </a>
+
+        <!-- ۳. آپارات -->
+        <a href="https://www.aparat.com/heydarzadehteacher" target="_blank" rel="noopener noreferrer"
+           class="menu-item aparat" title="آپارات" aria-label="صفحه‌ی آپارات" tabindex="-1">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 8.64v6.72L15.27 12 10 8.64zM12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z"/></svg>
+        </a>
+
+        <!-- ۴. وب‌سایت -->
+        <a href="https://sites.google.com/view/heydarzadehteacher" target="_blank" rel="noopener noreferrer"
+           class="menu-item website" title="وب‌سایت" aria-label="وب‌سایت" tabindex="-1">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/></svg>
+        </a>
+
+        <!-- ۵. وب‌اپ -->
+        <a href="https://heydarzadehteacher.github.io/Educational-Games-app/index.html" target="_blank" rel="noopener noreferrer"
+           class="menu-item webapp" title="وب‌اپ" aria-label="وب‌اپ آموزشی" tabindex="-1">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M17 1.01L7 1c-1.1 0-2 .9-2 2v18c0 1.1.9 2 2 2h10c1.1 0 2-.9 2-2V3c0-1.1-.9-1.99-2-1.99zM17 19H7V5h10v14z"/></svg>
+        </a>
+
+        <button class="menu-button" title="شبکه‌های اجتماعی" aria-label="باز کردن منوی شبکه‌های اجتماعی"
+                aria-haspopup="true" aria-expanded="false">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92 1.61 0 2.92-1.31 2.92-2.92s-1.31-2.92-2.92-2.92z"/></svg>
+        </button>
+    </div>
+
+    <script>
+        const wordList = ["لطیف", "عجیب", "ایستگاه", "عالم", "عمیق", "طبیعت", "تامل", "عادت", "موضوع", "علف", "محکم", "هیس", "گوش", "قطره", "حلقه", "صدا", "حشره", "تکه", "ساکت", "چطور", "عنکبوت", "صبحگاهی", "فقط", "نگاه", "همیشه", "کوتاه", "توصیف", "نگاشته", "گاهی", "نویسندگان", "گوارا", "شگفتی", "فضل", "هزار", "بحر", "انجم", "تاثیر", "بستان", "برهنه", "توحیدگو", "نوبهار", "اجزا", "روزگاران", "کهن", "طبیب", "گرمابه", "خلاصه", "تصمیم", "مسئله", "گوشت", "هوس", "نقطه", "بهترین", "فراخواند", "بعضی", "جمع", "بزرگان", "معلوم", "محل", "تعیین", "کارگاه", "حاضر", "شرط", "موفقیت", "میهن", "عزیز", "سادگی", "بازرگان", "حوادث", "روزگار", "فضا", "مهر", "بعد", "معمولا", "مقام", "مراقبت", "محافظت", "مقصد", "غفلت", "تهیدست", "استخوان", "فضیلت", "ثروتمند", "عقل", "هلاک", "موذی", "خویش", "شعله ور", "بوته", "قامت", "کاهلی", "مهرگان", "برتر", "گفتا", "هنگام", "دویست", "نگاهی", "چنار", "اهتزاز", "فروغ", "همراه", "استقلال", "ورزشگاه", "حاضران", "عظمت", "گذشته", "تصور", "موزون", "شعر", "شجاعت", "علاقه", "ایثار", "اصلی", "گام", "سازندگی", "سلسله", "هخامنشی", "پهناور", "سهمگین", "انبوه", "بیگانگان", "گذرگاه", "آشفتگی", "عقب", "نواحی", "گذشت", "چیرگی", "خواری", "گروهی", "محاصره", "یادگار", "تحمیل", "ظهر", "گوشه", "صحبت", "تقریبا", "تصویر", "صاحب", "منظم", "محو", "لطف", "خواندن", "دفاع", "ناگهان", "بگذار", "هوا", "وقت", "سپاسگزاری", "کنجکاو", "استعداد", "فوق العاده", "حافظ", "طراحی", "آهو", "گره", "ضامن", "ذهن", "مطمئن", "عصر", "عاشورا", "شاعر", "ضایع", "حمله", "هراس", "قتل", "خواجه", "حفظ", "قلعه", "اطلاع", "مهیب", "گمان", "حادثه", "دعوت", "جذب", "مغول", "آثار", "نظامیه", "شرایط", "قاب", "عکس", "صندلی", "لذت", "مخصوصا", "انتظار", "مثل", "پیغام", "منظور", "شاهنامه", "کاغذ", "بخوان", "رانندگی", "عاقبت", "خطر", "وظیفه", "نکوهیده", "قدرت", "جهل", "آگاهی", "تضمین", "جراحی", "خطوط", "تحمل", "اتفاق", "مهربانی", "ببخش", "شوهر", "رحمت", "الهی", "گوسفند", "نذر", "همسر", "آموزگار", "فرصت", "معنی", "حقیقت", "حیرت", "علم", "دگرگونی", "خواهی", "رهگذار", "قناعت", "عاقل", "زندگانی", "توشه", "هشیاران", "سور", "قصر"];
+        const persianAlphabet = ['آ','ب','پ','ت','ث','ج','چ','ح','خ','د','ذ','ر','ز','ژ','س','ش','ص','ض','ط','ظ','ع','غ','ف','ق','ک','گ','ل','م','ن','و','ه','ی','ئ'];
+
+        let currentWord = "";
+        let totalScore = 0;
+        let mistakes = 0;
+        let maxChances = 0;
+        let guessedLetters = [];
+        let wrongLetters = [];
+        let timeLeft = 300;
+        let timerInterval = null;
+        let isRoundOver = false;
+        let wordsGuessed = 0;
+        let wordsFailed = 0;
+
+        let hintsLeft = 3;
+        let hintUsedThisWord = false;
+
+        let filterUsed = false;
+        let filterUsedThisWord = false;
+
+        let gharbaalUsesLeft = 2;
+        let gharbaalUsedThisWord = false;
+
+        let wordDisplay = document.getElementById('word-display');
+        let scoreDisplay = document.getElementById('score');
+        let timerDisplay = document.getElementById('timer');
+        let messageDisplay = document.getElementById('message');
+        let keyboard = document.getElementById('keyboard');
+        let nextBtn = document.getElementById('next-btn');
+        let restartBtn = document.getElementById('restart-btn');
+        let gameCard = document.getElementById('game-card');
+        let wordsCorrectDisplay = document.getElementById('words-correct');
+        let wordsWrongDisplay = document.getElementById('words-wrong');
+
+        let hintBtn = document.getElementById('hint-btn');
+        let hintCountSpan = document.getElementById('hint-count');
+
+        let filterBtn = document.getElementById('filter-btn');
+        let filterStatusSpan = document.getElementById('filter-status');
+
+        let gharbaalBtn = document.getElementById('gharbaal-btn');
+        let gharbaalCountSpan = document.getElementById('gharbaal-count');
+
+        const nameInput = document.getElementById('player-name-input');
+        const startBtn = document.getElementById('start-btn');
+        const nameError = document.getElementById('name-error');
+
+        nameInput.addEventListener('input', function() {
+            if (nameInput.value.trim() !== '') {
+                startBtn.disabled = false;
+                nameError.style.display = 'none';
+            } else {
+                startBtn.disabled = true;
+                nameError.style.display = 'block';
+            }
+        });
+
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+        function playSound(type) {
+            if (!audioCtx) return;
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            const now = audioCtx.currentTime;
+            if (type === 'correct') {
+                osc.type = 'sine'; osc.frequency.setValueAtTime(659.25, now);
+                gain.gain.setValueAtTime(0.15, now); gain.gain.linearRampToValueAtTime(0, now + 0.08);
+                osc.start(now); osc.stop(now + 0.08);
+            } else if (type === 'incorrect') {
+                osc.type = 'triangle'; osc.frequency.setValueAtTime(146.83, now);
+                gain.gain.setValueAtTime(0.25, now); gain.gain.linearRampToValueAtTime(0, now + 0.15);
+                osc.start(now); osc.stop(now + 0.15);
+            } else if (type === 'win') {
+                [523.25, 659.25, 783.99, 1046.50].forEach((f, i) => {
+                    const o = audioCtx.createOscillator(); const g = audioCtx.createGain();
+                    o.connect(g); g.connect(audioCtx.destination);
+                    o.frequency.setValueAtTime(f, now + i*0.06);
+                    g.gain.setValueAtTime(0.15, now + i*0.06);
+                    g.gain.linearRampToValueAtTime(0, now + i*0.06 + 0.15);
+                    o.start(now + i*0.06); o.stop(now + i*0.06 + 0.15);
+                });
+            } else if (type === 'lose') {
+                [392.00, 311.13, 246.94].forEach((f, i) => {
+                    const o = audioCtx.createOscillator(); const g = audioCtx.createGain();
+                    o.connect(g); g.connect(audioCtx.destination);
+                    o.frequency.setValueAtTime(f, now + i*0.1);
+                    g.gain.setValueAtTime(0.2, now + i*0.1);
+                    g.gain.linearRampToValueAtTime(0, now + i*0.1 + 0.2);
+                    o.start(now + i*0.1); o.stop(now + i*0.1 + 0.2);
+                });
+            } else if (type === 'gameover') {
+                osc.type = 'sawtooth'; osc.frequency.setValueAtTime(180, now);
+                osc.frequency.linearRampToValueAtTime(60, now + 0.7);
+                gain.gain.setValueAtTime(0.3, now); gain.gain.linearRampToValueAtTime(0, now + 0.7);
+                osc.start(now); osc.stop(now + 0.7);
+            }
+        }
+
+        function formatTime(seconds) {
+            let mins = Math.floor(seconds / 60);
+            let secs = seconds % 60;
+            return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+        }
+
+        function updateWordStats() {
+            wordsCorrectDisplay.innerText = wordsGuessed;
+            wordsWrongDisplay.innerText = wordsFailed;
+        }
+
+        function updateActionButtons() {
+            hintCountSpan.innerText = hintsLeft;
+            hintBtn.disabled = (hintsLeft <= 0 || hintUsedThisWord || isRoundOver || timeLeft <= 0);
+
+            filterStatusSpan.innerText = filterUsed ? '0' : '1';
+            filterBtn.disabled = (filterUsed || filterUsedThisWord || isRoundOver || timeLeft <= 0);
+
+            gharbaalCountSpan.innerText = gharbaalUsesLeft;
+            gharbaalBtn.disabled = (gharbaalUsesLeft <= 0 || gharbaalUsedThisWord || isRoundOver || timeLeft <= 0);
+        }
+
+        function handleStartGame() {
+            let name = nameInput.value.trim();
+            if (name === "") return;
+            document.getElementById('player-name').innerText = name;
+            document.getElementById('menu-page').style.display = 'none';
+            document.getElementById('game-page').style.display = 'flex';
+            initGame();
+        }
+
+        function restartGame() {
+            clearInterval(timerInterval);
+            document.getElementById('game-page').style.display = 'none';
+            document.getElementById('menu-page').style.display = 'flex';
+            nameInput.value = '';
+            startBtn.disabled = true;
+            nameError.style.display = 'block';
+            totalScore = 0;
+            wordsGuessed = 0;
+            wordsFailed = 0;
+            hintsLeft = 3;
+            filterUsed = false;
+            gharbaalUsesLeft = 2;
+            hintUsedThisWord = false;
+            filterUsedThisWord = false;
+            gharbaalUsedThisWord = false;
+            updateWordStats();
+            updateActionButtons();
+            scoreDisplay.innerText = '0';
+        }
+
+        function buildKeyboard() {
+            keyboard.innerHTML = '';
+            persianAlphabet.forEach(letter => {
+                let btn = document.createElement('button');
+                btn.className = 'key';
+                btn.innerText = letter;
+                btn.onclick = () => handleGuess(letter, btn);
+                keyboard.appendChild(btn);
+            });
+        }
+
+        function initGame() {
+            timeLeft = 300;
+            totalScore = 0;
+            wordsGuessed = 0;
+            wordsFailed = 0;
+            hintsLeft = 3;
+            filterUsed = false;
+            gharbaalUsesLeft = 2;
+            hintUsedThisWord = false;
+            filterUsedThisWord = false;
+            gharbaalUsedThisWord = false;
+
+            scoreDisplay.innerText = '0';
+            updateWordStats();
+            updateActionButtons();
+            timerDisplay.innerText = formatTime(timeLeft);
+            timerDisplay.classList.remove('timer-danger');
+
+            if (timerInterval) clearInterval(timerInterval);
+            timerInterval = setInterval(timerTick, 1000);
+
+            nextBtn.style.display = 'none';
+            restartBtn.style.display = 'none';
+            hintBtn.style.display = 'flex';
+            filterBtn.style.display = 'flex';
+            gharbaalBtn.style.display = 'flex';
+
+            nextWord();
+        }
+
+        function nextWord() {
+            if (timeLeft <= 0) return;
+            let randomIndex = Math.floor(Math.random() * wordList.length);
+            currentWord = wordList[randomIndex];
+            let letterCount = currentWord.replace(/ /g, '').length;
+            maxChances = letterCount;
+            mistakes = 0;
+            isRoundOver = false;
+            guessedLetters = Array(currentWord.length).fill(null);
+            wrongLetters = [];
+
+            hintUsedThisWord = false;
+            filterUsedThisWord = false;
+            gharbaalUsedThisWord = false;
+
+            updateActionButtons();
+            messageDisplay.innerHTML = "";
+            messageDisplay.style.background = "transparent";
+            nextBtn.style.display = 'none';
+            restartBtn.style.display = 'none';
+            keyboard.style.display = 'grid';
+            buildKeyboard();
+            renderWord();
+        }
+
+        function timerTick() {
+            timeLeft--;
+            timerDisplay.innerText = formatTime(timeLeft);
+            if (timeLeft <= 15) timerDisplay.classList.add('timer-danger');
+            updateActionButtons();
+            if (timeLeft <= 0) {
+                clearInterval(timerInterval);
+                playSound('gameover');
+                const playerName = document.getElementById('player-name').innerText;
+                messageDisplay.innerHTML = `
+                    🎖️ قهرمان گرامی، ${playerName} 🌹<br>
+                    ⏰ زمان بازی شما به پایان رسید.<br>
+                    ✅ کلمات درست حدس‌زده: ${wordsGuessed}<br>
+                    ❌ کلمات از دست‌رفته: ${wordsFailed}<br>
+                    🌟 امتیاز نهایی: ${totalScore}<br>
+                    🙏 سپاس از تلاش شما!
+                `;
+                messageDisplay.style.color = "#1e293b";
+                messageDisplay.style.background = "rgba(255,255,255,0.8)";
+                endGame();
+            }
+        }
+
+        function renderWord() {
+            wordDisplay.innerHTML = '';
+            for (let i = 0; i < currentWord.length; i++) {
+                let box = document.createElement('div');
+                box.className = 'letter-box';
+                let isSpace = currentWord[i] === ' ';
+                let correctDiv = document.createElement('div');
+                correctDiv.className = 'correct-letter';
+                correctDiv.innerText = guessedLetters[i] ? guessedLetters[i] : "";
+                let dashDiv = document.createElement('div');
+                dashDiv.className = isSpace ? 'dash space' : 'dash';
+                let wrongDiv = document.createElement('div');
+                wrongDiv.className = 'wrong-letter';
+                if (!isSpace && wrongLetters[i]) wrongDiv.innerText = wrongLetters[i];
+                box.appendChild(correctDiv);
+                box.appendChild(dashDiv);
+                box.appendChild(wrongDiv);
+                wordDisplay.appendChild(box);
+            }
+        }
+
+        function handleGuess(letter, btnElement) {
+            if (isRoundOver || timeLeft <= 0) return;
+            let isCorrect = false;
+            for (let i = 0; i < currentWord.length; i++) {
+                let targetLetter = currentWord[i];
+                if (letter === 'آ') {
+                    if (targetLetter === 'آ' || targetLetter === 'ا') { guessedLetters[i] = targetLetter; isCorrect = true; }
+                } else {
+                    if (targetLetter === letter) { guessedLetters[i] = letter; isCorrect = true; }
+                }
+            }
+            if (isCorrect) {
+                btnElement.style.background = '#2ecc71'; btnElement.style.color = 'white'; btnElement.disabled = true;
+                playSound('correct');
+                wordDisplay.classList.add('bounce');
+                setTimeout(() => wordDisplay.classList.remove('bounce'), 300);
+                renderWord();
+                checkWin();
+            } else {
+                btnElement.style.background = '#e74c3c'; btnElement.style.color = 'white'; btnElement.disabled = true;
+                playSound('incorrect');
+                wordDisplay.classList.add('shake');
+                setTimeout(() => wordDisplay.classList.remove('shake'), 300);
+                wrongLetters.push(letter);
+                mistakes++;
+                renderWord();
+                checkLoss();
+            }
+        }
+
+        function useHint() {
+            if (hintBtn.disabled) return;
+
+            let unguessedIndices = [];
+            for (let i = 0; i < currentWord.length; i++) {
+                if (currentWord[i] !== ' ' && guessedLetters[i] === null) {
+                    unguessedIndices.push(i);
+                }
+            }
+            if (unguessedIndices.length === 0) return;
+
+            const randomIndex = unguessedIndices[Math.floor(Math.random() * unguessedIndices.length)];
+            const letterToGuess = currentWord[randomIndex];
+
+            hintsLeft--;
+            hintUsedThisWord = true;
+            updateActionButtons();
+
+            let keys = document.getElementsByClassName('key');
+            let btnToClick = null;
+            for (let k of keys) {
+                if (k.innerText === letterToGuess) {
+                    btnToClick = k;
+                    break;
+                }
+            }
+            if (btnToClick) {
+                handleGuess(letterToGuess, btnToClick);
+            }
+        }
+
+        function useFilter() {
+            if (filterBtn.disabled) return;
+
+            filterUsed = true;
+            filterUsedThisWord = true;
+            updateActionButtons();
+
+            let keys = document.getElementsByClassName('key');
+            for (let k of keys) {
+                let letter = k.innerText;
+                let inWord = false;
+                for (let i = 0; i < currentWord.length; i++) {
+                    let target = currentWord[i];
+                    if (letter === 'آ') {
+                        if (target === 'آ' || target === 'ا') { inWord = true; break; }
+                    } else {
+                        if (target === letter) { inWord = true; break; }
+                    }
+                }
+                if (!inWord && !k.disabled) {
+                    k.disabled = true;
+                    k.classList.add('filtered-out');
+                }
+            }
+        }
+
+        function useGharbaal() {
+            if (gharbaalBtn.disabled) return;
+
+            let keys = document.getElementsByClassName('key');
+            let candidates = [];
+            for (let k of keys) {
+                if (k.disabled) continue;
+                let letter = k.innerText;
+                let inWord = false;
+                for (let i = 0; i < currentWord.length; i++) {
+                    let target = currentWord[i];
+                    if (letter === 'آ') {
+                        if (target === 'آ' || target === 'ا') { inWord = true; break; }
+                    } else {
+                        if (target === letter) { inWord = true; break; }
+                    }
+                }
+                if (!inWord) {
+                    candidates.push(k);
+                }
+            }
+
+            const toRemove = Math.min(10, candidates.length);
+            for (let i = 0; i < toRemove; i++) {
+                const rand = Math.floor(Math.random() * candidates.length);
+                const btn = candidates[rand];
+                btn.disabled = true;
+                btn.classList.add('filtered-out');
+                candidates.splice(rand, 1);
+            }
+
+            gharbaalUsesLeft--;
+            gharbaalUsedThisWord = true;
+            updateActionButtons();
+        }
+
+        function animateScorePop(amount, isWin) {
+            let popDiv = document.createElement('div');
+            popDiv.className = 'score-pop';
+            popDiv.innerText = isWin ? `+${amount} 🌟` : `0 😔`;
+            popDiv.style.color = isWin ? '#27ae60' : '#e74c3c';
+            gameCard.appendChild(popDiv);
+            setTimeout(() => {
+                totalScore += amount;
+                scoreDisplay.innerText = totalScore;
+                popDiv.remove();
+            }, 1000);
+        }
+
+        function checkWin() {
+            let won = true;
+            for (let i = 0; i < currentWord.length; i++) {
+                if (currentWord[i] !== ' ' && guessedLetters[i] === null) { won = false; break; }
+            }
+            if (won) {
+                isRoundOver = true;
+                wordsGuessed++;
+                updateWordStats();
+                playSound('win');
+                messageDisplay.innerHTML = "🎉 آفرین! کلمه رو درست حدس زدی";
+                messageDisplay.style.color = "#27ae60";
+                messageDisplay.style.background = "rgba(46, 204, 113, 0.15)";
+                let wordScore = Math.max(0, currentWord.replace(/ /g, '').length - mistakes);
+                animateScorePop(wordScore, true);
+                disableKeyboard();
+                keyboard.style.display = "none";
+                hintBtn.disabled = true;
+                filterBtn.disabled = true;
+                gharbaalBtn.disabled = true;
+                nextBtn.style.display = "block";
+            }
+        }
+
+        function checkLoss() {
+            if (mistakes >= maxChances) {
+                isRoundOver = true;
+                wordsFailed++;
+                updateWordStats();
+                playSound('lose');
+                messageDisplay.innerHTML = `❌ کلمه "${currentWord}" بود`;
+                messageDisplay.style.color = "#c0392b";
+                messageDisplay.style.background = "rgba(231, 76, 60, 0.15)";
+                animateScorePop(0, false);
+                disableKeyboard();
+                keyboard.style.display = "none";
+                hintBtn.disabled = true;
+                filterBtn.disabled = true;
+                gharbaalBtn.disabled = true;
+                nextBtn.style.display = "block";
+            }
+        }
+
+        function disableKeyboard() {
+            let keys = document.getElementsByClassName('key');
+            for (let key of keys) key.disabled = true;
+        }
+
+        function endGame() {
+            disableKeyboard();
+            keyboard.style.display = "none";
+            nextBtn.style.display = "none";
+            hintBtn.style.display = "none";
+            filterBtn.style.display = "none";
+            gharbaalBtn.style.display = "none";
+            restartBtn.style.display = "block";
+        }
+
+        document.addEventListener('keydown', function(e) {
+            if (document.getElementById('game-page').style.display === 'none') return;
+            const keyMap = {
+                'a':'ش','b':'ذ','c':'ز','d':'ی','e':'ث','f':'ب','g':'ل','h':'ا','i':'ه','j':'ت','k':'ن','l':'م','m':'ئ','n':'د','o':'خ','p':'ح','q':'ض','r':'ق','s':'س','t':'ف','u':'ع','v':'ر','w':'ص','x':'ط','y':'غ','z':'ظ',',':'و','[':'ج',']':'چ',';':'ک',"'":'گ','\\':'پ'
+            };
+            let persianKey = keyMap[e.key.toLowerCase()] || e.key;
+            if (persianAlphabet.includes(persianKey) && !isRoundOver && timeLeft > 0) {
+                let keys = document.getElementsByClassName('key');
+                for (let k of keys) {
+                    if (k.innerText === persianKey && !k.disabled) {
+                        handleGuess(persianKey, k);
+                        break;
+                    }
+                }
+            }
+        });
+
+        // ===== اسکریپت منوی شبکه‌های اجتماعی =====
+        (function() {
+            const menu = document.getElementById('circularMenu');
+            const menuButton = document.querySelector('.menu-button');
+            const menuItems = Array.from(document.querySelectorAll('.menu-item'));
+            let isMenuOpen = false;
+            let isInitialized = false;
+            let isAnimating = false;
+            const ANIMATION_LOCK_MS = 730;
+
+            function setMenuState(open) {
+                isMenuOpen = open;
+                menu.classList.toggle('active', open);
+                menuButton.setAttribute('aria-expanded', String(open));
+                menuItems.forEach(item => item.setAttribute('tabindex', open ? '0' : '-1'));
+            }
+
+            function toggleMenu() {
+                if (isAnimating) return;
+                if (!isInitialized) {
+                    menu.classList.add('ready');
+                    isInitialized = true;
+                }
+                isAnimating = true;
+                setMenuState(!isMenuOpen);
+                setTimeout(() => { isAnimating = false; }, ANIMATION_LOCK_MS);
+            }
+
+            menuButton.addEventListener('click', function(e) {
+                e.stopPropagation();
+                toggleMenu();
+            });
+
+            document.addEventListener('click', function(e) {
+                if (isMenuOpen && !menu.contains(e.target)) {
+                    setMenuState(false);
+                }
+            });
+
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape' && isMenuOpen) {
+                    setMenuState(false);
+                    menuButton.focus();
+                }
+            });
+
+            menu.addEventListener('click', function(e) {
+                e.stopPropagation();
+            });
+        })();
+    </script>
+</body>
+</html>

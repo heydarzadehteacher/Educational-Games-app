@@ -1,0 +1,1476 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>🔬 بازی آموزشی علوم</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;700;900&display=swap');
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            touch-action: manipulation;
+        }
+
+        html, body {
+            height: 100%;
+            overflow-y: auto;
+        }
+
+        body {
+            font-family: 'Vazirmatn', sans-serif;
+            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+            min-height: 100vh;
+            padding: 15px;
+            color: #333;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        .simple-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            pointer-events: none;
+            background: radial-gradient(circle at 30% 40%, rgba(255,255,255,0.05) 0%, transparent 70%);
+        }
+
+        .container {
+            width: 100%;
+            max-width: 820px;
+            margin: 0 auto;
+            padding: 5px;
+            z-index: 1;
+            position: relative;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 12px;
+            color: white;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+            padding: 8px 0;
+        }
+
+        h1 {
+            font-size: 1.8rem;
+            margin-bottom: 3px;
+            font-weight: 900;
+        }
+
+        .subtitle {
+            font-size: 1rem;
+            opacity: 0.9;
+        }
+
+        .turn-info {
+            background: rgba(255, 255, 255, 0.85);
+            border-radius: 14px;
+            padding: 10px 15px;
+            margin-bottom: 10px;
+            text-align: center;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+            font-weight: 700;
+            font-size: 1.1rem;
+            color: #2d3436;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .dice-container {
+            text-align: center;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.85);
+            border-radius: 16px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+            margin-bottom: 15px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .dice {
+            width: 70px;
+            height: 70px;
+            margin: 0 auto 10px;
+            background: white;
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.2rem;
+            font-weight: 900;
+            cursor: pointer;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s;
+            user-select: none;
+            border: 3px solid #4a5568;
+            background: linear-gradient(145deg, #ffffff, #e8e8e8);
+        }
+        .dice:hover { transform: scale(1.05); }
+        .dice.disabled { opacity: 0.5; cursor: not-allowed; background: #ccc; }
+        .dice.rolling { animation: roll 0.8s ease-in-out; }
+
+        @keyframes roll {
+            0% { transform: rotate(0deg) scale(1); }
+            25% { transform: rotate(90deg) scale(1.1); }
+            50% { transform: rotate(180deg) scale(1); }
+            75% { transform: rotate(270deg) scale(1.1); }
+            100% { transform: rotate(360deg) scale(1); }
+        }
+
+        .dice-btn {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            font-size: 1rem;
+            border-radius: 50px;
+            cursor: pointer;
+            font-family: 'Vazirmatn', sans-serif;
+            transition: all 0.3s;
+            width: 100%;
+            min-height: 44px;
+            font-weight: 700;
+            box-shadow: 0 2px 10px rgba(102, 126, 234, 0.2);
+        }
+        .dice-btn:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+        }
+        .dice-btn:disabled { opacity: 0.6; cursor: not-allowed; }
+
+        .board-container {
+            background: rgba(255, 255, 255, 0.85);
+            border-radius: 16px;
+            padding: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+            margin-bottom: 15px;
+            overflow: auto;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .board {
+            display: grid;
+            grid-template-columns: repeat(10, 1fr);
+            gap: 3px;
+            margin: 0 auto;
+            position: relative;
+            border: 2px solid #4a5568;
+            border-radius: 10px;
+            padding: 5px;
+            background: #f7fafc;
+            min-width: 320px;
+        }
+
+        .cell {
+            aspect-ratio: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 0.7rem;
+            border-radius: 4px;
+            position: relative;
+            transition: all 0.3s;
+            user-select: none;
+            min-height: 25px;
+            background: #e2e8f0;
+            border: 1px solid #cbd5e0;
+        }
+        .cell-special { background: #f6d365; border: 2px solid #e53e3e; color: #742a2a; font-size: 0.6rem; }
+        .cell-double { background: #a8edea; border: 2px solid #4299e1; color: #2c5282; font-size: 0.6rem; }
+        .cell-challenge { background: #ffecd2; border: 2px solid #d69e2e; color: #744210; font-size: 0.6rem; }
+        .cell-start { background: #48bb78; border: 2px solid #276749; color: white; font-size: 0.8rem; }
+        .cell-finish { background: #9f7aea; border: 2px solid #553c9a; color: white; font-size: 0.8rem; }
+
+        .cell-type {
+            position: absolute;
+            bottom: 2px;
+            font-size: 0.45rem;
+            color: rgba(0, 0, 0, 0.7);
+            width: 100%;
+            text-align: center;
+            font-weight: 700;
+            line-height: 1.2;
+        }
+
+        .token {
+            width: 65%;
+            height: 65%;
+            border-radius: 50%;
+            position: absolute;
+            top: 17%;
+            left: 17%;
+            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.3);
+            z-index: 5;
+            transition: all 0.3s ease;
+        }
+        .token-p1 { background: #e53e3e; border: 2px solid #c53030; }
+        .token-p2 { background: #3182ce; border: 2px solid #2c5282; }
+        .token.moving { animation: bounce 0.4s infinite alternate; }
+        @keyframes bounce { from { transform: translateY(0); } to { transform: translateY(-4px); } }
+
+        .players-panel {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .player-info {
+            padding: 12px;
+            border-radius: 14px;
+            transition: all 0.3s;
+            min-height: 110px;
+            background: rgba(255, 255, 255, 0.85);
+            border: 2px solid #e0e0e0;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        }
+        .player-active {
+            border-color: #ffa500 !important;
+            box-shadow: 0 0 20px rgba(255,165,0,0.25);
+            background: #fffdf5;
+        }
+        .player1-info { border-color: #f56565; }
+        .player2-info { border-color: #4299e1; }
+
+        .player-name {
+            font-size: 1.1rem;
+            font-weight: 700;
+            margin-bottom: 6px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .player-score { font-size: 1.4rem; color: #2d3748; font-weight: 900; }
+
+        .progress-bar {
+            height: 6px;
+            background: #e2e8f0;
+            border-radius: 4px;
+            margin: 6px 0;
+            overflow: hidden;
+        }
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #48bb78, #38a169);
+            width: 0%;
+            transition: width 0.5s ease;
+        }
+
+        .player-stats {
+            font-size: 0.85rem;
+            margin-top: 5px;
+        }
+        .player-stats div { margin: 3px 0; }
+
+        .timer-bar-small {
+            height: 4px;
+            background: #4caf50;
+            border-radius: 4px;
+            transition: width 0.3s linear, background 0.3s;
+            margin: 6px 0 0;
+            width: 100%;
+        }
+        .timer-text-small {
+            font-size: 11px;
+            font-weight: 700;
+            color: #666;
+            text-align: center;
+        }
+
+        .game-controls {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .control-btn {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 12px;
+            font-family: 'Vazirmatn', sans-serif;
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            min-height: 44px;
+            font-weight: 700;
+            color: white;
+        }
+        .restart-btn { background: linear-gradient(135deg, #f56565, #e53e3e); box-shadow: 0 2px 10px rgba(229,62,62,0.2); }
+        .restart-btn:hover { transform: translateY(-2px); }
+        .help-btn { background: linear-gradient(135deg, #48bb78, #38a169); box-shadow: 0 2px 10px rgba(56,161,105,0.2); }
+        .help-btn:hover { transform: translateY(-2px); }
+
+        .instructions {
+            background: rgba(255, 255, 255, 0.85);
+            border-radius: 16px;
+            padding: 15px;
+            margin-top: 15px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+        .instructions h3 {
+            color: #2d3748;
+            margin-bottom: 10px;
+            font-size: 1.2rem;
+            text-align: center;
+            font-weight: 900;
+        }
+        .instructions-list { display: grid; grid-template-columns: 1fr; gap: 8px; }
+        .instruction-item {
+            background: rgba(0,0,0,0.03);
+            padding: 10px;
+            border-radius: 10px;
+            border-right: 4px solid #4299e1;
+        }
+        .instruction-item h4 {
+            color: #2d3748;
+            margin-bottom: 4px;
+            font-size: 0.95rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 700;
+        }
+        .instruction-item p {
+            color: #718096;
+            line-height: 1.4;
+            font-size: 0.85rem;
+        }
+
+        /* مودال سوال */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            padding: 15px;
+        }
+        .modal.show { display: flex; }
+
+        .modal-content {
+            background: white;
+            padding: 25px 22px;
+            border-radius: 24px;
+            width: 100%;
+            max-width: 520px;
+            max-height: 85vh;
+            overflow-y: auto;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+            animation: slideUp 0.4s ease;
+            border: 3px solid #6c5ce7;
+        }
+
+        @keyframes slideUp {
+            from { transform: translateY(30px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .question-title {
+            font-size: 1.2rem;
+            color: #2d3748;
+            margin-bottom: 10px;
+            text-align: center;
+            padding-bottom: 8px;
+            border-bottom: 2px solid #e2e8f0;
+            font-weight: 700;
+        }
+
+        .question-text {
+            font-size: 1.1rem;
+            margin-bottom: 18px;
+            line-height: 1.6;
+            text-align: center;
+            color: #2d3748;
+        }
+
+        .options-container {
+            display: grid;
+            gap: 10px;
+            margin-bottom: 18px;
+        }
+        .option {
+            padding: 12px;
+            background: #f7fafc;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 1rem;
+            text-align: center;
+            min-height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 500;
+        }
+        .option:hover { background: #edf2f7; transform: translateX(-3px); }
+        .option.selected { background: #e3f2fd; border-color: #2196f3; }
+        .option.correct { background: #c6f6d5; border-color: #48bb78; color: #22543d; }
+        .option.wrong { background: #fed7d7; border-color: #f56565; color: #742a2a; }
+
+        .modal-buttons {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+        }
+        .modal-btn {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 50px;
+            font-family: 'Vazirmatn', sans-serif;
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            flex: 1;
+            min-height: 44px;
+            font-weight: 700;
+        }
+        .modal-btn-primary { background: #4299e1; color: white; }
+        .modal-btn-primary:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(66,153,225,0.3); }
+        .modal-btn:disabled { opacity: 0.6; cursor: not-allowed; }
+
+        .timer-container {
+            margin: 12px 0;
+            text-align: center;
+        }
+        .timer-bar {
+            height: 8px;
+            background: #e2e8f0;
+            border-radius: 4px;
+            overflow: hidden;
+            margin-bottom: 5px;
+        }
+        .timer-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #4caf50, #8bc34a);
+            width: 100%;
+            transition: width 0.3s linear;
+        }
+        .timer-text {
+            font-weight: 700;
+            color: #333;
+            font-size: 1rem;
+        }
+        .timer-warning { color: #ff9800; }
+        .timer-danger { color: #f44336; }
+
+        .status-message {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: white;
+            padding: 12px 24px;
+            border-radius: 50px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+            font-weight: 700;
+            z-index: 100;
+            animation: slideInUp 0.5s ease;
+            display: none;
+            max-width: 90%;
+            text-align: center;
+            font-size: 0.95rem;
+        }
+        .status-success { background: #c6f6d5; color: #22543d; border: 2px solid #38a169; }
+        .status-warning { background: #feebc8; color: #744210; border: 2px solid #d69e2e; }
+        .status-error { background: #fed7d7; color: #742a2a; border: 2px solid #f56565; }
+        .status-info { background: #bee3f8; color: #2c5282; border: 2px solid #4299e1; }
+
+        @media (max-width: 600px) {
+            .players-panel { grid-template-columns: 1fr; gap: 8px; }
+            .cell { font-size: 0.6rem; min-height: 22px; }
+            .board { gap: 2px; padding: 3px; min-width: 300px; }
+            .dice { width: 60px; height: 60px; font-size: 1.8rem; }
+            .modal-content { padding: 18px 15px; }
+            .question-text { font-size: 1rem; }
+            .option { font-size: 0.9rem; padding: 10px; min-height: 45px; }
+            .player-info { min-height: 100px; padding: 10px; }
+        }
+        @media (max-width: 350px) {
+            .board { min-width: 280px; }
+            .cell { font-size: 0.5rem; }
+        }
+
+        /* ===== استایل‌های منوی شبکه‌های اجتماعی ===== */
+        :root {
+            --neon-primary: #0ff;
+            --neon-secondary: #f0f;
+            --bg-dark: #121212;
+        }
+
+        .circular-menu {
+            position: fixed;
+            bottom: 25px;
+            left: 25px;
+            width: 60px;
+            height: 60px;
+            z-index: 9999;
+        }
+
+        .circular-menu .menu-button {
+            position: absolute;
+            top: 0; left: 0;
+            width: 58px; height: 58px;
+            border-radius: 50%;
+            background-color: var(--bg-dark);
+            color: var(--neon-primary);
+            border: 2px solid var(--neon-primary);
+            cursor: pointer;
+            z-index: 2;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 0 8px var(--neon-primary),
+                        0 0 15px var(--neon-primary),
+                        0 0 30px var(--neon-primary),
+                        inset 0 0 15px rgba(0, 255, 255, 0.2);
+            transition: all 0.4s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .circular-menu .menu-button:focus-visible {
+            outline: 3px solid #fff;
+            outline-offset: 3px;
+        }
+
+        .circular-menu.active .menu-button {
+            background-color: #1a0a1a;
+            color: var(--neon-secondary);
+            border-color: var(--neon-secondary);
+            transform: rotate(135deg);
+            box-shadow: 0 0 10px var(--neon-secondary),
+                        0 0 20px var(--neon-secondary),
+                        0 0 40px var(--neon-secondary),
+                        inset 0 0 20px rgba(255, 0, 255, 0.3);
+        }
+
+        .circular-menu .menu-item {
+            position: absolute;
+            top: 0; left: 0;
+            width: 52px; height: 52px;
+            border-radius: 50%;
+            background-color: #ffffff;
+            color: #2c3e50;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            transform: scale(0);
+            z-index: -1;
+            text-decoration: none;
+            -webkit-tap-highlight-color: transparent;
+            pointer-events: none;
+            visibility: hidden;
+        }
+
+        .circular-menu.active .menu-item {
+            pointer-events: auto;
+            visibility: visible;
+        }
+
+        .menu-item:focus-visible {
+            outline: 3px solid #fff;
+            outline-offset: 2px;
+        }
+
+        .menu-item.instagram:hover, .menu-item.instagram:focus-visible { background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888); color: white; }
+        .menu-item.telegram:hover, .menu-item.telegram:focus-visible { background: #0088cc; color: white; }
+        .menu-item.aparat:hover, .menu-item.aparat:focus-visible { background: #ed1c24; color: white; }
+        .menu-item.website:hover, .menu-item.website:focus-visible { background: #4facfe; color: white; }
+        .menu-item.webapp:hover, .menu-item.webapp:focus-visible { background: #6c5ce7; color: white; }
+
+        .circular-menu.ready.active .menu-item {
+            animation-duration: 0.45s;
+            animation-timing-function: cubic-bezier(0.68, -0.55, 0.27, 1.55);
+            animation-fill-mode: forwards;
+        }
+        .circular-menu.ready.active .menu-item:nth-child(1) { animation-name: expand1; animation-delay: 0.00s; }
+        .circular-menu.ready.active .menu-item:nth-child(2) { animation-name: expand2; animation-delay: 0.07s; }
+        .circular-menu.ready.active .menu-item:nth-child(3) { animation-name: expand3; animation-delay: 0.14s; }
+        .circular-menu.ready.active .menu-item:nth-child(4) { animation-name: expand4; animation-delay: 0.21s; }
+        .circular-menu.ready.active .menu-item:nth-child(5) { animation-name: expand5; animation-delay: 0.28s; }
+
+        .circular-menu.ready:not(.active) .menu-item {
+            animation-duration: 0.35s;
+            animation-timing-function: ease-in;
+            animation-fill-mode: forwards;
+        }
+        .circular-menu.ready:not(.active) .menu-item:nth-child(1) { animation-name: collapse1; animation-delay: 0.28s; }
+        .circular-menu.ready:not(.active) .menu-item:nth-child(2) { animation-name: collapse2; animation-delay: 0.21s; }
+        .circular-menu.ready:not(.active) .menu-item:nth-child(3) { animation-name: collapse3; animation-delay: 0.14s; }
+        .circular-menu.ready:not(.active) .menu-item:nth-child(4) { animation-name: collapse4; animation-delay: 0.07s; }
+        .circular-menu.ready:not(.active) .menu-item:nth-child(5) { animation-name: collapse5; animation-delay: 0.00s; }
+
+        @keyframes expand1 { 0% { opacity:0; transform:scale(0); z-index:1; } 100% { opacity:1; transform:translate(0,-150px) scale(1); z-index:1; } }
+        @keyframes expand2 { 0% { opacity:0; transform:scale(0); z-index:1; } 100% { opacity:1; transform:translate(57px,-139px) scale(1); z-index:1; } }
+        @keyframes expand3 { 0% { opacity:0; transform:scale(0); z-index:1; } 100% { opacity:1; transform:translate(106px,-106px) scale(1); z-index:1; } }
+        @keyframes expand4 { 0% { opacity:0; transform:scale(0); z-index:1; } 100% { opacity:1; transform:translate(139px,-57px) scale(1); z-index:1; } }
+        @keyframes expand5 { 0% { opacity:0; transform:scale(0); z-index:1; } 100% { opacity:1; transform:translate(150px,0) scale(1); z-index:1; } }
+
+        @keyframes collapse1 { 0% { opacity:1; transform:translate(0,-150px) scale(1); z-index:1; } 100% { opacity:0; transform:translate(0,-150px) scale(0); z-index:-1; } }
+        @keyframes collapse2 { 0% { opacity:1; transform:translate(57px,-139px) scale(1); z-index:1; } 100% { opacity:0; transform:translate(57px,-139px) scale(0); z-index:-1; } }
+        @keyframes collapse3 { 0% { opacity:1; transform:translate(106px,-106px) scale(1); z-index:1; } 100% { opacity:0; transform:translate(106px,-106px) scale(0); z-index:-1; } }
+        @keyframes collapse4 { 0% { opacity:1; transform:translate(139px,-57px) scale(1); z-index:1; } 100% { opacity:0; transform:translate(139px,-57px) scale(0); z-index:-1; } }
+        @keyframes collapse5 { 0% { opacity:1; transform:translate(150px,0) scale(1); z-index:1; } 100% { opacity:0; transform:translate(150px,0) scale(0); z-index:-1; } }
+
+        .circular-menu svg { width: 24px; height: 24px; fill: currentColor; }
+    </style>
+</head>
+<body>
+
+    <div class="simple-bg"></div>
+
+    <div class="container">
+        <header>
+            <h1>🔬 بازی آموزشی علوم</h1>
+            <p class="subtitle">یادگیری علوم به شیوه‌ای جذاب و تعاملی</p>
+        </header>
+
+        <div class="turn-info">
+            <span>نوبت: <span id="currentPlayer">بازیکن ۱</span></span>
+            <span style="margin-right: 15px;"> | امتیاز هدف: <span id="targetScore">100</span></span>
+        </div>
+
+        <div class="dice-container">
+            <div class="dice disabled" id="dice">🎲</div>
+            <button class="dice-btn" id="rollDice">ریختن تاس</button>
+        </div>
+
+        <div class="board-container">
+            <div class="board" id="board"></div>
+        </div>
+
+        <div class="players-panel">
+            <div class="player-info player1-info active" id="player1Info">
+                <div class="player-name">
+                    <span>🔴 بازیکن ۱</span>
+                    <span class="player-score" id="player1Score">0</span>
+                </div>
+                <div class="progress-bar"><div class="progress-fill" id="player1Progress"></div></div>
+                <div class="player-stats">
+                    <div>✅ پاسخ صحیح: <span id="player1Correct">0</span></div>
+                    <div>📍 موقعیت: خانه <span id="player1Position">1</span></div>
+                </div>
+                <div class="timer-bar-small" id="timerBar1"></div>
+                <div class="timer-text-small" id="timerText1"></div>
+            </div>
+
+            <div class="player-info player2-info" id="player2Info">
+                <div class="player-name">
+                    <span>🔵 بازیکن ۲</span>
+                    <span class="player-score" id="player2Score">0</span>
+                </div>
+                <div class="progress-bar"><div class="progress-fill" id="player2Progress"></div></div>
+                <div class="player-stats">
+                    <div>✅ پاسخ صحیح: <span id="player2Correct">0</span></div>
+                    <div>📍 موقعیت: خانه <span id="player2Position">1</span></div>
+                </div>
+                <div class="timer-bar-small" id="timerBar2"></div>
+                <div class="timer-text-small" id="timerText2"></div>
+            </div>
+        </div>
+
+        <div class="game-controls">
+            <button class="control-btn restart-btn" id="restartBtn">🔄 شروع مجدد</button>
+            <button class="control-btn help-btn" id="helpBtn">📖 راهنما</button>
+        </div>
+
+        <div class="instructions" id="instructions" style="display: none;">
+            <h3>📚 راهنمای بازی علوم</h3>
+            <div class="instructions-list">
+                <div class="instruction-item"><h4>🎲 حرکت در بازی</h4><p>بازیکنان به نوبت تاس می‌ریزند و مهره خود را به تعداد عدد تاس حرکت می‌دهند.</p></div>
+                <div class="instruction-item"><h4>❓ سوالات علوم</h4><p>هر سوال ۱۵ ثانیه زمان دارد. پاسخ صحیح: +۱۰ امتیاز، پاسخ غلط: -۵ امتیاز.</p></div>
+                <div class="instruction-item"><h4>⭐ خانه‌های ویژه</h4><p>آبی (۲×امتیاز) - نارنجی (جای خالی) - زرد (درست/نادرست)</p></div>
+                <div class="instruction-item"><h4>🏆 برنده بازی</h4><p>اولین بازیکنی که به ۱۰۰ امتیاز برسد یا زودتر به خانه ۱۰۰ برسد، برنده می‌شود.</p></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal" id="questionModal">
+        <div class="modal-content">
+            <h3 class="question-title" id="questionType">سوال علوم</h3>
+            <p class="question-text" id="questionText"></p>
+            <div class="timer-container">
+                <div class="timer-bar"><div class="timer-fill" id="timerFill"></div></div>
+                <div class="timer-text" id="timerText">⏱ ۱۵ ثانیه</div>
+            </div>
+            <div class="options-container" id="optionsContainer"></div>
+            <div class="modal-buttons">
+                <button class="modal-btn modal-btn-primary" id="submitAnswer">ثبت پاسخ</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="status-message" id="statusMessage"></div>
+
+    <!-- ===== منوی شبکه‌های اجتماعی ===== -->
+    <div class="circular-menu" id="circularMenu">
+        <!-- ۱. اینستاگرام -->
+        <a href="https://instagram.com/heydarzadehteacher" target="_blank" rel="noopener noreferrer"
+           class="menu-item instagram" title="اینستاگرام" aria-label="صفحه‌ی اینستاگرام" tabindex="-1">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.204-.012 3.583-.069 4.849-.148 3.227-1.664 4.771-4.919 4.919-1.266.058-1.645.069-4.849.069-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.791-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.209-1.791 4-4 4zm6.406-11.845c-.796 0-1.44.645-1.44 1.44s.644 1.44 1.44 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
+        </a>
+
+        <!-- ۲. تلگرام -->
+        <a href="https://t.me/bazieamouzeshi" target="_blank" rel="noopener noreferrer"
+           class="menu-item telegram" title="تلگرام" aria-label="کانال تلگرام" tabindex="-1">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.38-.94-2.23-1.5-.99-.65-.35-1.01.22-1.59.15-.15 2.71-2.48 2.76-2.69.01-.03.01-.14-.07-.2-.08-.06-.19-.04-.27-.02-.12.02-1.96 1.25-5.54 3.66-.52.36-1 .53-1.42.52-.47-.01-1.37-.26-2.03-.48-.82-.27-1.47-.42-1.41-.88.03-.24.37-.49 1.02-.74 3.98-1.73 6.63-2.87 7.96-3.42 3.79-1.58 4.58-1.85 5.09-1.86.11 0 .37.03.53.16.14.11.18.25.2.39-.01.06.01.23-.02.37z"/></svg>
+        </a>
+
+        <!-- ۳. آپارات -->
+        <a href="https://www.aparat.com/heydarzadehteacher" target="_blank" rel="noopener noreferrer"
+           class="menu-item aparat" title="آپارات" aria-label="صفحه‌ی آپارات" tabindex="-1">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 8.64v6.72L15.27 12 10 8.64zM12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z"/></svg>
+        </a>
+
+        <!-- ۴. وب‌سایت -->
+        <a href="https://sites.google.com/view/heydarzadehteacher" target="_blank" rel="noopener noreferrer"
+           class="menu-item website" title="وب‌سایت" aria-label="وب‌سایت" tabindex="-1">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/></svg>
+        </a>
+
+        <!-- ۵. وب‌اپ -->
+        <a href="https://heydarzadehteacher.github.io/Educational-Games-app/index.html" target="_blank" rel="noopener noreferrer"
+           class="menu-item webapp" title="وب‌اپ" aria-label="وب‌اپ آموزشی" tabindex="-1">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M17 1.01L7 1c-1.1 0-2 .9-2 2v18c0 1.1.9 2 2 2h10c1.1 0 2-.9 2-2V3c0-1.1-.9-1.99-2-1.99zM17 19H7V5h10v14z"/></svg>
+        </a>
+
+        <button class="menu-button" title="شبکه‌های اجتماعی" aria-label="باز کردن منوی شبکه‌های اجتماعی"
+                aria-haspopup="true" aria-expanded="false">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92 1.61 0 2.92-1.31 2.92-2.92s-1.31-2.92-2.92-2.92z"/></svg>
+        </button>
+    </div>
+
+    <script>
+        (function() {
+            // ===== صداها =====
+            let audioCtx = null;
+            function getAudioContext() {
+                if (!audioCtx) audioCtx = new(window.AudioContext || window.webkitAudioContext)();
+                if (audioCtx.state === 'suspended') audioCtx.resume();
+                return audioCtx;
+            }
+            function playTone(freq, duration, type = 'sine', vol = 0.2) {
+                try {
+                    const ctx = getAudioContext();
+                    const osc = ctx.createOscillator();
+                    const gain = ctx.createGain();
+                    osc.type = type;
+                    osc.frequency.setValueAtTime(freq, ctx.currentTime);
+                    gain.gain.setValueAtTime(vol, ctx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + duration);
+                    osc.connect(gain);
+                    gain.connect(ctx.destination);
+                    osc.start();
+                    osc.stop(ctx.currentTime + duration);
+                } catch (e) {}
+            }
+            function sfxCorrect() { playTone(523,0.15); setTimeout(()=>playTone(659,0.15),150); setTimeout(()=>playTone(784,0.25),300); }
+            function sfxWrong() { playTone(200,0.4,'sawtooth',0.25); }
+            function sfxWin() { playTone(500,0.28); setTimeout(()=>playTone(720,0.28),240); setTimeout(()=>playTone(1050,0.35),500); }
+            function sfxDice() { for(let i=0;i<8;i++) playTone(180+Math.random()*500,'square',0.025,0.06,0,i*0.035); setTimeout(()=>playTone(70,'triangle',0.14,0.22,-20),300); }
+            const sfxMove = () => playTone(520,'sine',0.08,0.07,120);
+
+            // ===== تبدیل اعداد به فارسی =====
+            function toPersianNumber(num) {
+                const digits = '۰۱۲۳۴۵۶۷۸۹';
+                return String(num).replace(/\d/g, d => digits[parseInt(d)]);
+            }
+
+            // ===== متغیرهای بازی =====
+            let currentPlayer = 0;
+            let playerPositions = [1,1];
+            let playerScores = [0,0];
+            let playerCorrect = [0,0];
+            const targetScore = 100;
+            let isDiceRolling = false;
+            let isQuestionActive = false;
+            let selectedOption = null;
+            let currentQuestion = null;
+            let gameActive = true;
+            let timerInterval = null;
+            let timeLeft = 15;
+            const QUESTION_TIME = 15;
+            const CORRECT_SCORE = 10;
+            const WRONG_PENALTY = 5;
+            const playerColors = ['#e53e3e','#3182ce'];
+            const playerNames = ['بازیکن ۱','بازیکن ۲'];
+            let highlightCell = null;
+
+            const specialCells = {
+                5:{type:'double',name:'۲×'},15:{type:'double',name:'۲×'},25:{type:'double',name:'۲×'},
+                35:{type:'double',name:'۲×'},45:{type:'double',name:'۲×'},55:{type:'double',name:'۲×'},
+                65:{type:'double',name:'۲×'},75:{type:'double',name:'۲×'},85:{type:'double',name:'۲×'},
+                95:{type:'double',name:'۲×'},
+                10:{type:'challenge',name:'جای خالی'},20:{type:'challenge',name:'جای خالی'},
+                30:{type:'challenge',name:'جای خالی'},40:{type:'challenge',name:'جای خالی'},
+                50:{type:'challenge',name:'جای خالی'},60:{type:'challenge',name:'جای خالی'},
+                70:{type:'challenge',name:'جای خالی'},80:{type:'challenge',name:'جای خالی'},
+                90:{type:'challenge',name:'جای خالی'},99:{type:'challenge',name:'جای خالی'},
+                7:{type:'special',name:'شانس'},13:{type:'special',name:'شانس'},22:{type:'special',name:'شانس'},
+                33:{type:'special',name:'شانس'},44:{type:'special',name:'شانس'},66:{type:'special',name:'شانس'},
+                77:{type:'special',name:'شانس'},88:{type:'special',name:'شانس'},92:{type:'special',name:'شانس'},
+                97:{type:'special',name:'شانس'},
+                1:{type:'start',name:'شروع'},100:{type:'finish',name:'پایان'}
+            };
+
+            const scienceQuestions = [
+                { text:'در کاوش علمی کدام دیرتر اتفاق می‌افتد؟', options:['فرضیه‌سازی','طرح پرسش','آزمایش','نتیجه‌گیری'], correct:3, type:'تستی' },
+                { text:'برای این که بدانیم چه خاکی برای رشد گیاه مناسب‌تر است باید چه چیزی را تغییر دهیم؟', options:['نوع گیاه','نوع خاک','مقدار خاک','محل گیاه'], correct:1, type:'تستی' },
+                { text:'کدام مورد در مدت زمان پرواز فرفره تاثیر ندارد؟', options:['طول بال فرفره','جرم کاغذ','پهنای بال فرفره','ساعت رها کردن فرفره'], correct:3, type:'تستی' },
+                { text:'این عبارت که "آیا افزایش دمای چایی در سرعت حل شدن قند تاثیر دارد؟" بیانگر کدام مرحله از کاوش است؟', options:['طرح پرسش','فرضیه','آزمایش','نتیجه‌گیری'], correct:0, type:'تستی' },
+                { text:'کلماتی مثل احتمالا به نظر من و... در کدام مرحله کاوش کاربرد دارد؟', options:['نتیجه‌گیری','سوال','مشاهده','پیش‌بینی'], correct:3, type:'تستی' },
+                { text:'در کدام تغییر زیر فقط حالت ماده عوض می‌شود؟', options:['زنگ زدن آهن','سوختن نان','تبخیر آب','سوختن چوب'], correct:2, type:'تستی' },
+                { text:'کدام تغییر فیزیکی نیست؟', options:['بریدن کاغذ','سوختن کاغذ','حل شدن قند در چایی','آب شدن یخ'], correct:1, type:'تستی' },
+                { text:'کدام تغییر با بقیه تفاوت بیشتری دارد؟', options:['فاسد شدن میوه','پختن غذا','ترش شدن شیر','خرد کردن میوه'], correct:3, type:'تستی' },
+                { text:'مهم ترین تفاوت بین ریز شدن کاغذ و سوختن کاغذ چیست؟', options:['تغییر اندازه','تغییر شکل','تغییر جنس','تغییر حالت'], correct:2, type:'تستی' },
+                { text:'اگر پارچه را با قیچی ببریم کدام ویژگی تغییر کرده است؟', options:['اندازه','رنگ','جنس','حالت'], correct:0, type:'تستی' },
+                { text:'کدام تغییر بدون دخالت انسان است؟', options:['ساخت تونل','کندن زمین','تغییر فصل','صاف کردن زمین'], correct:2, type:'تستی' },
+                { text:'در کدام مورد تغییر شیمیایی آهسته‌تر اتفاق می‌افتد؟', options:['سوختن بنزین','سوختن چوب کبریت','زنگ زدن آهن','شکستن شیشه'], correct:2, type:'تستی' },
+                { text:'کدام تغییر با بقیه متفاوت است؟', options:['بریدن نان','سوختن کاغذ','سرخ کردن پیاز','پختن مرغ'], correct:0, type:'تستی' },
+                { text:'کدام تغییر شیمیایی تند است؟', options:['تبدیل گل به میوه','سوختن بنزین','زنگ زدن آهن','پاره کردن کاغذ'], correct:1, type:'تستی' },
+                { text:'مریم می‌گوید: "این گل در حال خشک شدن است احتمالا نور کافی به آن نرسیده است." این جملات او، به ترتیب به کدام مراحل کاوشگری اشاره دارد؟', options:['مشاهده - فرضیه','مشاهده - نتیجه‌گیری','آزمایش - نتیجه‌گیری','فرضیه - آزمایش'], correct:0, type:'تستی' },
+                { text:'پاسخ های احتمالی به سوالات یا پیشنهاد راه حل قابل آزمایش درباره‌ی یک مسئله چه نام دارد؟', options:['نظریه','فرضیه','آزمایش','مشاهده'], correct:1, type:'تستی' },
+                { text:'زنگ زدن آهن چه نوع تغییری است؟', options:['شیمیایی تند','فیزیکی کند','فیزیکی تند','شیمیایی کند'], correct:3, type:'تستی' },
+                { text:'ساسان گفت: "تخم مرغ را در آب انداختم، روی آب شناور ماند." با توجه به مراحل روش علمی، جمله‌ی بعدی او چه می‌تواند باشد؟', options:['حتما تخم مرغ خراب شده بود.','تخم مرغ نباید روی آب می‌ماند.','چرا تخم مرغ در آب ته‌نشین نشد؟','چون تخم مرغ فاسد شده بود.'], correct:2, type:'تستی' },
+                { text:'کدام جمله مفهومی درستی ندارد؟', options:['ذره‌بین نور را در یک نقطه جمع می‌کند','به کمک ذره‌بین نوشته‌ها را بزرگتر می‌بینیم','منشور ضخیم نقطه کانونی قوی‌تر دارد','منشور نور را تجزیه می کند'], correct:2, type:'تستی' },
+                { text:'منشور نور را ..... می‌کند.', options:['متمرکز','بازتاب','جذب','تجزیه'], correct:3, type:'تستی' },
+                { text:'با کدام می‌توان تصاویر را روی پرده نمایش داد؟', options:['آینه','شیشه','عدسی','منشور'], correct:2, type:'تستی' },
+                { text:'نقش قطرات آب در تشکیل رنگین‌کمان مثل ..... است.', options:['ذره‌بین','کانون','عدسی','منشور'], correct:3, type:'تستی' },
+                { text:'کدام عبارت درست است؟', options:['ذره‌بین از جنس شیشه و پلاستیک است','منشور به شکل عدس است و نور سفید را تجزیه می‌کند','لیوان شیشه‌ای پر از آب مثل تلسکوپ عمل می‌کند','نور خورشید در نقطه ای به نام کانون منشور جمع می‌شود'], correct:0, type:'تستی' },
+                { text:'از بدن کدام جانور فسیل بهتری تشکیل می‌شود؟', options:['اردک','سگ','نهنگ','عروس دریایی'], correct:2, type:'تستی' },
+                { text:'از بدن کدام جانور فسیل کمتری تشکیل می‌شود؟', options:['ماهی','صدف دو کفه‌ای','مارماهی','کرم خاکی'], correct:3, type:'تستی' },
+                { text:'کدام مورد محیط بهتری برای تشکیل فسیل است؟', options:['دریا','بیابان','جنگل','دامنه‌ی کوه'], correct:0, type:'تستی' },
+                { text:'با مطالعه‌ی اثر رد پای دایناسور می‌توان به کدام ویژگی پی برد؟', options:['نوع تغذیه','سرعت جانور','جثه‌ی جانور','همه‌ی موارد'], correct:3, type:'تستی' },
+                { text:'فرمانده بدن کدام است؟', options:['نخاع','رشته‌های عصبی','مغز','گیرنده‌های حسی'], correct:2, type:'تستی' },
+                { text:'از سوراخ بین ستون مهره‌ها چه چیزی عبور می کند؟', options:['غضروف','مفصل','نخاع','عصب'], correct:2, type:'تستی' },
+                { text:'کار کدام مورد ارادی است؟', options:['روده - معده','بازو- ران','قلب - ران','مری- روده'], correct:1, type:'تستی' },
+                { text:'کدام اتفاق در خم شدن ساعد صورت می‌گیرد؟', options:['جمع شدن عضله‌ی پشت بازو','باز شدن عضله‌ی روی بازو و پشت ساعد','جمع شدن عضله‌ی روی بازو','باز شدن عضله‌ی روی بازو'], correct:2, type:'تستی' },
+                { text:'کدام در رشد استخوانی موثر است؟', options:['ورزش','مصرف لبنیات','نور آفتاب','همه‌ی موارد'], correct:3, type:'تستی' },
+                { text:'رنگ چشم مربوط به کدام بخش است؟', options:['شبکیه','عنبیه','قرنیه','مردمک'], correct:1, type:'تستی' },
+                { text:'در افراد نزدیک‌بین تصویر اجسام به طور واضح روی .... تشکیل نمی‌شود؟', options:['قرنیه','عصب بینایی','شبکیه','عدسی'], correct:2, type:'تستی' },
+                { text:'کدام یک از موارد زیر مرکز پردازش و درک تصویر است؟', options:['شبکیه','عدسی','عصب بینایی','مغز'], correct:3, type:'تستی' },
+                { text:'گیرنده‌های بویایی در کدام قسمت قرار دارند؟', options:['درون زبان','پایین بینی','بالای حفره‌ی بینی','خارج از بینی'], correct:2, type:'تستی' },
+                { text:'کدام دو حس ارتباط نزدیکی با هم دارند؟', options:['بینایی – چشایی','بویایی – بینایی','بویایی – چشایی','لامسه – بویایی'], correct:2, type:'تستی' },
+                { text:'رشته‌های عصبی کدام حس در سراسر بدن پراکنده است؟', options:['بینایی','چشایی','لامسه','بویایی'], correct:2, type:'تستی' },
+                { text:'افراد نابینا از کدام حس برای خواندن استفاده می‌کنند؟', options:['بینایی','لامسه','چشایی','بویایی'], correct:1, type:'تستی' },
+                { text:'مزه‌ی کدام را سریع‌تر حس می‌کنید؟', options:['نان','آبمیوه','بیسکوییت','برنج'], correct:1, type:'تستی' }
+            ];
+
+            const fillBlankQuestions = [
+                { text:'مبین و همکلاسی‌هایش در مرحله‌ی .... متوجه شدند که همه‌ی فرفره‌ها با هم به زمین نمی‌رسند.', answer:'مشاهده', type:'جای خالی' },
+                { text:'در چرخه‌ی آب همه‌ی تغییرات ... هستند.', answer:'فیزیکی', type:'جای خالی' },
+                { text:'زنگ زدن آهن یک تغییر مضر ... است.', answer:'شیمیایی', type:'جای خالی' },
+                { text:'در یک تغییر ... شکل و اندازه‌ی ماده تغییر می‌کند اما ماده‌ی جدیدی به وجود نمی‌آید.', answer:'فیزیکی', type:'جای خالی' },
+                { text:'قطرات آب معلق در هوا بعد از باران می‌توانند مثل .... عمل کنند.', answer:'منشور', type:'جای خالی' },
+                { text:'زبان اندام حس .... است.', answer:'چشایی', type:'جای خالی' },
+                { text:'به آثار و بقایای گیاهان و جانوران که پس از سال‌ها به جا مانده است، .... می‌گویند.', answer:'فسیل', type:'جای خالی' },
+                { text:'بخش رنگی چشم .... نام دارد.', answer:'عنبیه', type:'جای خالی' },
+                { text:'روی عنبیه را پرده‌ی شفافی به نام .... می‌پوشاند.', answer:'قرنیه', type:'جای خالی' },
+                { text:'بخش .... گوش از طریق عصب شنوایی به مغز پیام می‌فرستد.', answer:'حلزونی', type:'جای خالی' }
+            ];
+
+            const trueFalseQuestions = [
+                { text:'وقتی شرایط آزمایش مناسب باشد، نیازی به تکرار آزمایش نیست.', answer:false, type:'درست/نادرست' },
+                { text:'بریدن پارچه، شکستن لیوان و تبدیل انگور به سرکه، همگی نوعی تغییر فیزیکی هستند.', answer:false, type:'درست/نادرست' },
+                { text:'برای دیدن رنگین کمان باید رو به آفتاب بایستیم.', answer:false, type:'درست/نادرست' },
+                { text:'گاهی نور در طبیعت، هنگام عبور از یک قطره‌ی آب، به رنگ‌های گوناگون تجزیه نمی‌شود.', answer:true, type:'درست/نادرست' },
+                { text:'از حشرات هیچ فسیلی تشکیل نمی‌شود.', answer:false, type:'درست/نادرست' },
+                { text:'هنگام خواب، مغز کامل از کار می‌افتد و نخاع، فرماندهی بدن را بر عهده می‌گیرد.', answer:false, type:'درست/نادرست' },
+                { text:'اسکلت، شکل بدن ما را به وجود می‌آورد.', answer:true, type:'درست/نادرست' },
+                { text:'ماهیچه‌های قلب و معده با اراده‌ی ما کار نمی‌کنند.', answer:true, type:'درست/نادرست' },
+                { text:'عنبیه در وسط مردمک قرار دارد.', answer:false, type:'درست/نادرست' },
+                { text:'تعداد گیرنده‌های لمسی در بعضی از بخش‌های بدن بیشتر از جاهای دیگر است.', answer:true, type:'درست/نادرست' }
+            ];
+
+            let questionDistribution = {};
+            function distributeQuestions() {
+                questionDistribution = {};
+                let normalCells = [];
+                for (let i=1; i<=100; i++) {
+                    if (!specialCells[i] || specialCells[i].type==='double') normalCells.push(i);
+                }
+                normalCells = normalCells.filter(c => c!==1 && c!==100);
+                const shuffledQuestions = [...scienceQuestions].sort(()=>Math.random()-0.5);
+                const shuffledCells = [...normalCells].sort(()=>Math.random()-0.5);
+                let ci = 0;
+                for (let q of shuffledQuestions) {
+                    for (let j=0; j<2 && ci<shuffledCells.length; j++) {
+                        questionDistribution[shuffledCells[ci]] = { question: q, questionType:'science' };
+                        ci++;
+                    }
+                }
+                while (ci < shuffledCells.length) {
+                    const q = scienceQuestions[Math.floor(Math.random()*scienceQuestions.length)];
+                    questionDistribution[shuffledCells[ci]] = { question: q, questionType:'science' };
+                    ci++;
+                }
+            }
+
+            // ===== عناصر DOM =====
+            const boardEl = document.getElementById('board');
+            const diceEl = document.getElementById('dice');
+            const rollBtn = document.getElementById('rollDice');
+            const restartBtn = document.getElementById('restartBtn');
+            const helpBtn = document.getElementById('helpBtn');
+            const instrEl = document.getElementById('instructions');
+            const p1Info = document.getElementById('player1Info');
+            const p2Info = document.getElementById('player2Info');
+            const p1Score = document.getElementById('player1Score');
+            const p2Score = document.getElementById('player2Score');
+            const p1Progress = document.getElementById('player1Progress');
+            const p2Progress = document.getElementById('player2Progress');
+            const p1Correct = document.getElementById('player1Correct');
+            const p2Correct = document.getElementById('player2Correct');
+            const p1Pos = document.getElementById('player1Position');
+            const p2Pos = document.getElementById('player2Position');
+            const timerBar1 = document.getElementById('timerBar1');
+            const timerBar2 = document.getElementById('timerBar2');
+            const timerText1 = document.getElementById('timerText1');
+            const timerText2 = document.getElementById('timerText2');
+            const curPlayerEl = document.getElementById('currentPlayer');
+            const targetScoreEl = document.getElementById('targetScore');
+            const qModal = document.getElementById('questionModal');
+            const qType = document.getElementById('questionType');
+            const qText = document.getElementById('questionText');
+            const optsContainer = document.getElementById('optionsContainer');
+            const submitBtn = document.getElementById('submitAnswer');
+            const timerFill = document.getElementById('timerFill');
+            const timerText = document.getElementById('timerText');
+            const statusMsg = document.getElementById('statusMessage');
+
+            // ===== توابع کمکی =====
+            function showMessage(msg, type='info', dur=3000) {
+                statusMsg.textContent = msg;
+                statusMsg.className = 'status-message status-'+type;
+                statusMsg.style.display = 'block';
+                clearTimeout(statusMsg._timer);
+                statusMsg._timer = setTimeout(() => {
+                    statusMsg.style.display = 'none';
+                    statusMsg.className = 'status-message';
+                }, dur);
+            }
+
+            function setTimerBar(player, percent) {
+                const bar = player===0 ? timerBar1 : timerBar2;
+                const text = player===0 ? timerText1 : timerText2;
+                bar.style.width = percent+'%';
+                if (percent <= 30) bar.style.background = '#f44336';
+                else if (percent <= 60) bar.style.background = '#ff9800';
+                else bar.style.background = '#4caf50';
+                text.textContent = percent>0 ? `⏱ ${toPersianNumber(Math.round(percent/100*15))} ث` : '';
+            }
+
+            function resetTimers() {
+                timerBar1.style.width = '100%'; timerBar1.style.background = '#4caf50';
+                timerBar2.style.width = '100%'; timerBar2.style.background = '#4caf50';
+                timerText1.textContent = ''; timerText2.textContent = '';
+            }
+
+            function createBoard() {
+                boardEl.innerHTML = '';
+                for (let i=1; i<=100; i++) {
+                    const cell = document.createElement('div');
+                    cell.className = 'cell';
+                    cell.dataset.index = i;
+                    const content = document.createElement('div');
+                    content.textContent = i;
+                    cell.appendChild(content);
+                    if (specialCells[i]) {
+                        const type = specialCells[i].type;
+                        if (type==='start') { cell.classList.add('cell-start'); content.textContent='شروع'; }
+                        else if (type==='finish') { cell.classList.add('cell-finish'); content.textContent='پایان'; }
+                        else if (type==='double') cell.classList.add('cell-double');
+                        else if (type==='challenge') cell.classList.add('cell-challenge');
+                        else if (type==='special') cell.classList.add('cell-special');
+                        const span = document.createElement('span');
+                        span.className = 'cell-type';
+                        span.textContent = specialCells[i].name;
+                        cell.appendChild(span);
+                    } else {
+                        cell.classList.add('cell-number');
+                    }
+                    boardEl.appendChild(cell);
+                }
+                createTokens();
+            }
+
+            function createTokens() {
+                document.querySelectorAll('.token').forEach(t=>t.remove());
+                for (let i=0; i<2; i++) {
+                    const pos = playerPositions[i];
+                    const cell = document.querySelector(`.cell[data-index="${pos}"]`);
+                    if (cell) {
+                        const token = document.createElement('div');
+                        token.className = `token token-p${i+1}`;
+                        token.dataset.player = i;
+                        cell.appendChild(token);
+                    }
+                }
+            }
+
+            function updateUI() {
+                p1Score.textContent = toPersianNumber(playerScores[0]);
+                p2Score.textContent = toPersianNumber(playerScores[1]);
+                p1Progress.style.width = Math.min(100,(playerScores[0]/targetScore)*100)+'%';
+                p2Progress.style.width = Math.min(100,(playerScores[1]/targetScore)*100)+'%';
+                p1Correct.textContent = toPersianNumber(playerCorrect[0]);
+                p2Correct.textContent = toPersianNumber(playerCorrect[1]);
+                p1Pos.textContent = toPersianNumber(playerPositions[0]);
+                p2Pos.textContent = toPersianNumber(playerPositions[1]);
+                targetScoreEl.textContent = toPersianNumber(targetScore);
+                p1Info.classList.toggle('player-active', currentPlayer===0);
+                p2Info.classList.toggle('player-active', currentPlayer===1);
+                curPlayerEl.textContent = playerNames[currentPlayer];
+                curPlayerEl.style.color = playerColors[currentPlayer];
+            }
+
+            function activateDice() {
+                diceEl.classList.remove('disabled');
+                diceEl.style.cursor = 'pointer';
+                rollBtn.disabled = false;
+                diceEl.textContent = '🎲';
+            }
+
+            function deactivateDice() {
+                diceEl.classList.add('disabled');
+                diceEl.style.cursor = 'not-allowed';
+                rollBtn.disabled = true;
+            }
+
+            function clearHighlight() {
+                if (highlightCell) {
+                    highlightCell.classList.remove('highlight-p1','highlight-p2');
+                    highlightCell = null;
+                }
+            }
+
+            function applyHighlight(cellIndex) {
+                clearHighlight();
+                const cell = boardEl.children[cellIndex];
+                if (cell) {
+                    cell.classList.add('highlight-p'+(currentPlayer+1));
+                    highlightCell = cell;
+                }
+            }
+
+            // ===== تاس و حرکت =====
+            function rollDice() {
+                if (isDiceRolling || isQuestionActive || !gameActive) return;
+                if (diceEl.classList.contains('disabled')) return;
+
+                isDiceRolling = true;
+                deactivateDice();
+                diceEl.classList.add('rolling');
+                sfxDice();
+                showMessage('🎲 تاس می‌چرخد...', 'info', 1500);
+
+                let rollCount = 0;
+                const interval = setInterval(() => {
+                    diceEl.textContent = ['⚀','⚁','⚂','⚃','⚄','⚅'][Math.floor(Math.random()*6)];
+                    rollCount++;
+                    if (rollCount > 8) {
+                        clearInterval(interval);
+                        const val = Math.floor(Math.random()*6)+1;
+                        diceEl.textContent = ['⚀','⚁','⚂','⚃','⚄','⚅'][val-1];
+                        diceEl.classList.remove('rolling');
+                        showMessage(`🎲 تاس ${toPersianNumber(val)} آمد!`, 'info', 2000);
+                        setTimeout(() => {
+                            movePlayer(val);
+                        }, 400);
+                    }
+                }, 100);
+            }
+
+            function movePlayer(steps) {
+                if (!gameActive) return;
+                const idx = currentPlayer;
+                let newPos = playerPositions[idx] + steps;
+                if (newPos > 100) {
+                    const overflow = newPos - 100;
+                    newPos = 100 - overflow;
+                    showMessage('از خانه ۱۰۰ گذشتی! به عقب برگشتی.', 'warning', 2000);
+                }
+                playerPositions[idx] = newPos;
+                animateToken(idx, steps);
+                updateUI();
+                setTimeout(() => {
+                    showQuestionForCell(newPos);
+                }, steps*200 + 400);
+            }
+
+            function animateToken(idx, steps) {
+                const token = document.querySelector(`.token[data-player="${idx}"]`);
+                if (!token) return;
+                token.classList.add('moving');
+                let count = 0;
+                const startPos = playerPositions[idx] - steps;
+                const moveInterval = setInterval(() => {
+                    count++;
+                    const temp = startPos + count;
+                    const prev = document.querySelector(`.cell[data-index="${temp-1}"]`);
+                    if (prev && prev.contains(token)) prev.removeChild(token);
+                    const next = document.querySelector(`.cell[data-index="${temp}"]`);
+                    if (next) next.appendChild(token);
+                    if (count >= steps) {
+                        clearInterval(moveInterval);
+                        token.classList.remove('moving');
+                        sfxMove();
+                    }
+                }, 200);
+            }
+
+            // ===== نمایش سوال =====
+            function showQuestionForCell(cellIndex) {
+                if (!gameActive) return;
+                isQuestionActive = true;
+                deactivateDice();
+
+                const cellType = specialCells[cellIndex] ? specialCells[cellIndex].type : 'normal';
+                let question, qTypeText = '';
+                if (cellType === 'double') {
+                    if (questionDistribution[cellIndex]) {
+                        question = questionDistribution[cellIndex].question;
+                        question.points = CORRECT_SCORE * 2;
+                        qTypeText = '۲× امتیاز: تستی';
+                    } else {
+                        question = scienceQuestions[Math.floor(Math.random()*scienceQuestions.length)];
+                        question.points = CORRECT_SCORE * 2;
+                        qTypeText = '۲× امتیاز: تستی';
+                    }
+                } else if (cellType === 'challenge') {
+                    const q = fillBlankQuestions[Math.floor(Math.random()*fillBlankQuestions.length)];
+                    question = { ...q, points: CORRECT_SCORE };
+                    qTypeText = 'جای خالی';
+                } else if (cellType === 'special') {
+                    const q = trueFalseQuestions[Math.floor(Math.random()*trueFalseQuestions.length)];
+                    question = { ...q, points: CORRECT_SCORE };
+                    qTypeText = 'درست/نادرست';
+                } else {
+                    if (questionDistribution[cellIndex]) {
+                        question = questionDistribution[cellIndex].question;
+                        question.points = CORRECT_SCORE;
+                        qTypeText = 'تستی';
+                    } else {
+                        question = scienceQuestions[Math.floor(Math.random()*scienceQuestions.length)];
+                        question.points = CORRECT_SCORE;
+                        qTypeText = 'تستی';
+                    }
+                }
+                currentQuestion = question;
+                selectedOption = null;
+                timeLeft = QUESTION_TIME;
+                submitBtn.disabled = true;
+                submitBtn.textContent = 'ثبت پاسخ';
+                qType.textContent = qTypeText;
+                if (question.type==='جای خالی') {
+                    qText.textContent = question.text.replace('....','_____').replace('.‌.‌..','_____');
+                } else {
+                    qText.textContent = question.text;
+                }
+                optsContainer.innerHTML = '';
+                if (question.type==='درست/نادرست') {
+                    ['درست','نادرست'].forEach((label,idx)=>{
+                        const opt = document.createElement('div');
+                        opt.className = 'option';
+                        opt.textContent = label;
+                        opt.dataset.index = idx;
+                        opt.addEventListener('click',()=>selectOption(opt,idx));
+                        optsContainer.appendChild(opt);
+                    });
+                } else if (question.type==='جای خالی') {
+                    let options = [question.answer];
+                    const others = fillBlankQuestions.filter(q=>q.answer!==question.answer).map(q=>q.answer).filter((v,i,a)=>a.indexOf(v)===i);
+                    for (let i=0; i<3 && i<others.length; i++) {
+                        const idx = Math.floor(Math.random()*others.length);
+                        options.push(others[idx]);
+                        others.splice(idx,1);
+                    }
+                    while (options.length < 4) {
+                        const w = ['مشاهده','آزمایش','فرضیه','نتیجه‌گیری','فیزیکی','شیمیایی'][Math.floor(Math.random()*6)];
+                        if (!options.includes(w)) options.push(w);
+                    }
+                    options.sort(()=>Math.random()-0.5);
+                    options.forEach((optText,idx)=>{
+                        const opt = document.createElement('div');
+                        opt.className = 'option';
+                        opt.textContent = optText;
+                        opt.dataset.index = idx;
+                        if (optText===question.answer) opt.dataset.correct = 'true';
+                        opt.addEventListener('click',()=>selectOption(opt,idx));
+                        optsContainer.appendChild(opt);
+                    });
+                } else {
+                    question.options.forEach((optText,idx)=>{
+                        const opt = document.createElement('div');
+                        opt.className = 'option';
+                        opt.textContent = optText;
+                        opt.dataset.index = idx;
+                        opt.addEventListener('click',()=>selectOption(opt,idx));
+                        optsContainer.appendChild(opt);
+                    });
+                }
+                clearInterval(timerInterval);
+                updateTimerDisplay();
+                timerInterval = setInterval(updateTimer, 1000);
+                qModal.classList.add('show');
+                applyHighlight(cellIndex-1);
+            }
+
+            function selectOption(el, idx) {
+                if (!isQuestionActive) return;
+                document.querySelectorAll('.option').forEach(o=>o.classList.remove('selected'));
+                el.classList.add('selected');
+                selectedOption = idx;
+                submitBtn.disabled = false;
+            }
+
+            function updateTimerDisplay() {
+                const pct = (timeLeft / QUESTION_TIME) * 100;
+                timerFill.style.width = pct+'%';
+                timerFill.style.background = timeLeft<=5 ? '#f44336' : timeLeft<=10 ? '#ff9800' : '#4caf50';
+                timerText.textContent = `⏱ ${toPersianNumber(timeLeft)} ثانیه`;
+            }
+
+            function updateTimer() {
+                timeLeft--;
+                updateTimerDisplay();
+                if (timeLeft <= 0) {
+                    clearInterval(timerInterval);
+                    handleTimeout();
+                }
+            }
+
+            function handleTimeout() {
+                if (!isQuestionActive) return;
+                isQuestionActive = false;
+                clearInterval(timerInterval);
+                submitBtn.disabled = true;
+                submitBtn.textContent = 'زمان تمام شد!';
+                showCorrectAnswer();
+                sfxWrong();
+                const idx = currentPlayer;
+                const penalty = WRONG_PENALTY;
+                playerScores[idx] = Math.max(0, playerScores[idx]-penalty);
+                updateUI();
+                showMessage(`⏰ زمان تمام شد! ${toPersianNumber(penalty)} امتیاز از دست دادی`, 'error', 2500);
+                setTimeout(() => {
+                    qModal.classList.remove('show');
+                    clearHighlight();
+                    createTokens();
+                    switchTurn();
+                }, 1500);
+            }
+
+            function showCorrectAnswer() {
+                const q = currentQuestion;
+                if (q.type==='درست/نادرست') {
+                    document.querySelectorAll('.option').forEach((el,i)=>{
+                        if ((i===0 && q.answer===true) || (i===1 && q.answer===false)) el.classList.add('correct');
+                        el.style.pointerEvents = 'none';
+                    });
+                } else if (q.type==='جای خالی') {
+                    document.querySelectorAll('.option').forEach(el=>{
+                        if (el.dataset.correct==='true') el.classList.add('correct');
+                        el.style.pointerEvents = 'none';
+                    });
+                } else {
+                    document.querySelectorAll('.option').forEach((el,i)=>{
+                        if (i===q.correct) el.classList.add('correct');
+                        el.style.pointerEvents = 'none';
+                    });
+                }
+            }
+
+            function submitAnswer() {
+                if (selectedOption===null || !isQuestionActive) return;
+                clearInterval(timerInterval);
+                isQuestionActive = false;
+
+                const q = currentQuestion;
+                let correct = false;
+                if (q.type==='درست/نادرست') {
+                    correct = (selectedOption===0 && q.answer===true) || (selectedOption===1 && q.answer===false);
+                } else if (q.type==='جای خالی') {
+                    const selEl = document.querySelector(`.option[data-index="${selectedOption}"]`);
+                    correct = selEl.dataset.correct==='true';
+                } else {
+                    correct = selectedOption === q.correct;
+                }
+                const idx = currentPlayer;
+                submitBtn.disabled = true;
+                if (correct) {
+                    sfxCorrect();
+                    const pts = q.points || CORRECT_SCORE;
+                    playerScores[idx] += pts;
+                    playerCorrect[idx]++;
+                    showMessage(`✅ پاسخ صحیح! +${toPersianNumber(pts)} امتیاز`, 'success', 2000);
+                } else {
+                    sfxWrong();
+                    const penalty = WRONG_PENALTY;
+                    playerScores[idx] = Math.max(0, playerScores[idx]-penalty);
+                    showMessage(`❌ پاسخ نادرست! ${toPersianNumber(penalty)} امتیاز از دست دادی`, 'error', 2500);
+                }
+                showCorrectAnswer();
+                updateUI();
+                setTimeout(() => {
+                    qModal.classList.remove('show');
+                    clearHighlight();
+                    createTokens();
+                    switchTurn();
+                }, 1500);
+            }
+
+            // ===== مدیریت نوبت و پایان =====
+            function switchTurn() {
+                if (!gameActive) return;
+                isDiceRolling = false;
+                if (checkWinCondition()) return;
+                currentPlayer = 1 - currentPlayer;
+                updateUI();
+                activateDice();
+                resetTimers();
+                showMessage(`👤 نوبت ${playerNames[currentPlayer]}`, 'info', 2000);
+            }
+
+            function checkWinCondition() {
+                if (playerScores[0] >= targetScore) { endGame(0); return true; }
+                if (playerScores[1] >= targetScore) { endGame(1); return true; }
+                if (playerPositions[0] === 100) { endGame(0); return true; }
+                if (playerPositions[1] === 100) { endGame(1); return true; }
+                return false;
+            }
+
+            function endGame(winner) {
+                gameActive = false;
+                deactivateDice();
+                sfxWin();
+                showMessage(`🎉 بازیکن ${toPersianNumber(winner+1)} برنده شد!`, 'success', 5000);
+                setTimeout(() => {
+                    if (confirm(`🎉 بازیکن ${toPersianNumber(winner+1)} برنده بازی است!\n\nبازی جدید شروع شود؟`)) {
+                        resetGame();
+                    }
+                }, 600);
+            }
+
+            function resetGame() {
+                gameActive = true;
+                clearInterval(timerInterval);
+                qModal.classList.remove('show');
+                clearHighlight();
+                resetTimers();
+                playerPositions = [1,1];
+                playerScores = [0,0];
+                playerCorrect = [0,0];
+                currentPlayer = 0;
+                isDiceRolling = false;
+                isQuestionActive = false;
+                selectedOption = null;
+                currentQuestion = null;
+                distributeQuestions();
+                createBoard();
+                createTokens();
+                updateUI();
+                activateDice();
+                showMessage('🔄 بازی جدید شروع شد!', 'info', 3000);
+            }
+
+            // ===== رویدادها =====
+            rollBtn.addEventListener('click', rollDice);
+            diceEl.addEventListener('click', rollDice);
+            submitBtn.addEventListener('click', submitAnswer);
+            restartBtn.addEventListener('click', ()=>{
+                if (confirm('آیا مطمئنید می‌خواهید بازی را از اول شروع کنید؟')) resetGame();
+            });
+            helpBtn.addEventListener('click', ()=>{
+                instrEl.style.display = instrEl.style.display==='none' ? 'block' : 'none';
+                helpBtn.textContent = instrEl.style.display==='none' ? '📖 راهنما' : '📕 بستن راهنما';
+            });
+
+            // ===== شروع اولیه =====
+            distributeQuestions();
+            createBoard();
+            createTokens();
+            gameActive = true;
+            updateUI();
+            activateDice();
+            showMessage('🔬 بازی علوم شروع شد! نوبت بازیکن ۱ است.', 'info', 3000);
+
+            // ===== اسکریپت منوی شبکه‌های اجتماعی =====
+            (function() {
+                const menu = document.getElementById('circularMenu');
+                const menuButton = document.querySelector('.menu-button');
+                const menuItems = Array.from(document.querySelectorAll('.menu-item'));
+                let isMenuOpen = false;
+                let isInitialized = false;
+                let isAnimating = false;
+                const ANIMATION_LOCK_MS = 730;
+
+                function setMenuState(open) {
+                    isMenuOpen = open;
+                    menu.classList.toggle('active', open);
+                    menuButton.setAttribute('aria-expanded', String(open));
+                    menuItems.forEach(item => item.setAttribute('tabindex', open ? '0' : '-1'));
+                }
+
+                function toggleMenu() {
+                    if (isAnimating) return;
+                    if (!isInitialized) {
+                        menu.classList.add('ready');
+                        isInitialized = true;
+                    }
+                    isAnimating = true;
+                    setMenuState(!isMenuOpen);
+                    setTimeout(() => { isAnimating = false; }, ANIMATION_LOCK_MS);
+                }
+
+                menuButton.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    toggleMenu();
+                });
+
+                document.addEventListener('click', function(e) {
+                    if (isMenuOpen && !menu.contains(e.target)) {
+                        setMenuState(false);
+                    }
+                });
+
+                document.addEventListener('keydown', function(e) {
+                    if (e.key === 'Escape' && isMenuOpen) {
+                        setMenuState(false);
+                        menuButton.focus();
+                    }
+                });
+
+                menu.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                });
+            })();
+
+            document.addEventListener('touchstart', function(e){ if(e.touches.length>1) e.preventDefault(); }, {passive:false});
+            let lastTouchEnd = 0;
+            document.addEventListener('touchend', function(e){
+                const now = Date.now();
+                if(now-lastTouchEnd <= 300) e.preventDefault();
+                lastTouchEnd = now;
+            }, false);
+        })();
+    </script>
+</body>
+</html>

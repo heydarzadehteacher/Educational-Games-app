@@ -1,0 +1,730 @@
+<meta name='viewport' content='width=device-width, initial-scale=1'/><!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>چالش رنگ‌ها 🎨 + شبکه‌های اجتماعی</title>
+
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{
+    font-family:tahoma;
+    background:linear-gradient(135deg,#a8edea,#fed6e3);
+    min-height:100vh;
+    display:flex;
+    justify-content:center;
+    padding:12px;
+}
+
+.container{
+    width:100%;
+    max-width:420px;
+    background:rgba(255,255,255,0.35);
+    backdrop-filter:blur(14px);
+    -webkit-backdrop-filter:blur(14px);
+    border-radius:25px;
+    box-shadow:0 20px 45px rgba(0,0,0,0.15);
+    display:flex;
+    flex-direction:column;
+    overflow:hidden;
+    padding-bottom:15px;
+}
+
+header{
+    padding:20px 15px;
+    text-align:center;
+}
+h1{
+    font-size:2.2em;
+    background:linear-gradient(90deg,#ff6b6b,#feca57,#48c6ef,#4ecdc4);
+    background-size:400%;
+    -webkit-background-clip:text;
+    -webkit-text-fill-color:transparent;
+    animation:rainbow 10s infinite;
+}
+@keyframes rainbow{0%{background-position:0%}50%{background-position:100%}100%{background-position:0%}}
+
+.description{
+    padding:18px;
+    font-size:1.05em;
+    line-height:1.8;
+    overflow-y:auto;
+    max-height:42vh;
+}
+.description p{margin-bottom:15px}
+.description strong{color:#d63384}
+
+.example{
+    background:rgba(255,255,255,0.6);
+    padding:12px;
+    border-radius:14px;
+    margin:12px 0;
+    font-weight:bold;
+}
+
+.ready-text{
+    font-size:1.2em;
+    font-weight:bold;
+    color:#d63384;
+    text-align:center;
+    margin-top:15px;
+}
+
+.buttons{
+    padding:16px;
+    display:flex;
+    flex-direction:column;
+    gap:12px;
+}
+button{
+    padding:14px;
+    font-size:1.2em;
+    font-weight:bold;
+    border:none;
+    border-radius:16px;
+    cursor:pointer;
+}
+#section1{background:#56ab2f;color:white}
+#section2{background:#667eea;color:white}
+
+#game1{
+    display:none;
+    position:relative;
+    background:rgba(255,255,255,0.25);
+    backdrop-filter:blur(12px);
+    flex-direction:column;
+    align-items:center;
+    padding:16px;
+    min-height:380px;
+}
+
+.info{
+    display:flex;
+    justify-content:space-between;
+    width:100%;
+    margin-bottom:10px;
+    font-size:1.05em;
+}
+.color-word{
+    font-size:2.2em;
+    font-weight:bold;
+    margin:14px 0;
+    background:transparent;
+    padding:10px 15px;
+    border-radius:12px;
+}
+.color-buttons{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:10px;
+    width:100%;
+}
+.color-buttons button{
+    padding:12px;
+    font-size:1em;
+    border-radius:12px;
+}
+
+#game2{
+    display:none;
+    position:relative;
+    background:rgba(255,255,255,0.25);
+    backdrop-filter:blur(12px);
+    flex-direction:column;
+    align-items:center;
+    padding:16px;
+    min-height:420px;
+}
+
+#game2 .info{margin-bottom:12px;}
+#game2 .stage-word{
+    font-size:2.5em;
+    font-weight:bold;
+    margin:12px 0;
+    transition: transform 0.2s ease;
+}
+#game2 .question-box{
+    font-size:1.3em;
+    font-weight:bold;
+    margin:10px 0 20px 0;
+}
+#game2 .answer-buttons{
+    display:flex;
+    justify-content:space-between;
+    flex-wrap:wrap;
+    gap:6px;
+}
+#game2 .answer-buttons button{
+    flex:1 1 calc(20% - 6px);
+    padding:10px;
+    font-size:1em;
+    border-radius:10px;
+}
+.tick-cross{
+    position:absolute;
+    font-size:3em;
+    top:40%;
+    transform:translateY(-50%);
+    opacity:0;
+    pointer-events:none;
+    transition:opacity 0.5s ease, transform 0.5s ease;
+}
+.tick-cross.show{
+    opacity:1;
+    transform:translateY(-50%) scale(1.3);
+}
+.correct-highlight{
+    background-color:rgba(0,255,0,0.3);
+    border-radius:10px;
+    padding:5px 10px;
+}
+
+#finishPopup{
+    display:none;
+    position:fixed;
+    top:50%;
+    left:50%;
+    transform:translate(-50%,-50%);
+    background:rgba(255,255,255,0.95);
+    backdrop-filter:blur(12px);
+    border-radius:20px;
+    padding:25px;
+    width:90%;
+    max-width:360px;
+    text-align:center;
+    box-shadow:0 10px 30px rgba(0,0,0,0.2);
+    z-index:9999;
+}
+#finishPopup button{
+    padding:12px 18px;
+    border-radius:14px;
+    font-weight:bold;
+    font-size:1em;
+    cursor:pointer;
+}
+#finishPopup button#restartBtn{background:#56ab2f;color:white;}
+#finishPopup button#menuBtn{background:#667eea;color:white;}
+</style>
+
+<style>
+:root {
+  --neon-primary: #0ff;
+  --neon-secondary: #f0f;
+  --bg-dark: #121212;
+}
+
+.circular-menu {
+  position: fixed;
+  bottom: 25px;
+  left: 25px;
+  width: 60px;
+  height: 60px;
+  z-index: 9999;
+}
+
+.circular-menu .menu-button {
+  position: absolute;
+  top: 0; left: 0;
+  width: 58px; height: 58px;
+  border-radius: 50%;
+  background-color: var(--bg-dark);
+  color: var(--neon-primary);
+  border: 2px solid var(--neon-primary);
+  cursor: pointer;
+  z-index: 2;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  box-shadow: 0 0 8px var(--neon-primary),
+              0 0 15px var(--neon-primary),
+              0 0 30px var(--neon-primary),
+              inset 0 0 15px rgba(0, 255, 255, 0.2);
+  transition: all 0.4s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+  -webkit-tap-highlight-color: transparent;
+}
+
+.circular-menu .menu-button:focus-visible {
+  outline: 3px solid #fff;
+  outline-offset: 3px;
+}
+
+.circular-menu.active .menu-button {
+  background-color: #1a0a1a;
+  color: var(--neon-secondary);
+  border-color: var(--neon-secondary);
+  transform: rotate(135deg);
+  box-shadow: 0 0 10px var(--neon-secondary),
+              0 0 20px var(--neon-secondary),
+              0 0 40px var(--neon-secondary),
+              inset 0 0 20px rgba(255, 0, 255, 0.3);
+}
+
+.circular-menu .menu-item {
+  position: absolute;
+  top: 0; left: 0;
+  width: 52px; height: 52px;
+  border-radius: 50%;
+  background-color: #ffffff;
+  color: #2c3e50;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  opacity: 0;
+  transform: scale(0);
+  z-index: -1;
+  text-decoration: none;
+  -webkit-tap-highlight-color: transparent;
+  pointer-events: none;
+  visibility: hidden;
+}
+
+.circular-menu.active .menu-item {
+  pointer-events: auto;
+  visibility: visible;
+}
+
+.menu-item:focus-visible {
+  outline: 3px solid #fff;
+  outline-offset: 2px;
+}
+
+.menu-item.instagram:hover, .menu-item.instagram:focus-visible { background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888); color: white; }
+.menu-item.telegram:hover, .menu-item.telegram:focus-visible { background: #0088cc; color: white; }
+.menu-item.aparat:hover, .menu-item.aparat:focus-visible { background: #ed1c24; color: white; }
+.menu-item.website:hover, .menu-item.website:focus-visible { background: #4facfe; color: white; }
+.menu-item.webapp:hover, .menu-item.webapp:focus-visible { background: #6c5ce7; color: white; }
+
+.circular-menu.ready.active .menu-item {
+  animation-duration: 0.45s;
+  animation-timing-function: cubic-bezier(0.68, -0.55, 0.27, 1.55);
+  animation-fill-mode: forwards;
+}
+.circular-menu.ready.active .menu-item:nth-child(1) { animation-name: expand1; animation-delay: 0.00s; }
+.circular-menu.ready.active .menu-item:nth-child(2) { animation-name: expand2; animation-delay: 0.07s; }
+.circular-menu.ready.active .menu-item:nth-child(3) { animation-name: expand3; animation-delay: 0.14s; }
+.circular-menu.ready.active .menu-item:nth-child(4) { animation-name: expand4; animation-delay: 0.21s; }
+.circular-menu.ready.active .menu-item:nth-child(5) { animation-name: expand5; animation-delay: 0.28s; }
+
+.circular-menu.ready:not(.active) .menu-item {
+  animation-duration: 0.35s;
+  animation-timing-function: ease-in;
+  animation-fill-mode: forwards;
+}
+.circular-menu.ready:not(.active) .menu-item:nth-child(1) { animation-name: collapse1; animation-delay: 0.28s; }
+.circular-menu.ready:not(.active) .menu-item:nth-child(2) { animation-name: collapse2; animation-delay: 0.21s; }
+.circular-menu.ready:not(.active) .menu-item:nth-child(3) { animation-name: collapse3; animation-delay: 0.14s; }
+.circular-menu.ready:not(.active) .menu-item:nth-child(4) { animation-name: collapse4; animation-delay: 0.07s; }
+.circular-menu.ready:not(.active) .menu-item:nth-child(5) { animation-name: collapse5; animation-delay: 0.00s; }
+
+@keyframes expand1 { 0% { opacity:0; transform:scale(0); z-index:1; } 100% { opacity:1; transform:translate(0,-150px) scale(1); z-index:1; } }
+@keyframes expand2 { 0% { opacity:0; transform:scale(0); z-index:1; } 100% { opacity:1; transform:translate(57px,-139px) scale(1); z-index:1; } }
+@keyframes expand3 { 0% { opacity:0; transform:scale(0); z-index:1; } 100% { opacity:1; transform:translate(106px,-106px) scale(1); z-index:1; } }
+@keyframes expand4 { 0% { opacity:0; transform:scale(0); z-index:1; } 100% { opacity:1; transform:translate(139px,-57px) scale(1); z-index:1; } }
+@keyframes expand5 { 0% { opacity:0; transform:scale(0); z-index:1; } 100% { opacity:1; transform:translate(150px,0) scale(1); z-index:1; } }
+
+@keyframes collapse1 { 0% { opacity:1; transform:translate(0,-150px) scale(1); z-index:1; } 100% { opacity:0; transform:translate(0,-150px) scale(0); z-index:-1; } }
+@keyframes collapse2 { 0% { opacity:1; transform:translate(57px,-139px) scale(1); z-index:1; } 100% { opacity:0; transform:translate(57px,-139px) scale(0); z-index:-1; } }
+@keyframes collapse3 { 0% { opacity:1; transform:translate(106px,-106px) scale(1); z-index:1; } 100% { opacity:0; transform:translate(106px,-106px) scale(0); z-index:-1; } }
+@keyframes collapse4 { 0% { opacity:1; transform:translate(139px,-57px) scale(1); z-index:1; } 100% { opacity:0; transform:translate(139px,-57px) scale(0); z-index:-1; } }
+@keyframes collapse5 { 0% { opacity:1; transform:translate(150px,0) scale(1); z-index:1; } 100% { opacity:0; transform:translate(150px,0) scale(0); z-index:-1; } }
+
+.circular-menu svg { width: 24px; height: 24px; fill: currentColor; }
+</style>
+</head>
+<body>
+
+<div class="container" id="menu">
+<header>
+<h1>چالش رنگ‌ها 🎨</h1>
+</header>
+
+<div class="description">
+<p>در این بازی هیجان‌انگیز ۲ بخش متفاوت داریم:</p>
+
+<p><strong>بخش ۱ (ساده):</strong> یک کلمه رنگی ظاهر میشه و تو باید هم به کلمه‌ی نوشته شده توجه داشته باشی و هم به رنگ نوشته؛</p>
+
+<div class="example">
+مثلاً کلمه‌ی <span style="color:blue;font-weight:bold;">سبز</span> با رنگ آبی نوشته بشه.<br>
+سؤال: رنگ کلمه چیه؟<br>
+پاسخ درست: <strong>آبی</strong>
+</div>
+
+<p>تو باید سریع رنگ واقعی نوشته رو انتخاب کنی، نه چیزی که نوشته شده!</p>
+
+<p><strong>بخش ۲ (چالشی):</strong> این کار به صورت متوالی در ۵ مرحله صورت میگیره و بعدش باید به سوالات جواب بدی. حافظه، تمرکز و سرعتت همزمان به چالش کشیده میشه!</p>
+
+<div class="ready-text">
+🧠 آماده‌ی چالش هستی؟ 🧠
+</div>
+</div>
+
+<div class="buttons">
+<button id="section1">🌟 بخش ۱ (ساده)</button>
+<button id="section2">🔥 بخش ۲ (چالشی)</button>
+</div>
+</div>
+
+<div class="container" id="game1">
+<header><h1>بخش ۱ 🌟</h1></header>
+<div style="width:100%;text-align:center">
+<div class="info">
+<div>✅ <span id="correct">0</span></div>
+<div>⏱ <span id="time">60</span></div>
+<div>❌ <span id="wrong">0</span></div>
+</div>
+<h2>رنگ کلمه کدومه؟</h2>
+<div id="colorWord" class="color-word">آبی</div>
+<div class="color-buttons">
+<button data-color="blue" style="background:blue;color:white">آبی</button>
+<button data-color="red" style="background:red;color:white">قرمز</button>
+<button data-color="yellow" style="background:gold">زرد</button>
+<button data-color="white" style="background:white">سفید</button>
+<button data-color="black" style="background:black;color:white">مشکی</button>
+</div>
+</div>
+</div>
+
+<div class="container" id="game2">
+<header><h1>بخش ۲ 🔥</h1></header>
+<div style="width:100%;text-align:center;position:relative;">
+<div class="info">
+<div>✅ <span id="correct2">0</span></div>
+<div>⏱ <span id="time2">120</span></div>
+<div>❌ <span id="wrong2">0</span></div>
+</div>
+
+<div id="stageWords" class="stage-word">...</div>
+<div class="tick-cross" id="tickCross">✔️</div>
+<div class="question-box" id="colorQuestion"></div>
+<div class="answer-buttons" id="answerButtons2">
+</div>
+</div>
+</div>
+
+<div id="finishPopup">
+<h2>⏰ زمان تمام شد!</h2>
+<p>تعداد پاسخ‌های درست: <span id="finalCorrect">0</span></p>
+<p>تعداد پاسخ‌های غلط: <span id="finalWrong">0</span></p>
+<div style="margin-top:18px;display:flex;justify-content:space-around">
+<button id="restartBtn">شروع دوباره</button>
+<button id="menuBtn">صفحه اصلی</button>
+</div>
+</div>
+
+<script>
+const audioCtx=new (window.AudioContext||window.webkitAudioContext)();
+function clickSound(){
+const o=audioCtx.createOscillator();
+const g=audioCtx.createGain();
+o.type='square';o.frequency.value=600;
+g.gain.value=0.07;
+o.connect(g);g.connect(audioCtx.destination);
+o.start();o.stop(audioCtx.currentTime+0.05);
+}
+
+const colors=[
+{name:'آبی',value:'blue'},
+{name:'قرمز',value:'red'},
+{name:'زرد',value:'yellow'},
+{name:'سفید',value:'white'},
+{name:'مشکی',value:'black'}
+];
+
+let correct=0,wrong=0,time=60,correctColor='';
+let qTimer,tTimer;
+const colorButtons=document.querySelectorAll('#game1 .color-buttons button');
+const section1=document.getElementById('section1');
+const section2=document.getElementById('section2');
+const menu=document.getElementById('menu');
+const game1=document.getElementById('game1');
+const game2=document.getElementById('game2');
+const finishPopup=document.getElementById('finishPopup');
+const restartBtn=document.getElementById('restartBtn');
+const menuBtn=document.getElementById('menuBtn');
+
+section1.onclick=()=>{
+clickSound();
+menu.style.display='none';
+game1.style.display='flex';
+startGame1();
+};
+
+section2.onclick=()=>{
+clickSound();
+menu.style.display='none';
+game2.style.display='flex';
+startGame2();
+};
+
+colorButtons.forEach(btn=>{
+btn.onclick=()=>{
+clickSound();
+checkAnswer1(btn.dataset.color);
+};
+});
+
+function startGame1(){
+correct=wrong=0;time=60;
+updateInfo1();
+nextQuestion1();
+finishPopup.style.display='none';
+enableColorButtons1(true);
+
+tTimer=setInterval(()=>{
+time--;
+document.getElementById('time').innerText=time;
+if(time===0){
+clearInterval(tTimer);
+clearTimeout(qTimer);
+showFinishPopup1();
+}
+},1000);
+}
+
+function nextQuestion1(){
+const word=colors[Math.floor(Math.random()*colors.length)];
+let color;
+do{color=colors[Math.floor(Math.random()*colors.length)];}while(word.value===color.value);
+colorWord.innerText=word.name;
+colorWord.style.color=color.value;
+correctColor=color.value;
+qTimer=setTimeout(()=>{
+wrong++;
+updateInfo1();
+nextQuestion1();
+},3000);
+}
+
+function checkAnswer1(val){
+clearTimeout(qTimer);
+val===correctColor?correct++:wrong++;
+updateInfo1();
+nextQuestion1();
+}
+
+function updateInfo1(){
+document.getElementById('correct').innerText=correct;
+document.getElementById('wrong').innerText=wrong;
+}
+
+function enableColorButtons1(state){
+colorButtons.forEach(btn=>btn.disabled=!state);
+}
+
+let correct2=0,wrong2=0,time2=120;
+let stageIndex=0,stepIndex=0;
+let stageWords=[],currentColor='';
+let stageTimer,game2Timer;
+const stageWordsDiv=document.getElementById('stageWords');
+const colorQuestionDiv=document.getElementById('colorQuestion');
+const answerButtons2=document.getElementById('answerButtons2');
+const tickCross=document.getElementById('tickCross');
+
+function startGame2(){
+correct2=wrong2=0;time2=120;
+updateInfo2();
+stageIndex=0;
+stepIndex=0;
+stageWordsDiv.innerText = "در حال آماده‌سازی مرحله اول...";
+colorQuestionDiv.innerText = "";
+finishPopup.style.display='none';
+answerButtons2.innerHTML='';
+enableAnswerButtons2(true);
+
+game2Timer=setInterval(()=>{
+time2--;
+document.getElementById('time2').innerText=time2;
+if(time2<=0){
+clearInterval(game2Timer);
+clearTimeout(stageTimer);
+showFinishPopup2();
+}
+},1000);
+
+setTimeout(nextStage2,500);
+}
+
+function nextStage2(){
+if(time2<=0) return;
+
+stageWords=[];
+for(let i=0;i<5;i++){
+const word=colors[Math.floor(Math.random()*colors.length)];
+const color=colors[Math.floor(Math.random()*colors.length)];
+stageWords.push({name:word.name,color:color.value});
+}
+stepIndex=0;
+stageWordsDiv.innerText="";
+colorQuestionDiv.innerText="";
+
+stageTimer=setInterval(()=>{
+if(stepIndex>=stageWords.length){
+clearInterval(stageTimer);
+askQuestion2();
+return;
+}
+const w=stageWords[stepIndex];
+stageWordsDiv.innerText=w.name;
+stageWordsDiv.style.color=w.color;
+stepIndex++;
+},1000);
+}
+
+function askQuestion2(){
+const randColor=colors[Math.floor(Math.random()*colors.length)];
+currentColor=randColor.value;
+let count=stageWords.filter(w=>w.color===randColor.value).length;
+colorQuestionDiv.innerHTML=`چند کلمه با رنگ <span class="correct-highlight">${randColor.name}</span> نوشته شده بود؟`;
+
+answerButtons2.innerHTML='';
+for(let i=0;i<=5;i++){
+    const btn=document.createElement('button');
+    btn.innerText=i;
+    btn.onclick=()=>{
+        clickSound();
+        Array.from(answerButtons2.children).forEach(b=>b.style.background='');
+
+        if(i===count){ 
+            correct2++;
+            btn.style.background='rgba(0,255,0,0.6)';
+        } else{
+            wrong2++;
+            btn.style.background='rgba(255,0,0,0.6)';
+        }
+
+        tickCross.innerText=i===count?'✔️':'❌';
+        tickCross.classList.add('show');
+        setTimeout(()=>tickCross.classList.remove('show'),600);
+
+        updateInfo2();
+        setTimeout(nextStage2,600);
+    };
+    answerButtons2.appendChild(btn);
+}
+}
+
+function updateInfo2(){
+document.getElementById('correct2').innerText=correct2;
+document.getElementById('wrong2').innerText=wrong2;
+}
+
+function enableAnswerButtons2(state){
+document.querySelectorAll('#game2 .answer-buttons button').forEach(btn=>btn.disabled=!state);
+}
+
+function showFinishPopup1(){
+enableColorButtons1(false);
+finishPopup.style.display='block';
+document.getElementById('finalCorrect').innerText=correct;
+document.getElementById('finalWrong').innerText=wrong;
+}
+
+function showFinishPopup2(){
+enableAnswerButtons2(false);
+enableColorButtons1(false);
+finishPopup.style.display='block';
+document.getElementById('finalCorrect').innerText=correct2;
+document.getElementById('finalWrong').innerText=wrong2;
+}
+
+restartBtn.onclick=()=>{
+finishPopup.style.display='none';
+if(game1.style.display==='flex') startGame1();
+if(game2.style.display==='flex') startGame2();
+};
+
+menuBtn.onclick=()=>{
+finishPopup.style.display='none';
+game1.style.display='none';
+game2.style.display='none';
+menu.style.display='flex';
+};
+</script>
+
+<div class="circular-menu" id="circularMenu">
+  <a href="https://instagram.com/heydarzadehteacher" target="_blank" rel="noopener noreferrer"
+     class="menu-item instagram" title="اینستاگرام" aria-label="صفحه‌ی اینستاگرام" tabindex="-1">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.204-.012 3.583-.069 4.849-.148 3.227-1.664 4.771-4.919 4.919-1.266.058-1.645.069-4.849.069-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.791-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.209-1.791 4-4 4zm6.406-11.845c-.796 0-1.44.645-1.44 1.44s.644 1.44 1.44 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
+  </a>
+
+  <a href="https://t.me/bazieamouzeshi" target="_blank" rel="noopener noreferrer"
+     class="menu-item telegram" title="تلگرام" aria-label="کانال تلگرام" tabindex="-1">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.38-.94-2.23-1.5-.99-.65-.35-1.01.22-1.59.15-.15 2.71-2.48 2.76-2.69.01-.03.01-.14-.07-.2-.08-.06-.19-.04-.27-.02-.12.02-1.96 1.25-5.54 3.66-.52.36-1 .53-1.42.52-.47-.01-1.37-.26-2.03-.48-.82-.27-1.47-.42-1.41-.88.03-.24.37-.49 1.02-.74 3.98-1.73 6.63-2.87 7.96-3.42 3.79-1.58 4.58-1.85 5.09-1.86.11 0 .37.03.53.16.14.11.18.25.2.39-.01.06.01.23-.02.37z"/></svg>
+  </a>
+
+  <a href="https://www.aparat.com/heydarzadehteacher" target="_blank" rel="noopener noreferrer"
+     class="menu-item aparat" title="آپارات" aria-label="صفحه‌ی آپارات" tabindex="-1">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 8.64v6.72L15.27 12 10 8.64zM12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z"/></svg>
+  </a>
+
+  <a href="https://sites.google.com/view/heydarzadehteacher" target="_blank" rel="noopener noreferrer"
+     class="menu-item website" title="وب‌سایت" aria-label="وب‌سایت" tabindex="-1">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/></svg>
+  </a>
+
+  <a href="https://heydarzadehteacher.github.io/Educational-Games-app/index.html" target="_blank" rel="noopener noreferrer"
+     class="menu-item webapp" title="وب‌اپ" aria-label="وب‌اپ آموزشی" tabindex="-1">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M17 1.01L7 1c-1.1 0-2 .9-2 2v18c0 1.1.9 2 2 2h10c1.1 0 2-.9 2-2V3c0-1.1-.9-1.99-2-1.99zM17 19H7V5h10v14z"/></svg>
+  </a>
+
+  <button class="menu-button" title="شبکه‌های اجتماعی" aria-label="باز کردن منوی شبکه‌های اجتماعی"
+          aria-haspopup="true" aria-expanded="false">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92 1.61 0 2.92-1.31 2.92-2.92s-1.31-2.92-2.92-2.92z"/></svg>
+  </button>
+</div>
+
+<script>
+  (function() {
+    const menu = document.getElementById('circularMenu');
+    const menuButton = document.querySelector('.menu-button');
+    const menuItems = Array.from(document.querySelectorAll('.menu-item'));
+    let isMenuOpen = false;
+    let isInitialized = false;
+    let isAnimating = false;
+    const ANIMATION_LOCK_MS = 730;
+
+    function setMenuState(open) {
+      isMenuOpen = open;
+      menu.classList.toggle('active', open);
+      menuButton.setAttribute('aria-expanded', String(open));
+      menuItems.forEach(item => item.setAttribute('tabindex', open ? '0' : '-1'));
+    }
+
+    function toggleMenu() {
+      if (isAnimating) return;
+      if (!isInitialized) {
+        menu.classList.add('ready');
+        isInitialized = true;
+      }
+      isAnimating = true;
+      setMenuState(!isMenuOpen);
+      setTimeout(() => { isAnimating = false; }, ANIMATION_LOCK_MS);
+    }
+
+    menuButton.addEventListener('click', function(e) {
+      e.stopPropagation();
+      toggleMenu();
+    });
+
+    document.addEventListener('click', function(e) {
+      if (isMenuOpen && !menu.contains(e.target)) {
+        setMenuState(false);
+      }
+    });
+
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape' && isMenuOpen) {
+        setMenuState(false);
+        menuButton.focus();
+      }
+    });
+
+    menu.addEventListener('click', function(e) {
+      e.stopPropagation();
+    });
+  })();
+</script>
+
+</body>
+</html>

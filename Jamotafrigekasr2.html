@@ -1,0 +1,2315 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>پازل کسرها - چهارم تا ششم</title>
+    <style>
+        /* ===== تمام استایل‌های قبلی بازی (بدون تغییر) ===== */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            font-family: 'Vazirmatn', 'Segoe UI', Tahoma, sans-serif;
+            background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+            background-attachment: fixed;
+            color: #fff;
+            min-height: 100vh;
+            padding: 15px;
+            touch-action: pan-y;
+            overflow-y: auto;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+        }
+
+        .container {
+            max-width: 500px;
+            margin: 0 auto;
+            width: 100%;
+            transition: opacity 0.3s;
+            height: auto;
+        }
+        .container.game-ended {
+            pointer-events: none;
+            opacity: 0.6;
+        }
+
+        .page-hidden {
+            visibility: hidden !important;
+            opacity: 0 !important;
+            pointer-events: none !important;
+            position: absolute !important;
+            top: -9999px !important;
+            left: -9999px !important;
+            width: 1px !important;
+            height: 1px !important;
+            overflow: hidden !important;
+        }
+        .page-visible {
+            visibility: visible !important;
+            opacity: 1 !important;
+            pointer-events: auto !important;
+            position: relative !important;
+            top: auto !important;
+            left: auto !important;
+            width: 100% !important;
+            height: auto !important;
+            overflow: visible !important;
+        }
+
+        #gameContainer {
+            display: block !important;
+            width: 100%;
+            max-width: 500px;
+            margin: 0 auto;
+        }
+        #gameContainer.page-hidden {
+            visibility: hidden !important;
+            opacity: 0 !important;
+            height: 0 !important;
+            overflow: hidden !important;
+            padding: 0 !important;
+            margin: 0 !important;
+        }
+        #gameContainer.page-visible {
+            visibility: visible !important;
+            opacity: 1 !important;
+            height: auto !important;
+            overflow: visible !important;
+            padding: inherit !important;
+            margin: inherit !important;
+        }
+
+        .game-header,
+        .game-info {
+            width: 100%;
+            text-align: center;
+        }
+        .game-info {
+            display: grid !important;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+        }
+
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.85);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 3000;
+            padding: 15px;
+        }
+
+        .modal-content {
+            background: linear-gradient(135deg, #6a11cb, #2575fc);
+            border-radius: 18px;
+            padding: 20px;
+            width: 100%;
+            max-width: 380px;
+            max-height: 90vh;
+            overflow-y: auto;
+            animation: scaleIn 0.3s ease;
+            box-sizing: border-box;
+        }
+        .modal-content::-webkit-scrollbar {
+            width: 6px;
+        }
+        .modal-content::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 3px;
+        }
+        .modal-content::-webkit-scrollbar-thumb {
+            background: rgba(255, 222, 89, 0.7);
+            border-radius: 3px;
+        }
+
+        .modal-title {
+            font-size: 1.6rem;
+            margin-bottom: 18px;
+            text-align: center;
+            color: #ffde59;
+            line-height: 1.3;
+        }
+
+        .instructions {
+            margin-bottom: 22px;
+            line-height: 1.6;
+        }
+        .instruction-item {
+            margin-bottom: 14px;
+            display: flex;
+            align-items: flex-start;
+            gap: 8px;
+            font-size: 0.95rem;
+        }
+
+        .close-btn {
+            background: #ffde59;
+            color: #1a2980;
+            border: none;
+            padding: 14px 25px;
+            font-size: 1rem;
+            border-radius: 50px;
+            font-weight: bold;
+            cursor: pointer;
+            width: 100%;
+            transition: transform 0.2s;
+            margin-top: 5px;
+        }
+        .close-btn:active {
+            transform: scale(0.95);
+        }
+
+        .game-header {
+            text-align: center;
+            margin-bottom: 15px;
+        }
+        .game-header h1 {
+            font-size: 1.8rem;
+            color: #ffde59;
+            margin-bottom: 5px;
+        }
+        .game-header .subtitle {
+            font-size: 1rem;
+            opacity: 0.9;
+            margin-bottom: 15px;
+        }
+
+        .menu-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin-top: 20px;
+        }
+        .menu-btn {
+            padding: 20px 15px;
+            border: none;
+            border-radius: 20px;
+            font-size: 1.4rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.3s, box-shadow 0.3s;
+            color: #fff;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+            text-align: center;
+        }
+        .menu-btn:active {
+            transform: scale(0.95);
+        }
+        .menu-btn.grade4 {
+            background: linear-gradient(135deg, #00b894, #00cec9);
+        }
+        .menu-btn.grade5 {
+            background: linear-gradient(135deg, #fdcb6e, #f39c12);
+        }
+        .menu-btn.grade6 {
+            background: linear-gradient(135deg, #e17055, #d63031);
+        }
+        .menu-btn .sub {
+            font-size: 0.8rem;
+            opacity: 0.9;
+            display: block;
+            margin-top: 5px;
+            font-weight: normal;
+        }
+
+        .game-info {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        .info-card {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 15px 10px;
+            text-align: center;
+            backdrop-filter: blur(5px);
+        }
+        .info-label {
+            font-size: 0.8rem;
+            opacity: 0.9;
+            margin-bottom: 5px;
+        }
+        .info-value {
+            font-size: 1.4rem;
+            font-weight: bold;
+            color: #ffde59;
+        }
+
+        .lives {
+            display: flex;
+            justify-content: center;
+            gap: 5px;
+            margin-top: 5px;
+        }
+        .life {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #ffde59;
+        }
+        .life.lost {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .selection-message {
+            background: rgba(52, 152, 219, 0.2);
+            border: 2px solid #3498db;
+            border-radius: 15px;
+            padding: 12px 15px;
+            text-align: center;
+            margin-bottom: 20px;
+            font-weight: bold;
+            min-height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.95rem;
+            line-height: 1.5;
+        }
+        .selected-piece {
+            color: #ffde59;
+            font-size: 1.3rem;
+            margin: 0 5px;
+        }
+
+        .pieces-section {
+            margin-bottom: 25px;
+        }
+        .section-title {
+            font-size: 1.2rem;
+            margin-bottom: 15px;
+            color: #ffde59;
+            text-align: center;
+        }
+
+        .pieces-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+        }
+        @media (min-width: 400px) {
+            .pieces-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+
+        .fraction-piece {
+            background: rgba(155, 89, 182, 0.15);
+            border: 3px solid #9b59b6;
+            border-radius: 15px;
+            padding: 18px 8px;
+            text-align: center;
+            font-size: 1.4rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            user-select: none;
+            touch-action: manipulation;
+            color: #ffde59;
+            min-height: 70px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            direction: ltr;
+        }
+        .fraction-piece.selected {
+            background: rgba(155, 89, 182, 0.4);
+            border-color: #ffde59;
+            transform: scale(0.95);
+            box-shadow: 0 0 20px rgba(255, 222, 89, 0.5);
+        }
+        .fraction-piece.solved {
+            opacity: 0.4;
+            cursor: default;
+            border-color: #2ecc71;
+            background: rgba(46, 204, 113, 0.2);
+        }
+        .fraction-piece.hint-highlight {
+            border-color: #ffde59 !important;
+            box-shadow: 0 0 25px #ffde59 !important;
+            transform: scale(1.02);
+        }
+
+        .answers-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+        }
+        .answer-cell {
+            aspect-ratio: 1;
+            background: rgba(255, 255, 255, 0.1);
+            border: 3px solid rgba(255, 255, 255, 0.2);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.6rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            user-select: none;
+            touch-action: manipulation;
+            direction: ltr;
+        }
+        .answer-cell:active {
+            transform: scale(0.95);
+        }
+        .answer-cell.correct {
+            background: rgba(46, 204, 113, 0.4);
+            border-color: #2ecc71;
+            color: #2ecc71;
+            cursor: default;
+        }
+        .answer-cell.wrong {
+            animation: shake 0.5s ease;
+            background: rgba(231, 76, 60, 0.4);
+            border-color: #e74c3c;
+        }
+        .answer-cell.hint-highlight {
+            border-color: #ffde59 !important;
+            box-shadow: 0 0 25px #ffde59 !important;
+            transform: scale(1.05);
+        }
+
+        .scratchpad-section {
+            margin: 20px 0 10px 0;
+        }
+        .scratchpad-section .section-title {
+            font-size: 1.2rem;
+            margin-bottom: 10px;
+            color: #ffde59;
+            text-align: center;
+        }
+        .scratchpad-hint {
+            font-size: 0.85rem;
+            opacity: 0.8;
+            text-align: center;
+            margin-bottom: 8px;
+            color: #ddd;
+            line-height: 1.6;
+        }
+        .canvas-wrapper {
+            background: #ffffff;
+            border-radius: 15px;
+            padding: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+            touch-action: none;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .canvas-wrapper canvas {
+            display: block;
+            width: 100%;
+            height: auto;
+            max-width: 600px;
+            border-radius: 10px;
+            touch-action: none;
+            cursor: pointer;
+            background: white;
+            border: 1px solid #ddd;
+            aspect-ratio: 600 / 1200;
+        }
+        .canvas-tools {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 10px;
+            margin-top: 12px;
+            justify-content: center;
+        }
+        .canvas-tools .color-btn {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            border: 3px solid transparent;
+            cursor: pointer;
+            transition: all 0.2s;
+            touch-action: manipulation;
+        }
+        .canvas-tools .color-btn.active {
+            border-color: #ffde59;
+            transform: scale(1.1);
+        }
+        .canvas-tools .color-btn.black {
+            background: #222;
+        }
+        .canvas-tools .color-btn.blue {
+            background: #3498db;
+        }
+        .canvas-tools .color-btn.red {
+            background: #e74c3c;
+        }
+        .canvas-tools .tool-btn {
+            background: rgba(255, 255, 255, 0.15);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            color: #fff;
+            padding: 8px 14px;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.2s;
+            touch-action: manipulation;
+        }
+        .canvas-tools .tool-btn:active {
+            transform: scale(0.95);
+        }
+        .canvas-tools .tool-btn.active {
+            border-color: #ffde59;
+            background: rgba(255, 222, 89, 0.2);
+        }
+        .canvas-tools .tool-btn.eraser {
+            background: rgba(231, 76, 60, 0.2);
+            border-color: #e74c3c;
+        }
+        .canvas-tools .tool-btn.clear {
+            background: rgba(231, 76, 60, 0.3);
+            border-color: #e74c3c;
+        }
+
+        .game-buttons {
+            display: flex;
+            gap: 12px;
+            margin-top: 15px;
+            flex-wrap: wrap;
+        }
+        .game-btn {
+            flex: 1;
+            background: linear-gradient(to right, #ff416c, #ff4b2b);
+            color: white;
+            border: none;
+            padding: 16px;
+            font-size: 1rem;
+            border-radius: 15px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-align: center;
+            touch-action: manipulation;
+            min-width: 80px;
+        }
+        .game-btn:active {
+            transform: scale(0.95);
+        }
+        .game-btn.secondary {
+            background: linear-gradient(to right, #3498db, #2980b9);
+        }
+        .game-btn.success {
+            background: linear-gradient(to right, #2ecc71, #27ae60);
+        }
+
+        #message {
+            position: fixed;
+            bottom: 20px;
+            left: 15px;
+            right: 15px;
+            background: rgba(46, 204, 113, 0.95);
+            color: white;
+            padding: 16px;
+            border-radius: 15px;
+            font-weight: bold;
+            text-align: center;
+            display: none;
+            z-index: 1000;
+            box-shadow: 0 5px 25px rgba(0, 0, 0, 0.3);
+            animation: slideUp 0.3s ease;
+            font-size: 0.95rem;
+        }
+        #message.error {
+            background: rgba(231, 76, 60, 0.95);
+        }
+        #message.info {
+            background: rgba(52, 152, 219, 0.95);
+        }
+
+        /* ===== بهبود استایل مودال پایان بازی ===== */
+        #endModal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.85);
+            backdrop-filter: blur(8px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 3000;
+            padding: 15px;
+        }
+
+        #endModal.active {
+            display: flex;
+        }
+
+        #endModal .modal-content {
+            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+            border-radius: 25px;
+            padding: 25px 20px;
+            max-width: 420px;
+            width: 90%;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+            animation: modalPop 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+            text-align: center;
+            border: 2px solid #ffde59;
+            margin: auto;
+        }
+
+        @keyframes modalPop {
+            0% {
+                transform: scale(0.8) translateY(30px);
+                opacity: 0;
+            }
+            100% {
+                transform: scale(1) translateY(0);
+                opacity: 1;
+            }
+        }
+
+        #endModal .modal-title {
+            font-size: 2rem;
+            color: #ffde59;
+            margin-bottom: 10px;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+        }
+
+        #endModal .modal-title .icon {
+            font-size: 2.5rem;
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        #endModal .final-score {
+            font-size: 3.5rem;
+            font-weight: bold;
+            color: #ffde59;
+            margin: 15px 0;
+            text-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        #endModal .score-label {
+            font-size: 1.1rem;
+            color: rgba(255, 255, 255, 0.8);
+            margin-bottom: 10px;
+        }
+
+        #endModal .stats-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin: 20px 0;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 15px;
+            backdrop-filter: blur(5px);
+        }
+
+        #endModal .stats-grid .stat-item {
+            text-align: center;
+        }
+
+        #endModal .stats-grid .stat-value {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #ffde59;
+        }
+
+        #endModal .stats-grid .stat-label {
+            font-size: 0.9rem;
+            color: rgba(255, 255, 255, 0.7);
+            margin-top: 3px;
+        }
+
+        #endModal .modal-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-top: 20px;
+        }
+
+        #endModal .modal-btn {
+            padding: 16px 20px;
+            border: none;
+            border-radius: 50px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            min-height: 55px;
+            width: 100%;
+            font-family: Vazirmatn, sans-serif;
+        }
+
+        #endModal .modal-btn-primary {
+            background: linear-gradient(135deg, #ffde59, #f59e0b);
+            color: #1a2980;
+            box-shadow: 0 5px 15px rgba(255, 222, 89, 0.3);
+        }
+
+        #endModal .modal-btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(255, 222, 89, 0.4);
+        }
+
+        #endModal .modal-btn-secondary {
+            background: rgba(255, 255, 255, 0.15);
+            color: white;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+        }
+
+        #endModal .modal-btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.25);
+            transform: translateY(-2px);
+        }
+
+        #confettiContainer {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 4000;
+            overflow: hidden;
+        }
+        .confettiPiece {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            border-radius: 2px;
+            animation: confettiFall linear forwards;
+        }
+        @keyframes confettiFall {
+            0% {
+                transform: translateY(-10vh) rotate(0deg);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(110vh) rotate(720deg);
+                opacity: 0;
+            }
+        }
+
+        @keyframes scaleIn {
+            from {
+                transform: scale(0.8);
+                opacity: 0;
+            }
+            to {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+        @keyframes slideUp {
+            from {
+                transform: translateY(100px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+        @keyframes shake {
+            0%,
+            100% {
+                transform: translateX(0);
+            }
+            10%,
+            30%,
+            50%,
+            70%,
+            90% {
+                transform: translateX(-5px);
+            }
+            20%,
+            40%,
+            60%,
+            80% {
+                transform: translateX(5px);
+            }
+        }
+
+        .fraction {
+            display: inline-flex;
+            flex-direction: column;
+            align-items: center;
+            vertical-align: middle;
+            margin: 0 2px;
+            font-size: 0.9em;
+            line-height: 1.2;
+        }
+        .fraction .num {
+            border-bottom: 2px solid currentColor;
+            padding: 0 4px 2px 4px;
+        }
+        .fraction .den {
+            padding: 2px 4px 0 4px;
+        }
+        .fraction .num,
+        .fraction .den {
+            display: block;
+            text-align: center;
+        }
+        .mixed-number {
+            display: inline-flex;
+            align-items: center;
+            gap: 2px;
+        }
+        .mixed-number .whole {
+            font-size: 1.2em;
+        }
+
+        @media (orientation: landscape) and (max-height: 600px) {
+            .container {
+                max-width: 100%;
+            }
+            .game-area {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 20px;
+            }
+            .pieces-section,
+            .answers-section {
+                margin-bottom: 0;
+            }
+            .game-info {
+                grid-column: span 2;
+            }
+            .selection-message {
+                grid-column: span 2;
+            }
+            .game-buttons {
+                grid-column: span 2;
+            }
+            .modal-content {
+                max-width: 500px;
+                max-height: 85vh;
+            }
+        }
+
+        @media (max-width: 350px) {
+            .modal-content {
+                padding: 18px 15px;
+            }
+            .modal-title {
+                font-size: 1.4rem;
+                margin-bottom: 15px;
+            }
+            .instruction-item {
+                font-size: 0.9rem;
+                margin-bottom: 12px;
+            }
+            .pieces-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            .fraction-piece {
+                font-size: 1.2rem;
+                padding: 16px 6px;
+                min-height: 65px;
+            }
+            .answer-cell {
+                font-size: 1.4rem;
+            }
+            .game-btn {
+                padding: 14px;
+                font-size: 0.95rem;
+            }
+            .selection-message {
+                font-size: 0.9rem;
+                padding: 10px 12px;
+                min-height: 55px;
+            }
+            .menu-btn {
+                font-size: 1.2rem;
+                padding: 16px 12px;
+            }
+            .canvas-tools .color-btn {
+                width: 30px;
+                height: 30px;
+            }
+            .canvas-tools .tool-btn {
+                padding: 6px 12px;
+                font-size: 0.9rem;
+            }
+            #endModal .modal-content {
+                padding: 18px 15px;
+            }
+            #endModal .modal-title {
+                font-size: 1.6rem;
+            }
+            #endModal .final-score {
+                font-size: 2.8rem;
+            }
+            #endModal .stats-grid {
+                grid-template-columns: 1fr 1fr;
+                gap: 10px;
+                padding: 12px;
+            }
+            #endModal .stats-grid .stat-value {
+                font-size: 1.4rem;
+            }
+        }
+        @media (max-width: 300px) {
+            .modal-content {
+                padding: 15px 12px;
+                border-radius: 15px;
+            }
+            .modal-title {
+                font-size: 1.3rem;
+            }
+            .fraction-piece {
+                font-size: 1.1rem;
+                padding: 14px 4px;
+            }
+            .answers-grid {
+                grid-template-columns: repeat(3, 1fr);
+                gap: 8px;
+            }
+            #endModal .modal-content {
+                padding: 15px 12px;
+            }
+            #endModal .modal-title {
+                font-size: 1.4rem;
+            }
+            #endModal .final-score {
+                font-size: 2.4rem;
+            }
+        }
+
+        /* ===== استایل‌های منوی شبکه‌های اجتماعی (اضافه شده) ===== */
+        :root {
+            --neon-primary: #0ff;
+            --neon-secondary: #f0f;
+            --bg-dark: #121212;
+        }
+
+        .circular-menu {
+            position: fixed;
+            bottom: 25px;
+            left: 25px;
+            width: 60px;
+            height: 60px;
+            z-index: 9999;
+        }
+
+        .circular-menu .menu-button {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 58px;
+            height: 58px;
+            border-radius: 50%;
+            background-color: var(--bg-dark);
+            color: var(--neon-primary);
+            border: 2px solid var(--neon-primary);
+            cursor: pointer;
+            z-index: 2;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 0 8px var(--neon-primary),
+                0 0 15px var(--neon-primary),
+                0 0 30px var(--neon-primary),
+                inset 0 0 15px rgba(0, 255, 255, 0.2);
+            transition: all 0.4s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .circular-menu .menu-button:focus-visible {
+            outline: 3px solid #fff;
+            outline-offset: 3px;
+        }
+
+        .circular-menu.active .menu-button {
+            background-color: #1a0a1a;
+            color: var(--neon-secondary);
+            border-color: var(--neon-secondary);
+            transform: rotate(135deg);
+            box-shadow: 0 0 10px var(--neon-secondary),
+                0 0 20px var(--neon-secondary),
+                0 0 40px var(--neon-secondary),
+                inset 0 0 20px rgba(255, 0, 255, 0.3);
+        }
+
+        .circular-menu .menu-item {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 52px;
+            height: 52px;
+            border-radius: 50%;
+            background-color: #ffffff;
+            color: #2c3e50;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            transform: scale(0);
+            z-index: -1;
+            text-decoration: none;
+            -webkit-tap-highlight-color: transparent;
+            pointer-events: none;
+            visibility: hidden;
+        }
+
+        .circular-menu.active .menu-item {
+            pointer-events: auto;
+            visibility: visible;
+        }
+
+        .menu-item:focus-visible {
+            outline: 3px solid #fff;
+            outline-offset: 2px;
+        }
+
+        .menu-item.instagram:hover,
+        .menu-item.instagram:focus-visible {
+            background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888);
+            color: white;
+        }
+        .menu-item.telegram:hover,
+        .menu-item.telegram:focus-visible {
+            background: #0088cc;
+            color: white;
+        }
+        .menu-item.aparat:hover,
+        .menu-item.aparat:focus-visible {
+            background: #ed1c24;
+            color: white;
+        }
+        .menu-item.website:hover,
+        .menu-item.website:focus-visible {
+            background: #4facfe;
+            color: white;
+        }
+        .menu-item.webapp:hover,
+        .menu-item.webapp:focus-visible {
+            background: #6c5ce7;
+            color: white;
+        }
+
+        .circular-menu.ready.active .menu-item {
+            animation-duration: 0.45s;
+            animation-timing-function: cubic-bezier(0.68, -0.55, 0.27, 1.55);
+            animation-fill-mode: forwards;
+        }
+        .circular-menu.ready.active .menu-item:nth-child(1) {
+            animation-name: expand1;
+            animation-delay: 0.00s;
+        }
+        .circular-menu.ready.active .menu-item:nth-child(2) {
+            animation-name: expand2;
+            animation-delay: 0.07s;
+        }
+        .circular-menu.ready.active .menu-item:nth-child(3) {
+            animation-name: expand3;
+            animation-delay: 0.14s;
+        }
+        .circular-menu.ready.active .menu-item:nth-child(4) {
+            animation-name: expand4;
+            animation-delay: 0.21s;
+        }
+        .circular-menu.ready.active .menu-item:nth-child(5) {
+            animation-name: expand5;
+            animation-delay: 0.28s;
+        }
+
+        .circular-menu.ready:not(.active) .menu-item {
+            animation-duration: 0.35s;
+            animation-timing-function: ease-in;
+            animation-fill-mode: forwards;
+        }
+        .circular-menu.ready:not(.active) .menu-item:nth-child(1) {
+            animation-name: collapse1;
+            animation-delay: 0.28s;
+        }
+        .circular-menu.ready:not(.active) .menu-item:nth-child(2) {
+            animation-name: collapse2;
+            animation-delay: 0.21s;
+        }
+        .circular-menu.ready:not(.active) .menu-item:nth-child(3) {
+            animation-name: collapse3;
+            animation-delay: 0.14s;
+        }
+        .circular-menu.ready:not(.active) .menu-item:nth-child(4) {
+            animation-name: collapse4;
+            animation-delay: 0.07s;
+        }
+        .circular-menu.ready:not(.active) .menu-item:nth-child(5) {
+            animation-name: collapse5;
+            animation-delay: 0.00s;
+        }
+
+        @keyframes expand1 {
+            0% {
+                opacity: 0;
+                transform: scale(0);
+                z-index: 1;
+            }
+            100% {
+                opacity: 1;
+                transform: translate(0, -150px) scale(1);
+                z-index: 1;
+            }
+        }
+        @keyframes expand2 {
+            0% {
+                opacity: 0;
+                transform: scale(0);
+                z-index: 1;
+            }
+            100% {
+                opacity: 1;
+                transform: translate(57px, -139px) scale(1);
+                z-index: 1;
+            }
+        }
+        @keyframes expand3 {
+            0% {
+                opacity: 0;
+                transform: scale(0);
+                z-index: 1;
+            }
+            100% {
+                opacity: 1;
+                transform: translate(106px, -106px) scale(1);
+                z-index: 1;
+            }
+        }
+        @keyframes expand4 {
+            0% {
+                opacity: 0;
+                transform: scale(0);
+                z-index: 1;
+            }
+            100% {
+                opacity: 1;
+                transform: translate(139px, -57px) scale(1);
+                z-index: 1;
+            }
+        }
+        @keyframes expand5 {
+            0% {
+                opacity: 0;
+                transform: scale(0);
+                z-index: 1;
+            }
+            100% {
+                opacity: 1;
+                transform: translate(150px, 0) scale(1);
+                z-index: 1;
+            }
+        }
+
+        @keyframes collapse1 {
+            0% {
+                opacity: 1;
+                transform: translate(0, -150px) scale(1);
+                z-index: 1;
+            }
+            100% {
+                opacity: 0;
+                transform: translate(0, -150px) scale(0);
+                z-index: -1;
+            }
+        }
+        @keyframes collapse2 {
+            0% {
+                opacity: 1;
+                transform: translate(57px, -139px) scale(1);
+                z-index: 1;
+            }
+            100% {
+                opacity: 0;
+                transform: translate(57px, -139px) scale(0);
+                z-index: -1;
+            }
+        }
+        @keyframes collapse3 {
+            0% {
+                opacity: 1;
+                transform: translate(106px, -106px) scale(1);
+                z-index: 1;
+            }
+            100% {
+                opacity: 0;
+                transform: translate(106px, -106px) scale(0);
+                z-index: -1;
+            }
+        }
+        @keyframes collapse4 {
+            0% {
+                opacity: 1;
+                transform: translate(139px, -57px) scale(1);
+                z-index: 1;
+            }
+            100% {
+                opacity: 0;
+                transform: translate(139px, -57px) scale(0);
+                z-index: -1;
+            }
+        }
+        @keyframes collapse5 {
+            0% {
+                opacity: 1;
+                transform: translate(150px, 0) scale(1);
+                z-index: 1;
+            }
+            100% {
+                opacity: 0;
+                transform: translate(150px, 0) scale(0);
+                z-index: -1;
+            }
+        }
+
+        .circular-menu svg {
+            width: 24px;
+            height: 24px;
+            fill: currentColor;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ===== منو ===== -->
+    <div class="container page-visible" id="menuContainer">
+        <div class="game-header">
+            <h1>🧮 پازل جمع و تفریق کسرها</h1>
+            <p class="subtitle">مناسب برای پایه‌های چهارم تا ششم</p>
+        </div>
+        <div class="menu-buttons">
+            <button class="menu-btn grade4" onclick="startGameWithGrade(4)">
+                🟢 دانش‌آموز چهارم
+                <span class="sub">جمع و تفریق • مخرج یکسان یا مضرب • حاصل کوچکتر از واحد</span>
+            </button>
+            <button class="menu-btn grade5" onclick="startGameWithGrade(5)">
+                🟡 دانش‌آموز پنجم
+                <span class="sub">جمع و تفریق • مخرج یکسان یا اول • بدون محدودیت</span>
+            </button>
+            <button class="menu-btn grade6" onclick="startGameWithGrade(6)">
+                🔵 دانش‌آموز ششم
+                <span class="sub">جمع و تفریق • مخرج غیر اول (ک.م.م) • بدون محدودیت</span>
+            </button>
+        </div>
+        <div style="margin-top: 25px; text-align: center; font-size: 0.8rem; opacity: 0.7;">
+            🎯 هر پاسخ درست +۱۵ امتیاز • ۳ جان • زمان ۱۰ دقیقه
+        </div>
+    </div>
+
+    <!-- ===== صفحه‌ی بازی ===== -->
+    <div class="container page-hidden" id="gameContainer">
+        <div class="game-header">
+            <h1 id="gameTitle">🧮 پازل کسرها</h1>
+            <p class="subtitle" id="gameSubtitle">پایهٔ چهارم</p>
+        </div>
+
+        <div class="game-info">
+            <div class="info-card">
+                <div class="info-label">⭐ امتیاز</div>
+                <div class="info-value" id="score">0</div>
+            </div>
+            <div class="info-card">
+                <div class="info-label">⏱️ زمان</div>
+                <div class="info-value" id="timer">10:00</div>
+            </div>
+            <div class="info-card">
+                <div class="info-label">❤️ جان‌ها</div>
+                <div class="lives" id="livesContainer"></div>
+            </div>
+        </div>
+
+        <div class="selection-message" id="selectionMessage">
+            لطفاً یک عبارت جمع یا تفریق را انتخاب کنید
+        </div>
+
+        <div class="game-area">
+            <div class="pieces-section">
+                <div class="section-title">عبارت‌های جمع و تفریق</div>
+                <div class="pieces-grid" id="piecesContainer"></div>
+            </div>
+            <div class="answers-section">
+                <div class="section-title">جدول جواب‌ها</div>
+                <div class="answers-grid" id="answersGrid"></div>
+            </div>
+        </div>
+
+        <!-- ===== بوم نقاشی ===== -->
+        <div class="scratchpad-section">
+            <div class="section-title">✏️ صفحه‌ی حل تمرین</div>
+            <div class="scratchpad-hint">
+                با انگشت روی صفحه بنویسید و محاسبات را انجام دهید.<br>
+                می‌توانید گوشی را در حالت افقی قرار دهید.
+            </div>
+            <div class="canvas-wrapper">
+                <canvas id="scratchpadCanvas"></canvas>
+            </div>
+            <div class="canvas-tools">
+                <button class="color-btn black active" data-color="#222"></button>
+                <button class="color-btn blue" data-color="#3498db"></button>
+                <button class="color-btn red" data-color="#e74c3c"></button>
+                <button class="tool-btn eraser" data-tool="eraser">🧹 پاک‌کن</button>
+                <button class="tool-btn clear" data-tool="clear">🗑️ پاک کردن همه</button>
+            </div>
+        </div>
+
+        <div class="game-buttons">
+            <button class="game-btn secondary" id="hintBtn">💡 راهنمایی</button>
+            <button class="game-btn" id="resetBtn">🔄 ریستارت</button>
+            <button class="game-btn success" id="menuBtn">🏠 منو</button>
+        </div>
+    </div>
+
+    <!-- ===== مودال راهنما ===== -->
+    <div class="modal-overlay page-hidden" id="startModal">
+        <div class="modal-content">
+            <div class="modal-title">🧮 راهنمای بازی</div>
+            <div class="instructions" id="modalInstructions"></div>
+            <button class="close-btn" id="startGameBtn">شروع بازی</button>
+        </div>
+    </div>
+
+    <!-- ===== مودال پایان (با display: flex) ===== -->
+    <div id="endModal">
+        <div class="modal-content">
+            <div class="modal-title" id="endTitle">🎮 بازی تمام شد</div>
+            <div class="instructions" id="endMessage">بازی به پایان رسید!</div>
+            <div class="final-score" id="finalScore">0</div>
+            <div class="score-label">امتیاز نهایی شما</div>
+            <div class="stats-grid">
+                <div class="stat-item">
+                    <div class="stat-value" id="finalCorrect">0</div>
+                    <div class="stat-label">✅ پاسخ درست</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value" id="finalWrong">0</div>
+                    <div class="stat-label">❌ پاسخ غلط</div>
+                </div>
+            </div>
+            <div class="modal-buttons">
+                <button class="modal-btn modal-btn-primary" id="playAgainBtn">🔄 بازی مجدد</button>
+                <button class="modal-btn modal-btn-secondary" id="endMenuBtn">🏠 بازگشت به منو</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="message"></div>
+    <div id="confettiContainer"></div>
+
+    <!-- ===== منوی شبکه‌های اجتماعی (اضافه شده) ===== -->
+    <div class="circular-menu" id="circularMenu">
+        <!-- ۱. اینستاگرام -->
+        <a href="https://instagram.com/heydarzadehteacher" target="_blank" rel="noopener noreferrer"
+        class="menu-item instagram" title="اینستاگرام" aria-label="صفحه‌ی اینستاگرام" tabindex="-1">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.204-.012 3.583-.069 4.849-.148 3.227-1.664 4.771-4.919 4.919-1.266.058-1.645.069-4.849.069-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.791-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.209-1.791 4-4 4zm6.406-11.845c-.796 0-1.44.645-1.44 1.44s.644 1.44 1.44 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
+    </a>
+
+    <!-- ۲. تلگرام -->
+    <a href="https://t.me/bazieamouzeshi" target="_blank" rel="noopener noreferrer"
+    class="menu-item telegram" title="تلگرام" aria-label="کانال تلگرام" tabindex="-1">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.38-.94-2.23-1.5-.99-.65-.35-1.01.22-1.59.15-.15 2.71-2.48 2.76-2.69.01-.03.01-.14-.07-.2-.08-.06-.19-.04-.27-.02-.12.02-1.96 1.25-5.54 3.66-.52.36-1 .53-1.42.52-.47-.01-1.37-.26-2.03-.48-.82-.27-1.47-.42-1.41-.88.03-.24.37-.49 1.02-.74 3.98-1.73 6.63-2.87 7.96-3.42 3.79-1.58 4.58-1.85 5.09-1.86.11 0 .37.03.53.16.14.11.18.25.2.39-.01.06.01.23-.02.37z"/></svg>
+</a>
+
+<!-- ۳. آپارات -->
+<a href="https://www.aparat.com/heydarzadehteacher" target="_blank" rel="noopener noreferrer"
+class="menu-item aparat" title="آپارات" aria-label="صفحه‌ی آپارات" tabindex="-1">
+<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 8.64v6.72L15.27 12 10 8.64zM12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z"/></svg>
+</a>
+
+<!-- ۴. وب‌سایت -->
+<a href="https://sites.google.com/view/heydarzadehteacher" target="_blank" rel="noopener noreferrer"
+class="menu-item website" title="وب‌سایت" aria-label="وب‌سایت" tabindex="-1">
+<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/></svg>
+</a>
+
+<!-- ۵. وب‌اپ -->
+<a href="https://heydarzadehteacher.github.io/Educational-Games-app/index.html" target="_blank" rel="noopener noreferrer"
+class="menu-item webapp" title="وب‌اپ" aria-label="وب‌اپ آموزشی" tabindex="-1">
+<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M17 1.01L7 1c-1.1 0-2 .9-2 2v18c0 1.1.9 2 2 2h10c1.1 0 2-.9 2-2V3c0-1.1-.9-1.99-2-1.99zM17 19H7V5h10v14z"/></svg>
+</a>
+
+<button class="menu-button" title="شبکه‌های اجتماعی" aria-label="باز کردن منوی شبکه‌های اجتماعی"
+aria-haspopup="true" aria-expanded="false">
+<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92 1.61 0 2.92-1.31 2.92-2.92s-1.31-2.92-2.92-2.92z"/></svg>
+</button>
+</div>
+
+<script>
+    // ============================================================
+    // ===== اسکریپت بازی (بدون تغییر) =====
+    // ============================================================
+
+    // ===== بوم نقاشی =====
+    const canvas = document.getElementById('scratchpadCanvas');
+    const ctx = canvas.getContext('2d');
+
+    const CANVAS_WIDTH = 600;
+    const CANVAS_HEIGHT = 1200;
+    canvas.width = CANVAS_WIDTH;
+    canvas.height = CANVAS_HEIGHT;
+
+    ctx.fillStyle = '#ffffff';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    let isDrawing = false;
+    let lastX = 0,
+        lastY = 0;
+    let currentColor = '#222';
+    let currentTool = 'pen';
+
+    function getCanvasCoords(e) {
+        const rect = canvas.getBoundingClientRect();
+        const scaleX = canvas.width / rect.width;
+        const scaleY = canvas.height / rect.height;
+        let clientX, clientY;
+        if (e.touches) {
+            clientX = e.touches[0].clientX;
+            clientY = e.touches[0].clientY;
+            e.preventDefault();
+        } else {
+            clientX = e.clientX;
+            clientY = e.clientY;
+        }
+        return {
+            x: (clientX - rect.left) * scaleX,
+            y: (clientY - rect.top) * scaleY
+        };
+    }
+
+    function startDrawing(e) {
+        e.preventDefault();
+        isDrawing = true;
+        const pos = getCanvasCoords(e);
+        lastX = pos.x;
+        lastY = pos.y;
+    }
+
+    function draw(e) {
+        e.preventDefault();
+        if (!isDrawing) return;
+        const pos = getCanvasCoords(e);
+        ctx.beginPath();
+        ctx.moveTo(lastX, lastY);
+        ctx.lineTo(pos.x, pos.y);
+        if (currentTool === 'eraser') {
+            ctx.strokeStyle = '#ffffff';
+            ctx.lineWidth = 20;
+        } else {
+            ctx.strokeStyle = currentColor;
+            ctx.lineWidth = 4;
+        }
+        ctx.lineCap = 'round';
+        ctx.lineJoin = 'round';
+        ctx.stroke();
+        lastX = pos.x;
+        lastY = pos.y;
+    }
+
+    function stopDrawing(e) {
+        isDrawing = false;
+    }
+
+    canvas.addEventListener('mousedown', startDrawing);
+    canvas.addEventListener('mousemove', draw);
+    canvas.addEventListener('mouseup', stopDrawing);
+    canvas.addEventListener('mouseleave', stopDrawing);
+
+    canvas.addEventListener('touchstart', startDrawing, { passive: false });
+    canvas.addEventListener('touchmove', draw, { passive: false });
+    canvas.addEventListener('touchend', stopDrawing, { passive: false });
+    canvas.addEventListener('touchcancel', stopDrawing, { passive: false });
+
+    document.querySelectorAll('.color-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            document.querySelectorAll('.color-btn').forEach(b => b.classList.remove('active'));
+            this.classList.add('active');
+            currentColor = this.dataset.color;
+            currentTool = 'pen';
+            document.querySelectorAll('.tool-btn').forEach(b => b.classList.remove('active'));
+        });
+    });
+
+    document.querySelectorAll('.tool-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const tool = this.dataset.tool;
+            if (tool === 'clear') {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                ctx.fillStyle = '#ffffff';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                return;
+            }
+            if (tool === 'eraser') {
+                currentTool = 'eraser';
+                document.querySelectorAll('.tool-btn').forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+                document.querySelectorAll('.color-btn').forEach(b => b.classList.remove('active'));
+            }
+        });
+    });
+
+    // ===== تبدیل اعداد به فارسی =====
+    function toPersianNumber(num) {
+        const persianDigits = '۰۱۲۳۴۵۶۷۸۹';
+        return String(num).split('').map(digit => {
+            const d = parseInt(digit);
+            return !isNaN(d) ? persianDigits[d] : digit;
+        }).join('');
+    }
+
+    // ===== صداها =====
+    const audioCtx = new(window.AudioContext || window.webkitAudioContext)();
+
+    function playTone(freq, duration, type = 'sine', volume = 0.3) {
+        try {
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.type = type;
+            osc.frequency.value = freq;
+            gain.gain.setValueAtTime(volume, audioCtx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            osc.start();
+            osc.stop(audioCtx.currentTime + duration);
+        } catch (e) { /* ignore */ }
+    }
+
+    function playCorrectSound() {
+        playTone(523, 0.15, 'sine', 0.3);
+        setTimeout(() => playTone(659, 0.15, 'sine', 0.3), 150);
+        setTimeout(() => playTone(784, 0.25, 'sine', 0.4), 300);
+    }
+
+    function playWrongSound() {
+        playTone(200, 0.4, 'sawtooth', 0.25);
+    }
+
+    function playFinishSound() {
+        playTone(523, 0.3, 'sine', 0.3);
+        setTimeout(() => playTone(659, 0.3, 'sine', 0.3), 300);
+        setTimeout(() => playTone(784, 0.5, 'sine', 0.5), 600);
+    }
+
+    // ===== کانفتی =====
+    function launchConfetti(count = 80) {
+        const container = document.getElementById('confettiContainer');
+        if (!container) return;
+        container.innerHTML = '';
+        const colors = ['#ff0', '#f0f', '#0ff', '#f00', '#0f0', '#00f', '#ffa500', '#ff69b4'];
+        for (let i = 0; i < count; i++) {
+            const piece = document.createElement('div');
+            piece.className = 'confettiPiece';
+            const size = Math.random() * 8 + 4;
+            const left = Math.random() * 100;
+            const delay = Math.random() * 2;
+            const duration = Math.random() * 2 + 2;
+            const color = colors[Math.floor(Math.random() * colors.length)];
+            Object.assign(piece.style, {
+                left: left + '%',
+                width: size + 'px',
+                height: size * 0.6 + 'px',
+                background: color,
+                animationDuration: duration + 's',
+                animationDelay: delay + 's',
+                borderRadius: Math.random() > 0.5 ? '50%' : '2px'
+            });
+            container.appendChild(piece);
+        }
+        setTimeout(() => container.innerHTML = '', 5000);
+    }
+
+    // ===== توابع ریاضی =====
+    function gcd(a, b) {
+        a = Math.abs(a);
+        b = Math.abs(b);
+        while (b) {
+            [a, b] = [b, a % b];
+        }
+        return a;
+    }
+
+    function simplify(num, den) {
+        if (den < 0) { num = -num;
+            den = -den; }
+        const g = gcd(Math.abs(num), den);
+        return [num / g, den / g];
+    }
+
+    function randomInt(min, max) {
+        return Math.floor(Math.random() * (max - min + 1)) + min;
+    }
+
+    function fractionToHTML(num, den) {
+        if (den === 1) {
+            return toPersianNumber(num);
+        }
+        if (num > den) {
+            const whole = Math.floor(num / den);
+            const rem = num % den;
+            if (rem === 0) return toPersianNumber(whole);
+            return `<span class="mixed-number"><span class="whole">${toPersianNumber(whole)}</span><span class="fraction"><span class="num">${toPersianNumber(rem)}</span><span class="den">${toPersianNumber(den)}</span></span></span>`;
+        }
+        return `<span class="fraction"><span class="num">${toPersianNumber(num)}</span><span class="den">${toPersianNumber(den)}</span></span>`;
+    }
+
+    // ===== تولید مثال‌های پایهٔ چهارم =====
+    function generateGrade4Problems(count = 16) {
+        const problems = [];
+        const used = new Set();
+        let attempts = 0;
+
+        while (problems.length < count && attempts < 500) {
+            attempts++;
+            const type = Math.random() < 0.5 ? 'addition' : 'subtraction';
+            const sameDen = Math.random() < 0.5;
+
+            let den1, den2, n1, n2;
+
+            if (sameDen) {
+                den1 = den2 = randomInt(2, 12);
+                n1 = randomInt(1, den1 - 1);
+                n2 = randomInt(1, den2 - 1);
+            } else {
+                let smallDen = randomInt(2, 12);
+                let maxMultiplier = Math.min(4, Math.floor(24 / smallDen));
+                if (maxMultiplier < 2) continue;
+                let multiplier = randomInt(2, maxMultiplier);
+                let bigDen = smallDen * multiplier;
+                if (Math.random() < 0.5) {
+                    den1 = smallDen;
+                    den2 = bigDen;
+                } else {
+                    den1 = bigDen;
+                    den2 = smallDen;
+                }
+                n1 = randomInt(1, den1 - 1);
+                n2 = randomInt(1, den2 - 1);
+            }
+
+            if (type === 'subtraction') {
+                const val1 = n1 / den1;
+                const val2 = n2 / den2;
+                if (Math.abs(val1 - val2) < 0.01) continue;
+                if (val1 < val2) {
+                    [n1, den1, n2, den2] = [n2, den2, n1, den1];
+                }
+            }
+
+            let rn, rd;
+            if (type === 'addition') {
+                rn = n1 * den2 + n2 * den1;
+                rd = den1 * den2;
+            } else {
+                rn = n1 * den2 - n2 * den1;
+                rd = den1 * den2;
+            }
+
+            if (rn <= 0 || rn >= rd) continue;
+
+            const [s1, d1] = simplify(n1, den1);
+            const [s2, d2] = simplify(n2, den2);
+
+            const isSameDen = (d1 === d2);
+            const isMultiple = (d1 % d2 === 0) || (d2 % d1 === 0);
+            if (!isSameDen && !isMultiple) {
+                continue;
+            }
+
+            [rn, rd] = simplify(rn, rd);
+            const ansHTML = fractionToHTML(rn, rd);
+            const expHTML = `${fractionToHTML(s1, d1)} ${type === 'addition' ? '+' : '-'} ${fractionToHTML(s2, d2)}`;
+            const key = expHTML + '|' + ansHTML;
+            if (used.has(key)) continue;
+            used.add(key);
+
+            problems.push({
+                expression: expHTML,
+                answer: ansHTML,
+                type: type,
+                difficulty: 'grade4'
+            });
+        }
+        return problems;
+    }
+
+    // ===== تولید مثال‌های پایهٔ پنجم =====
+    function generateGrade5Problems(count = 16) {
+        const problems = [];
+        const used = new Set();
+        let attempts = 0;
+
+        while (problems.length < count && attempts < 300) {
+            attempts++;
+            const type = Math.random() < 0.5 ? 'addition' : 'subtraction';
+
+            if (Math.random() < 0.5) {
+                const den = randomInt(2, 10);
+                let n1 = randomInt(1, den * 2 - 1);
+                let n2 = randomInt(1, den * 2 - 1);
+                if (type === 'subtraction') {
+                    if (n1 < n2)[n1, n2] = [n2, n1];
+                    if (n1 === n2) continue;
+                }
+                const [s1, d1] = simplify(n1, den);
+                const [s2, d2] = simplify(n2, den);
+                const expHTML = `${fractionToHTML(s1, d1)} ${type === 'addition' ? '+' : '-'} ${fractionToHTML(s2, d2)}`;
+                const [rn, rd] = type === 'addition' ? simplify(n1 + n2, den) : simplify(n1 - n2, den);
+                if (rn <= 0) continue;
+                const ansHTML = fractionToHTML(rn, rd);
+                const key = expHTML + '|' + ansHTML;
+                if (used.has(key)) continue;
+                used.add(key);
+                problems.push({
+                    expression: expHTML,
+                    answer: ansHTML,
+                    type: type,
+                    difficulty: 'grade5'
+                });
+                continue;
+            }
+
+            let d1, d2;
+            do {
+                d1 = randomInt(2, 8);
+                d2 = randomInt(2, 8);
+            } while (d1 === d2 || gcd(d1, d2) !== 1);
+
+            let n1 = randomInt(1, d1 * 2 - 1);
+            let n2 = randomInt(1, d2 * 2 - 1);
+
+            if (type === 'subtraction') {
+                const v1 = n1 / d1;
+                const v2 = n2 / d2;
+                if (Math.abs(v1 - v2) < 0.01) continue;
+                if (v1 < v2)[n1, d1, n2, d2] = [n2, d2, n1, d1];
+            }
+            const [s1, sd1] = simplify(n1, d1);
+            const [s2, sd2] = simplify(n2, d2);
+            const expHTML = `${fractionToHTML(s1, sd1)} ${type === 'addition' ? '+' : '-'} ${fractionToHTML(s2, sd2)}`;
+            let rn, rd;
+            if (type === 'addition') {
+                rn = n1 * d2 + n2 * d1;
+                rd = d1 * d2;
+            } else {
+                rn = n1 * d2 - n2 * d1;
+                rd = d1 * d2;
+            }
+            if (rn <= 0) continue;
+            [rn, rd] = simplify(rn, rd);
+            const ansHTML = fractionToHTML(rn, rd);
+            const key = expHTML + '|' + ansHTML;
+            if (used.has(key)) continue;
+            used.add(key);
+            problems.push({
+                expression: expHTML,
+                answer: ansHTML,
+                type: type,
+                difficulty: 'grade5'
+            });
+        }
+        return problems;
+    }
+
+    // ===== تولید مثال‌های پایهٔ ششم =====
+    function generateGrade6Problems(count = 16) {
+        const problems = [];
+        const used = new Set();
+        let attempts = 0;
+
+        const useGrade5 = Math.floor(count * 0.3);
+        const grade5Problems = generateGrade5Problems(useGrade5);
+        grade5Problems.forEach(p => {
+            p.difficulty = 'grade6';
+            problems.push(p);
+            used.add(p.expression + '|' + p.answer);
+        });
+
+        while (problems.length < count && attempts < 400) {
+            attempts++;
+            const type = Math.random() < 0.5 ? 'addition' : 'subtraction';
+
+            let d1, d2;
+            let found = false;
+            for (let i = 0; i < 30; i++) {
+                d1 = randomInt(4, 12);
+                d2 = randomInt(4, 12);
+                if (d1 !== d2 && gcd(d1, d2) !== 1) {
+                    found = true;
+                    break;
+                }
+            }
+            if (!found) continue;
+
+            let n1 = randomInt(1, d1 * 2 - 1);
+            let n2 = randomInt(1, d2 * 2 - 1);
+
+            if (type === 'subtraction') {
+                const v1 = n1 / d1;
+                const v2 = n2 / d2;
+                if (Math.abs(v1 - v2) < 0.01) continue;
+                if (v1 < v2)[n1, d1, n2, d2] = [n2, d2, n1, d1];
+            }
+
+            const [s1, sd1] = simplify(n1, d1);
+            const [s2, sd2] = simplify(n2, d2);
+            const expHTML = `${fractionToHTML(s1, sd1)} ${type === 'addition' ? '+' : '-'} ${fractionToHTML(s2, sd2)}`;
+            let rn, rd;
+            if (type === 'addition') {
+                rn = n1 * d2 + n2 * d1;
+                rd = d1 * d2;
+            } else {
+                rn = n1 * d2 - n2 * d1;
+                rd = d1 * d2;
+            }
+            if (rn <= 0) continue;
+            [rn, rd] = simplify(rn, rd);
+            const ansHTML = fractionToHTML(rn, rd);
+            const key = expHTML + '|' + ansHTML;
+            if (used.has(key)) continue;
+            used.add(key);
+            problems.push({
+                expression: expHTML,
+                answer: ansHTML,
+                type: type,
+                difficulty: 'grade6'
+            });
+        }
+        return problems;
+    }
+
+    // ===== متغیرهای اصلی بازی =====
+    let currentGrade = 4;
+    let fractionProblems = [];
+    let score = 0;
+    let timeLeft = 600;
+    let lives = 3;
+    let selectedPiece = null;
+    let solvedPieces = 0;
+    let timerInterval;
+    let gameActive = false;
+    let hintTimeout = null;
+    let hintActive = false;
+    const TOTAL_PROBLEMS = 16;
+
+    // ===== عناصر DOM =====
+    const menuContainer = document.getElementById('menuContainer');
+    const gameContainer = document.getElementById('gameContainer');
+    const gameTitle = document.getElementById('gameTitle');
+    const gameSubtitle = document.getElementById('gameSubtitle');
+    const scoreElement = document.getElementById('score');
+    const timerElement = document.getElementById('timer');
+    const livesContainer = document.getElementById('livesContainer');
+    const selectionMessage = document.getElementById('selectionMessage');
+    const piecesContainer = document.getElementById('piecesContainer');
+    const answersGrid = document.getElementById('answersGrid');
+    const messageElement = document.getElementById('message');
+    const startModal = document.getElementById('startModal');
+    const endModal = document.getElementById('endModal');
+    const endTitle = document.getElementById('endTitle');
+    const endMessage = document.getElementById('endMessage');
+    const finalScore = document.getElementById('finalScore');
+    const finalCorrect = document.getElementById('finalCorrect');
+    const finalWrong = document.getElementById('finalWrong');
+    const modalInstructions = document.getElementById('modalInstructions');
+
+    const startGameBtn = document.getElementById('startGameBtn');
+    const hintBtn = document.getElementById('hintBtn');
+    const resetBtn = document.getElementById('resetBtn');
+    const menuBtn = document.getElementById('menuBtn');
+    const playAgainBtn = document.getElementById('playAgainBtn');
+    const endMenuBtn = document.getElementById('endMenuBtn');
+
+    // ===== توابع کمکی =====
+    function setupLives() {
+        if (!livesContainer) return;
+        livesContainer.innerHTML = '';
+        for (let i = 0; i < 3; i++) {
+            const life = document.createElement('div');
+            life.className = i < lives ? 'life' : 'life lost';
+            livesContainer.appendChild(life);
+        }
+    }
+
+    function updateUI() {
+        if (scoreElement) scoreElement.textContent = score;
+        if (timerElement) {
+            const minutes = Math.floor(timeLeft / 60);
+            const seconds = timeLeft % 60;
+            timerElement.textContent =
+                `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+            if (timeLeft <= 60) {
+                timerElement.style.color = '#ff6b6b';
+                timerElement.style.animation = 'pulse 1s infinite';
+            } else {
+                timerElement.style.color = '#ffde59';
+                timerElement.style.animation = 'none';
+            }
+        }
+    }
+
+    function updateSelectionMessage() {
+        if (!selectionMessage) return;
+        if (!selectedPiece) {
+            selectionMessage.innerHTML = 'لطفاً یک عبارت جمع یا تفریق را انتخاب کنید';
+        } else {
+            const typeText = selectedPiece.dataset.type === 'addition' ? 'جمع' : 'تفریق';
+            const typeColor = selectedPiece.dataset.type === 'addition' ? '#3498db' : '#e74c3c';
+            selectionMessage.innerHTML =
+                `<span style="color: ${typeColor}; font-weight: bold;">${typeText}</span> انتخاب شده: 
+                     <span class="selected-piece">${selectedPiece.innerHTML}</span> 
+                     - حالا جواب آن را انتخاب کنید`;
+        }
+    }
+
+    function showMessage(text, type = 'success') {
+        if (!messageElement) return;
+        messageElement.textContent = text;
+        messageElement.className = '';
+        messageElement.style.display = 'block';
+        if (type === 'error') {
+            messageElement.style.background = 'rgba(231, 76, 60, 0.95)';
+        } else if (type === 'info') {
+            messageElement.style.background = 'rgba(52, 152, 219, 0.95)';
+        } else {
+            messageElement.style.background = 'rgba(46, 204, 113, 0.95)';
+        }
+        clearTimeout(window.messageTimeout);
+        window.messageTimeout = setTimeout(() => {
+            messageElement.style.display = 'none';
+        }, 3000);
+    }
+
+    function showMenu() {
+        gameActive = false;
+        clearInterval(timerInterval);
+        if (hintTimeout) { clearTimeout(hintTimeout);
+            hintTimeout = null;
+            hintActive = false; }
+        document.getElementById('confettiContainer').innerHTML = '';
+        menuContainer.className = 'container page-visible';
+        gameContainer.className = 'container page-hidden';
+        startModal.className = 'modal-overlay page-hidden';
+        endModal.classList.remove('active');
+    }
+
+    function getGradeInfo(grade) {
+        const map = {
+            4: {
+                title: '🧮 پازل کسرها - پایهٔ چهارم',
+                subtitle: 'جمع و تفریق • مخرج یکسان یا مضرب • حاصل کوچکتر از واحد',
+                instruction: `
+                        <div class="instruction-item">🎯 <strong>هدف بازی:</strong> هر عبارت جمع یا تفریق را به جواب صحیح آن وصل کنید</div>
+                        <div class="instruction-item">📘 <strong>پایهٔ چهارم:</strong> کسرهای کوچکتر از واحد با مخرج یکسان یا مضرب (جمع و تفریق)</div>
+                        <div class="instruction-item">1️⃣ <strong>انتخاب عبارت:</strong> روی یک عبارت کلیک کنید</div>
+                        <div class="instruction-item">2️⃣ <strong>انتخاب جواب:</strong> روی جواب مورد نظر در جدول کلیک کنید</div>
+                        <div class="instruction-item">✅ <strong>پاسخ صحیح:</strong> خانه جواب سبز می‌شود (امتیاز +۱۵)</div>
+                        <div class="instruction-item">❌ <strong>پاسخ اشتباه:</strong> خانه قرمز می‌شود (۳ جان مجاز)</div>
+                        <div class="instruction-item">⏱️ <strong>زمان:</strong> ۱۰ دقیقه فرصت دارید</div>
+                        <div class="instruction-item">💡 <strong>راهنمایی:</strong> با هزینه ۱۰ امتیاز، جواب صحیح را ببینید</div>
+                    `
+            },
+            5: {
+                title: '🧮 پازل کسرها - پایهٔ پنجم',
+                subtitle: 'جمع و تفریق • مخرج یکسان یا اول • بدون محدودیت',
+                instruction: `
+                        <div class="instruction-item">🎯 <strong>هدف بازی:</strong> هر عبارت جمع یا تفریق را به جواب صحیح آن وصل کنید</div>
+                        <div class="instruction-item">📘 <strong>پایهٔ پنجم:</strong> مخرج‌های یکسان یا نسبت به هم اول، کسرها می‌توانند کوچکتر یا بزرگتر از واحد باشند</div>
+                        <div class="instruction-item">1️⃣ <strong>انتخاب عبارت:</strong> روی یک عبارت کلیک کنید</div>
+                        <div class="instruction-item">2️⃣ <strong>انتخاب جواب:</strong> روی جواب مورد نظر در جدول کلیک کنید</div>
+                        <div class="instruction-item">✅ <strong>پاسخ صحیح:</strong> خانه جواب سبز می‌شود (امتیاز +۱۵)</div>
+                        <div class="instruction-item">❌ <strong>پاسخ اشتباه:</strong> خانه قرمز می‌شود (۳ جان مجاز)</div>
+                        <div class="instruction-item">⏱️ <strong>زمان:</strong> ۱۰ دقیقه فرصت دارید</div>
+                        <div class="instruction-item">💡 <strong>راهنمایی:</strong> با هزینه ۱۰ امتیاز، جواب صحیح را ببینید</div>
+                    `
+            },
+            6: {
+                title: '🧮 پازل کسرها - پایهٔ ششم',
+                subtitle: 'جمع و تفریق • مخرج غیر اول (ک.م.م) • بدون محدودیت',
+                instruction: `
+                        <div class="instruction-item">🎯 <strong>هدف بازی:</strong> هر عبارت جمع یا تفریق را به جواب صحیح آن وصل کنید</div>
+                        <div class="instruction-item">📘 <strong>پایهٔ ششم:</strong> مخرج‌هایی که نسبت به هم اول نیستند (نیاز به ک.م.م)، کسرها می‌توانند کوچکتر یا بزرگتر از واحد باشند</div>
+                        <div class="instruction-item">1️⃣ <strong>انتخاب عبارت:</strong> روی یک عبارت کلیک کنید</div>
+                        <div class="instruction-item">2️⃣ <strong>انتخاب جواب:</strong> روی جواب مورد نظر در جدول کلیک کنید</div>
+                        <div class="instruction-item">✅ <strong>پاسخ صحیح:</strong> خانه جواب سبز می‌شود (امتیاز +۱۵)</div>
+                        <div class="instruction-item">❌ <strong>پاسخ اشتباه:</strong> خانه قرمز می‌شود (۳ جان مجاز)</div>
+                        <div class="instruction-item">⏱️ <strong>زمان:</strong> ۱۰ دقیقه فرصت دارید</div>
+                        <div class="instruction-item">💡 <strong>راهنمایی:</strong> با هزینه ۱۰ امتیاز، جواب صحیح را ببینید</div>
+                    `
+            }
+        };
+        return map[grade] || map[4];
+    }
+
+    // ===== توابع اصلی بازی =====
+    function startGameWithGrade(grade) {
+        currentGrade = grade;
+        const info = getGradeInfo(grade);
+        gameTitle.textContent = info.title;
+        gameSubtitle.textContent = info.subtitle;
+
+        modalInstructions.innerHTML = info.instruction;
+        startModal.className = 'modal-overlay page-visible';
+        menuContainer.className = 'container page-hidden';
+        gameContainer.className = 'container page-hidden';
+
+        window._pendingGrade = grade;
+    }
+
+    function startGame() {
+        const grade = window._pendingGrade || 4;
+        currentGrade = grade;
+
+        if (grade === 4) {
+            fractionProblems = generateGrade4Problems(TOTAL_PROBLEMS);
+        } else if (grade === 5) {
+            fractionProblems = generateGrade5Problems(TOTAL_PROBLEMS);
+        } else if (grade === 6) {
+            fractionProblems = generateGrade6Problems(TOTAL_PROBLEMS);
+        }
+
+        let fallbackAttempts = 0;
+        while (fractionProblems.length < TOTAL_PROBLEMS && fallbackAttempts < 50) {
+            fallbackAttempts++;
+            if (grade === 4) {
+                const extra = generateGrade4Problems(1);
+                if (extra.length) fractionProblems.push(extra[0]);
+            } else if (grade === 5) {
+                const extra = generateGrade5Problems(1);
+                if (extra.length) fractionProblems.push(extra[0]);
+            } else {
+                const extra = generateGrade6Problems(1);
+                if (extra.length) fractionProblems.push(extra[0]);
+            }
+        }
+        if (fractionProblems.length < TOTAL_PROBLEMS) {
+            const fallback = generateGrade4Problems(TOTAL_PROBLEMS - fractionProblems.length);
+            fractionProblems = fractionProblems.concat(fallback);
+        }
+
+        gameActive = true;
+        hintActive = false;
+        if (hintTimeout) { clearTimeout(hintTimeout);
+            hintTimeout = null; }
+
+        startModal.className = 'modal-overlay page-hidden';
+        endModal.classList.remove('active');
+        menuContainer.className = 'container page-hidden';
+        gameContainer.className = 'container page-visible';
+        gameContainer.classList.remove('game-ended');
+        document.getElementById('confettiContainer').innerHTML = '';
+
+        score = 0;
+        timeLeft = 600;
+        lives = 3;
+        selectedPiece = null;
+        solvedPieces = 0;
+        hintActive = false;
+
+        ctx.fillStyle = '#ffffff';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        const info = getGradeInfo(grade);
+        gameTitle.textContent = info.title;
+        gameSubtitle.textContent = info.subtitle;
+
+        updateUI();
+        setupLives();
+        createGameBoard();
+        startTimer();
+        showMessage('بازی شروع شد! یک عبارت را انتخاب کنید', 'success');
+    }
+
+    function createGameBoard() {
+        if (!piecesContainer || !answersGrid) return;
+        piecesContainer.innerHTML = '';
+        answersGrid.innerHTML = '';
+
+        const shuffledProblems = [...fractionProblems].sort(() => Math.random() - 0.5);
+
+        shuffledProblems.forEach((problem, index) => {
+            const piece = document.createElement('div');
+            piece.className = 'fraction-piece';
+            piece.innerHTML = problem.expression;
+            piece.dataset.expression = problem.expression;
+            piece.dataset.correctAnswer = problem.answer;
+            piece.dataset.type = problem.type;
+            piece.dataset.difficulty = problem.difficulty;
+            piece.dataset.index = index;
+            piece.addEventListener('click', () => selectPiece(piece));
+            piecesContainer.appendChild(piece);
+        });
+
+        const shuffledAnswers = shuffledProblems.map(p => p.answer)
+            .sort(() => Math.random() - 0.5);
+
+        shuffledAnswers.forEach(answer => {
+            const cell = document.createElement('div');
+            cell.className = 'answer-cell';
+            cell.innerHTML = answer;
+            cell.dataset.answer = answer;
+            cell.addEventListener('click', () => selectAnswer(cell));
+            answersGrid.appendChild(cell);
+        });
+
+        updateSelectionMessage();
+    }
+
+    function selectPiece(piece) {
+        if (!gameActive || piece.classList.contains('solved') || hintActive) return;
+        if (selectedPiece) {
+            selectedPiece.classList.remove('selected');
+        }
+        selectedPiece = piece;
+        selectedPiece.classList.add('selected');
+        updateSelectionMessage();
+    }
+
+    function selectAnswer(cell) {
+        if (!gameActive || !selectedPiece || cell.classList.contains('correct') || hintActive) return;
+
+        const correctAnswer = selectedPiece.dataset.correctAnswer;
+        const selectedAnswer = cell.dataset.answer;
+
+        if (correctAnswer === selectedAnswer) {
+            cell.classList.add('correct');
+            selectedPiece.classList.remove('selected');
+            selectedPiece.classList.add('solved');
+            score += 15;
+            solvedPieces++;
+            selectedPiece = null;
+            playCorrectSound();
+            showMessage('آفرین! پاسخ صحیح است 🎯 (+۱۵ امتیاز)', 'success');
+
+            if (solvedPieces === TOTAL_PROBLEMS) {
+                endGame(true);
+            }
+        } else {
+            cell.classList.add('wrong');
+            lives--;
+            setupLives();
+            playWrongSound();
+            showMessage(`پاسخ نادرست! ${lives} جان باقی مانده`, 'error');
+            setTimeout(() => { cell.classList.remove('wrong'); }, 500);
+            if (lives === 0) {
+                setTimeout(() => endGame(false), 1000);
+            }
+        }
+        updateUI();
+        updateSelectionMessage();
+    }
+
+    function startTimer() {
+        clearInterval(timerInterval);
+        timerInterval = setInterval(() => {
+            if (!gameActive) return;
+            timeLeft--;
+            updateUI();
+            if (timeLeft <= 0) {
+                endGame(false);
+            }
+        }, 1000);
+    }
+
+    function handleHint() {
+        if (!gameActive) {
+            showMessage('بازی هنوز شروع نشده یا تمام شده!', 'error');
+            return;
+        }
+        if (hintActive) {
+            showMessage('لطفاً صبر کنید، راهنمایی در حال نمایش است', 'info');
+            return;
+        }
+        if (!selectedPiece) {
+            showMessage('ابتدا یک عبارت را انتخاب کنید', 'error');
+            return;
+        }
+        if (score < 10) {
+            showMessage('برای راهنمایی حداقل ۱۰ امتیاز نیاز دارید', 'error');
+            return;
+        }
+
+        const correctAnswer = selectedPiece.dataset.correctAnswer;
+        let correctCell = null;
+        const cells = document.querySelectorAll('.answer-cell:not(.correct)');
+        for (let cell of cells) {
+            if (cell.innerHTML === correctAnswer) {
+                correctCell = cell;
+                break;
+            }
+        }
+        if (!correctCell) {
+            showMessage('این عبارت قبلاً حل شده است', 'info');
+            return;
+        }
+
+        hintActive = true;
+        document.querySelectorAll('.answer-cell, .fraction-piece').forEach(el => {
+            el.style.pointerEvents = 'none';
+        });
+
+        correctCell.classList.add('hint-highlight');
+        if (selectedPiece) {
+            selectedPiece.classList.add('hint-highlight');
+        }
+
+        score = Math.max(0, score - 10);
+        updateUI();
+
+        showMessage('جواب صحیح برای ۳ ثانیه برجسته شد (۱۰ امتیاز کسر شد)', 'info');
+
+        hintTimeout = setTimeout(() => {
+            correctCell.classList.remove('hint-highlight');
+            if (selectedPiece) {
+                selectedPiece.classList.remove('hint-highlight');
+            }
+            document.querySelectorAll('.answer-cell, .fraction-piece').forEach(el => {
+                el.style.pointerEvents = '';
+            });
+            hintActive = false;
+            hintTimeout = null;
+        }, 3000);
+    }
+
+    function endGame(isWin) {
+        gameActive = false;
+        clearInterval(timerInterval);
+        if (hintTimeout) { clearTimeout(hintTimeout);
+            hintTimeout = null;
+            hintActive = false; }
+        gameContainer.classList.add('game-ended');
+
+        const totalCorrect = Math.round(score / 15);
+        const totalWrong = solvedPieces - totalCorrect;
+
+        if (isWin) {
+            const timeBonus = Math.floor(timeLeft * 2);
+            score += timeBonus;
+            updateUI();
+            endTitle.innerHTML = `<span class="icon">🎉</span> تبریک!`;
+            endMessage.textContent = `شما با موفقیت همه ${TOTAL_PROBLEMS} پازل را حل کردید! 
+                                         ${timeBonus > 0 ? `+${timeBonus} امتیاز برای زمان باقی‌مانده` : ''}`;
+            playFinishSound();
+            launchConfetti(120);
+        } else if (lives === 0) {
+            endTitle.innerHTML = `<span class="icon">💔</span> جان‌ها تمام شد`;
+            endMessage.textContent = 'شما ۳ بار پاسخ اشتباه دادید!';
+            playWrongSound();
+        } else {
+            endTitle.innerHTML = `<span class="icon">⏰</span> زمان تمام شد`;
+            endMessage.textContent = 'زمان ۱۰ دقیقه‌ای شما به پایان رسید!';
+            playWrongSound();
+        }
+
+        finalScore.textContent = score;
+        finalCorrect.textContent = Math.max(0, totalCorrect);
+        finalWrong.textContent = Math.max(0, totalWrong);
+        endModal.classList.add('active');
+    }
+
+    // ===== اتصال رویدادها =====
+    document.addEventListener('DOMContentLoaded', function() {
+        startGameBtn.addEventListener('click', startGame);
+        hintBtn.addEventListener('click', handleHint);
+        resetBtn.addEventListener('click', function() {
+            if (confirm('آیا مطمئنید می‌خواهید بازی را از اول شروع کنید؟')) {
+                if (hintTimeout) { clearTimeout(hintTimeout);
+                    hintTimeout = null;
+                    hintActive = false; }
+                startGame();
+            }
+        });
+        menuBtn.addEventListener('click', function() {
+            if (confirm('آیا مطمئنید می‌خواهید به منو بازگردید؟ پیشرفت بازی از دست خواهد رفت.')) {
+                showMenu();
+            }
+        });
+        playAgainBtn.addEventListener('click', function() {
+            if (hintTimeout) { clearTimeout(hintTimeout);
+                hintTimeout = null;
+                hintActive = false; }
+            document.getElementById('confettiContainer').innerHTML = '';
+            endModal.classList.remove('active');
+            startGame();
+        });
+        endMenuBtn.addEventListener('click', function() {
+            document.getElementById('confettiContainer').innerHTML = '';
+            endModal.classList.remove('active');
+            showMenu();
+        });
+
+        menuContainer.className = 'container page-visible';
+        gameContainer.className = 'container page-hidden';
+        startModal.className = 'modal-overlay page-hidden';
+        endModal.classList.remove('active');
+    });
+
+    // ============================================================
+    // ===== اسکریپت منوی شبکه‌های اجتماعی (اضافه شده) =====
+    // ============================================================
+    (function() {
+        const menu = document.getElementById('circularMenu');
+        const menuButton = document.querySelector('.menu-button');
+        const menuItems = Array.from(document.querySelectorAll('.menu-item'));
+        let isMenuOpen = false;
+        let isInitialized = false;
+        let isAnimating = false;
+        const ANIMATION_LOCK_MS = 730;
+
+        function setMenuState(open) {
+            isMenuOpen = open;
+            menu.classList.toggle('active', open);
+            menuButton.setAttribute('aria-expanded', String(open));
+            menuItems.forEach(item => item.setAttribute('tabindex', open ? '0' : '-1'));
+        }
+
+        function toggleMenu() {
+            if (isAnimating) return;
+            if (!isInitialized) {
+                menu.classList.add('ready');
+                isInitialized = true;
+            }
+            isAnimating = true;
+            setMenuState(!isMenuOpen);
+            setTimeout(() => { isAnimating = false; }, ANIMATION_LOCK_MS);
+        }
+
+        menuButton.addEventListener('click', function(e) {
+            e.stopPropagation();
+            toggleMenu();
+        });
+
+        document.addEventListener('click', function(e) {
+            if (isMenuOpen && !menu.contains(e.target)) {
+                setMenuState(false);
+            }
+        });
+
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape' && isMenuOpen) {
+                setMenuState(false);
+                menuButton.focus();
+            }
+        });
+
+        menu.addEventListener('click', function(e) {
+            e.stopPropagation();
+        });
+    })();
+</script>
+</body>
+</html>

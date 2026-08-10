@@ -1,0 +1,1449 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>سودوکو با کلمات فارسی پنجم + شبکه‌های اجتماعی</title>
+<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;700;800;900&display=swap" rel="stylesheet">
+<style>
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:'Vazirmatn',sans-serif;
+}
+
+body{
+    min-height:100vh;
+    background:linear-gradient(135deg, #e0f2fe 0%, #dbeafe 50%, #ede9fe 100%);
+    display:flex;
+    justify-content:flex-start;
+    align-items:center;
+    padding:20px;
+    overflow-x:hidden;
+}
+
+.container{
+    width:100%;
+    max-width:950px;
+    margin:auto;
+}
+
+/* ======================
+   Header
+====================== */
+.header{
+    text-align:center;
+    margin-bottom:25px;
+}
+
+.logo{
+    font-size:80px;
+    margin-bottom:10px;
+}
+
+.header h1{
+    color:#0f172a;
+    font-size:2.6rem;
+    font-weight:900;
+    line-height:1.3;
+    margin-bottom:12px;
+    white-space:nowrap;
+}
+
+.subtitle{
+    color:#475569;
+    font-size:1.1rem;
+    font-weight:500;
+}
+
+/* ======================
+   Student Name
+====================== */
+.student-box{
+    margin-bottom:25px;
+}
+
+.student-box input{
+    width:100%;
+    max-width:100%;
+    display:block;
+    height:60px;
+    border:none;
+    border-radius:18px;
+    background:#ffffff;
+    padding:0 20px;
+    font-size:1.1rem;
+    outline:none;
+    box-shadow:0 10px 25px rgba(15,23,42,.08);
+}
+
+.student-box input:focus{
+    box-shadow:0 0 0 4px rgba(59,130,246,.15), 0 10px 25px rgba(15,23,42,.08);
+}
+
+/* ======================
+   Guide
+====================== */
+.guide-card{
+    background:#ffffff;
+    border-radius:24px;
+    padding:28px;
+    box-shadow:0 10px 30px rgba(15,23,42,.08);
+    margin-bottom:30px;
+}
+
+.guide-card h2{
+    color:#1e293b;
+    margin-bottom:18px;
+}
+
+.guide-card ul{
+    list-style:none;
+}
+
+.guide-card li{
+    color:#334155;
+    line-height:2;
+    font-size:1rem;
+}
+
+.guide-card li::before{
+    content:"✓ ";
+    color:#22c55e;
+    font-weight:bold;
+}
+
+.danger-rule{
+    color:#dc2626 !important;
+    font-weight:700;
+}
+
+/* ======================
+   Records Card
+====================== */
+.records-card{
+    background:#ffffff;
+    border-radius:24px;
+    padding:28px;
+    box-shadow:0 10px 30px rgba(15,23,42,.08);
+    margin-bottom:30px;
+}
+
+.records-card h2{
+    color:#1e293b;
+    margin-bottom:18px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+}
+
+.clear-btn{
+    background:#fee2e2;
+    color:#dc2626;
+    border:none;
+    padding:8px 16px;
+    border-radius:10px;
+    cursor:pointer;
+    font-weight:700;
+    font-size:0.85rem;
+    transition:all 0.3s;
+}
+
+.clear-btn:hover{
+    background:#fecaca;
+}
+
+.records-grid{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:15px;
+}
+
+.record-item{
+    text-align:center;
+    padding:20px;
+    border-radius:16px;
+    background:#f8fafc;
+}
+
+.record-item.easy-record{
+    border:2px solid #22c55e;
+}
+
+.record-item.medium-record{
+    border:2px solid #f59e0b;
+}
+
+.record-item.hard-record{
+    border:2px solid #ef4444;
+}
+
+.record-label{
+    font-weight:700;
+    color:#1e293b;
+    margin-bottom:8px;
+    font-size:1rem;
+}
+
+.record-value{
+    font-size:1.4rem;
+    font-weight:900;
+    color:#3b82f6;
+}
+
+.no-record{
+    color:#94a3b8;
+    font-size:0.9rem;
+}
+
+/* ======================
+   Levels
+====================== */
+.levels{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:20px;
+}
+
+.level{
+    height:150px;
+    border-radius:24px;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    cursor:pointer;
+    transition:.3s;
+    box-shadow:0 10px 30px rgba(15,23,42,.08);
+}
+
+.level:hover{
+    transform:translateY(-10px) scale(1.03);
+    box-shadow:0 20px 40px rgba(15,23,42,.15);
+}
+
+.level h3{
+    font-size:1.8rem;
+    font-weight:800;
+    color:white;
+}
+
+.easy{
+    background:linear-gradient(135deg,#22c55e,#16a34a);
+}
+
+.medium{
+    background:linear-gradient(135deg,#f59e0b,#d97706);
+}
+
+.hard{
+    background:linear-gradient(135deg,#ef4444,#dc2626);
+}
+
+/* ======================
+   Game Board
+====================== */
+.game-container{
+    display:none;
+}
+
+.game-header{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:20px;
+    flex-wrap:wrap;
+    gap:15px;
+}
+
+.game-info{
+    background:white;
+    border-radius:18px;
+    padding:15px 25px;
+    box-shadow:0 5px 15px rgba(15,23,42,.08);
+    font-weight:700;
+    color:#1e293b;
+    display:flex;
+    gap:20px;
+    flex-wrap:wrap;
+    align-items:center;
+}
+
+.errors-count{
+    color:#dc2626;
+    font-size:1.2rem;
+}
+
+.timer{
+    color:#3b82f6;
+    font-size:1.2rem;
+    font-weight:900;
+}
+
+.legend{
+    display:flex;
+    flex-wrap:wrap;
+    gap:10px;
+    margin-bottom:25px;
+    padding:20px;
+    background:white;
+    border-radius:18px;
+    box-shadow:0 5px 15px rgba(15,23,42,.08);
+}
+
+.legend-item{
+    display:flex;
+    align-items:center;
+    gap:8px;
+    padding:5px 12px;
+    border-radius:12px;
+    background:#f1f5f9;
+    font-size:0.85rem;
+    font-weight:500;
+}
+
+.color-box{
+    width:24px;
+    height:24px;
+    border-radius:6px;
+    border:2px solid rgba(0,0,0,0.1);
+}
+
+.sudoku-grid{
+    display:grid;
+    grid-template-columns:repeat(9,1fr);
+    gap:2px;
+    background:#1e293b;
+    border:3px solid #1e293b;
+    border-radius:12px;
+    overflow:hidden;
+    box-shadow:0 15px 40px rgba(15,23,42,.15);
+}
+
+.cell{
+    aspect-ratio:1;
+    background:white;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    cursor:pointer;
+    font-size:0.7rem;
+    font-weight:700;
+    transition:all 0.2s;
+    position:relative;
+    min-width:0;
+    padding:2px;
+    word-break:break-word;
+    text-align:center;
+}
+
+.cell:hover{
+    background:#f0f9ff;
+    transform:scale(1.02);
+    z-index:1;
+}
+
+.cell.fixed{
+    font-weight:900;
+    cursor:default;
+}
+
+.cell.selected{
+    box-shadow:inset 0 0 0 3px #3b82f6;
+}
+
+.cell.error{
+    animation:shake 0.5s;
+    box-shadow:inset 0 0 0 3px #ef4444;
+}
+
+/* Thick borders for 3x3 blocks */
+.cell:nth-child(3n){
+    border-left:2px solid #1e293b;
+}
+
+.cell:nth-child(n+19):nth-child(-n+27),
+.cell:nth-child(n+46):nth-child(-n+54){
+    border-bottom:2px solid #1e293b;
+}
+
+@keyframes shake{
+    0%,100%{transform:translateX(0);}
+    25%{transform:translateX(-5px);}
+    75%{transform:translateX(5px);}
+}
+
+.word-palette{
+    display:flex;
+    flex-wrap:wrap;
+    gap:10px;
+    margin-top:25px;
+    padding:20px;
+    background:white;
+    border-radius:18px;
+    box-shadow:0 5px 15px rgba(15,23,42,.08);
+    justify-content:center;
+}
+
+.palette-word{
+    padding:10px 15px;
+    border-radius:12px;
+    cursor:pointer;
+    font-weight:700;
+    font-size:0.85rem;
+    transition:all 0.2s;
+    border:2px solid transparent;
+    position:relative;
+    display:flex;
+    align-items:center;
+    gap:8px;
+}
+
+.palette-word:hover{
+    transform:scale(1.08);
+    border-color:#3b82f6;
+}
+
+.palette-word.selected-word{
+    border-color:#1e293b;
+    transform:scale(1.1);
+}
+
+.palette-word.depleted{
+    opacity:0.4;
+    cursor:not-allowed;
+    pointer-events:none;
+}
+
+.word-count{
+    background:rgba(255,255,255,0.9);
+    color:#1e293b;
+    border-radius:50%;
+    width:24px;
+    height:24px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:0.75rem;
+    font-weight:900;
+}
+
+.btn{
+    padding:12px 25px;
+    border:none;
+    border-radius:12px;
+    font-weight:700;
+    font-size:1rem;
+    cursor:pointer;
+    transition:all 0.3s;
+}
+
+.btn-back{
+    background:#64748b;
+    color:white;
+}
+
+.btn-back:hover{
+    background:#475569;
+}
+
+.btn-check{
+    background:#3b82f6;
+    color:white;
+}
+
+.btn-check:hover{
+    background:#2563eb;
+}
+
+.game-over-overlay{
+    display:none;
+    position:fixed;
+    top:0;
+    left:0;
+    width:100%;
+    height:100%;
+    background:rgba(0,0,0,0.7);
+    justify-content:center;
+    align-items:center;
+    z-index:1000;
+}
+
+.game-over-card{
+    background:white;
+    padding:40px;
+    border-radius:24px;
+    text-align:center;
+    box-shadow:0 20px 60px rgba(0,0,0,0.3);
+    max-width:90%;
+}
+
+.game-over-card h2{
+    font-size:2rem;
+    margin-bottom:15px;
+}
+
+.game-over-card p{
+    font-size:1.1rem;
+    color:#475569;
+    margin-bottom:10px;
+}
+
+.new-record-badge{
+    display:inline-block;
+    background:#f59e0b;
+    color:white;
+    padding:8px 20px;
+    border-radius:20px;
+    font-weight:900;
+    margin:10px 0;
+    animation:pulse 1s infinite;
+}
+
+@keyframes pulse{
+    0%,100%{transform:scale(1);}
+    50%{transform:scale(1.05);}
+}
+
+.game-over-card button{
+    margin-top:20px;
+    padding:15px 40px;
+    background:#3b82f6;
+    color:white;
+    border:none;
+    border-radius:12px;
+    font-size:1.1rem;
+    font-weight:700;
+    cursor:pointer;
+}
+
+/* ======================
+   Footer
+====================== */
+.footer{
+    text-align:center;
+    margin-top:25px;
+    color:#64748b;
+    font-size:.9rem;
+}
+
+/* ======================
+   Mobile
+====================== */
+@media(max-width:768px){
+    body{
+        padding:15px;
+        align-items:flex-start;
+    }
+
+    .logo{
+        font-size:55px;
+    }
+
+    .header h1{
+        font-size:1.6rem;
+        line-height:1.4;
+        white-space:normal;
+    }
+
+    .subtitle{
+        font-size:.95rem;
+    }
+
+    .student-box input{
+        height:55px;
+        font-size:1rem;
+    }
+
+    .guide-card{
+        padding:20px;
+    }
+
+    .guide-card li{
+        font-size:.95rem;
+    }
+
+    .records-grid{
+        grid-template-columns:1fr;
+        gap:10px;
+    }
+
+    .levels{
+        grid-template-columns:1fr;
+        gap:15px;
+    }
+
+    .level{
+        height:100px;
+    }
+
+    .level h3{
+        font-size:1.5rem;
+    }
+
+    .cell{
+        font-size:0.6rem;
+    }
+
+    .legend-item{
+        font-size:0.7rem;
+        padding:3px 8px;
+    }
+
+    .palette-word{
+        padding:8px 10px;
+        font-size:0.75rem;
+    }
+    
+    .game-info{
+        font-size:0.85rem;
+        padding:10px 15px;
+    }
+}
+
+</style>
+</head>
+<body>
+
+<div class="container">
+
+    <!-- Main Menu -->
+    <div id="mainMenu">
+        <div class="header">
+            <div class="logo">🧩</div>
+            <h1>سودوکو با کلمات فارسی پنجم</h1>
+            <div class="subtitle">بازی آموزشی واژگان، تمرکز و حافظه</div>
+        </div>
+
+        <div class="student-box">
+            <input type="text" id="studentName" placeholder="نام و نام خانوادگی دانش‌آموز">
+        </div>
+
+        <div class="guide-card">
+            <h2>📖 راهنمای بازی</h2>
+            <ul>
+                <li>در هر سطر باید هر ۹ کلمه دقیقاً یک بار قرار بگیرد.</li>
+                <li>در هر ستون باید هر ۹ کلمه دقیقاً یک بار قرار بگیرد.</li>
+                <li>در هر ناحیه ۳×۳ باید هر ۹ کلمه وجود داشته باشد.</li>
+                <li>خانه‌های خالی را با کلمات مناسب کامل کنید.</li>
+                <li>اعداد روی کارت‌ها نشان‌دهنده تعداد استفاده باقی‌مانده است.</li>
+                <li class="danger-rule">⚠ با ثبت سومین پاسخ اشتباه، بازی پایان می‌یابد.</li>
+            </ul>
+        </div>
+
+        <!-- Records Section -->
+        <div class="records-card">
+            <h2>
+                🏆 بهترین رکوردها
+                <button class="clear-btn" onclick="clearRecords()">🗑 پاک کردن رکوردها</button>
+            </h2>
+            <div class="records-grid">
+                <div class="record-item easy-record">
+                    <div class="record-label">🟢 آسان</div>
+                    <div id="easyRecord" class="record-value no-record">بدون رکورد</div>
+                </div>
+                <div class="record-item medium-record">
+                    <div class="record-label">🟡 متوسط</div>
+                    <div id="mediumRecord" class="record-value no-record">بدون رکورد</div>
+                </div>
+                <div class="record-item hard-record">
+                    <div class="record-label">🔴 سخت</div>
+                    <div id="hardRecord" class="record-value no-record">بدون رکورد</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="levels">
+            <div class="level easy" onclick="startGame('easy')">
+                <h3>آسان</h3>
+            </div>
+            <div class="level medium" onclick="startGame('medium')">
+                <h3>متوسط</h3>
+            </div>
+            <div class="level hard" onclick="startGame('hard')">
+                <h3>سخت</h3>
+            </div>
+        </div>
+
+        <div class="footer">نسخه آزمایشی بازی سودوکو با کلمات فارسی</div>
+    </div>
+
+    <!-- Game Board -->
+    <div id="gameBoard" class="game-container">
+        <div class="game-header">
+            <button class="btn btn-back" onclick="goBack()">🔙 بازگشت به منو</button>
+            <div class="game-info">
+                <span>👤 <span id="displayName"></span></span>
+                <span>سطح: <span id="displayLevel"></span></span>
+                <span>⏱ <span id="timerDisplay" class="timer">۰۰:۰۰</span></span>
+                <span>خطا: <span id="errorCount" class="errors-count">۰</span> / ۳</span>
+            </div>
+        </div>
+
+        <div id="legend" class="legend"></div>
+        <div id="sudokuGrid" class="sudoku-grid"></div>
+        <div id="wordPalette" class="word-palette"></div>
+    </div>
+
+</div>
+
+<!-- Game Over Overlay -->
+<div id="gameOverOverlay" class="game-over-overlay">
+    <div class="game-over-card">
+        <h2 id="gameOverMessage"></h2>
+        <div id="newRecordBadge" class="new-record-badge" style="display:none;">🎉 رکورد جدید!</div>
+        <p id="gameOverDetails"></p>
+        <p id="gameOverTime"></p>
+        <button onclick="goBack()">بازگشت به منوی اصلی</button>
+    </div>
+</div>
+
+<script>
+
+// ======================
+// Word Bank (Custom)
+// ======================
+const wordBank = [
+    "لطیف", "عجیب", "ایستگاه", "عالم", "عمیق", "طبیعت", "تامل", "عادت", "موضوع",
+    "علف", "محکم", "هیس", "گوش", "قطره", "حلقه", "صدا", "حشره", "تکه",
+    "ساکت", "چطور", "عنکبوت", "صبحگاهی", "فقط", "نگاه", "همیشه", "کوتاه", "توصیف",
+    "نگاشته", "گاهی", "نویسندگان", "گوارا", "شگفتی", "فضل", "هزار", "بحر", "انجم",
+    "تاثیر", "بستان", "برهنه", "توحیدگو", "نوبهار", "اجزا", "روزگاران", "کهن", "طبیب",
+    "گرمابه", "خلاصه", "تصمیم", "مسئله", "گوشت", "هوس", "نقطه", "بهترین", "فراخواند",
+    "بعضی", "جمع", "بزرگان", "معلوم", "محل", "تعیین", "کارگاه", "حاضر", "شرط",
+    "موفقیت", "میهن", "عزیز", "سادگی", "بازرگان", "حوادث", "روزگار", "فضا", "مهر",
+    "بعد", "معمولا", "مقام", "مراقبت", "محافظت", "مقصد", "غفلت", "تهیدست", "استخوان",
+    "فضیلت", "ثروتمند", "عقل", "هلاک", "موذی", "خویش", "شعله‌ور", "بوته", "قامت",
+    "کاهلی", "مهرگان", "برتر", "گفتا", "هنگام", "دویست", "نگاهی", "چنار", "اهتزاز",
+    "فروغ", "همراه", "استقلال", "ورزشگاه", "حاضران", "عظمت", "گذشته", "تصور", "موزون",
+    "شعر", "شجاعت", "علاقه", "ایثار", "اصلی", "گام", "سازندگی", "سلسله", "هخامنشی",
+    "پهناور", "سهمگین", "انبوه", "بیگانگان", "گذرگاه", "آشفتگی", "عقب", "نواحی", "گذشت",
+    "چیرگی", "خواری", "گروهی", "محاصره", "یادگار", "تحمیل", "ظهر", "گوشه", "صحبت",
+    "تقریبا", "تصویر", "صاحب", "منظم", "محو", "لطف", "خواندن", "دفاع", "ناگهان",
+    "بگذار", "هوا", "وقت", "سپاسگزاری", "کنجکاو", "استعداد", "فوق العاده", "حافظ", "طراحی",
+    "آهو", "گره", "ضامن", "ذهن", "مطمئن", "عصر", "عاشورا", "شاعر", "ضایع",
+    "حمله", "هراس", "قتل", "خواجه", "حفظ", "قلعه", "اطلاع", "مهیب", "گمان",
+    "حادثه", "دعوت", "جذب", "مغول", "آثار", "نظامیه", "شرایط", "قاب", "عکس",
+    "صندلی", "لذت", "مخصوصا", "انتظار", "مثل", "پیغام", "منظور", "شاهنامه", "کاغذ",
+    "بخوان", "رانندگی", "عاقبت", "خطر", "وظیفه", "نکوهیده", "قدرت", "جهل", "آگاهی",
+    "تضمین", "جراحی", "خطوط", "تحمل", "اتفاق", "مهربانی", "ببخش", "شوهر", "رحمت",
+    "الهی", "گوسفند", "نذر", "همسر", "آموزگار", "فرصت", "معنی", "حقیقت", "حیرت",
+    "علم", "دگرگونی", "خواهی", "رهگذار", "قناعت", "عاقل", "زندگانی", "توشه", "هشیاران",
+    "سور", "قصر"
+];
+
+// ======================
+// Colors for words
+// ======================
+const wordColors = [
+    '#EF4444', '#F59E0B', '#10B981', '#3B82F6', '#8B5CF6',
+    '#EC4899', '#06B6D4', '#F97316', '#6366F1'
+];
+
+// ======================
+// Game State
+// ======================
+let gameState = {
+    studentName: '',
+    level: '',
+    selectedWords: [],
+    solution: [],
+    puzzle: [],
+    errors: 0,
+    selectedCell: null,
+    selectedWord: null,
+    wordColorMap: {},
+    wordRemaining: {},
+    timerSeconds: 0,
+    timerInterval: null
+};
+
+// ======================
+// Records Management
+// ======================
+function loadRecords() {
+    const records = localStorage.getItem('sudokuRecords');
+    return records ? JSON.parse(records) : {};
+}
+
+function saveRecord(level, studentName, timeSeconds) {
+    const records = loadRecords();
+    
+    // Only save if no record exists or new record is better (faster)
+    if (!records[level] || timeSeconds < records[level].timeSeconds) {
+        records[level] = {
+            studentName: studentName,
+            timeSeconds: timeSeconds,
+            date: new Date().toLocaleDateString('fa-IR')
+        };
+        localStorage.setItem('sudokuRecords', JSON.stringify(records));
+        return true; // New record!
+    }
+    return false; // No new record
+}
+
+function clearRecords() {
+    if (confirm("آیا مطمئن هستید که می‌خواهید همه رکوردها را پاک کنید؟")) {
+        localStorage.removeItem('sudokuRecords');
+        updateRecordsDisplay();
+    }
+}
+
+function updateRecordsDisplay() {
+    const records = loadRecords();
+    
+    const levels = ['easy', 'medium', 'hard'];
+    const levelIds = ['easyRecord', 'mediumRecord', 'hardRecord'];
+    const levelNames = { easy: 'آسان', medium: 'متوسط', hard: 'سخت' };
+    
+    levels.forEach((level, index) => {
+        const element = document.getElementById(levelIds[index]);
+        if (records[level]) {
+            const minutes = Math.floor(records[level].timeSeconds / 60);
+            const seconds = records[level].timeSeconds % 60;
+            const timeStr = `${String(minutes).padStart(2, '۰')}:${String(seconds).padStart(2, '۰')}`;
+            
+            element.innerHTML = `
+                <div style="font-size:1.4rem; font-weight:900; color:#3b82f6;">${timeStr}</div>
+                <div style="font-size:0.8rem; color:#64748b; margin-top:5px;">${records[level].studentName}</div>
+                <div style="font-size:0.7rem; color:#94a3b8;">${records[level].date}</div>
+            `;
+            element.classList.remove('no-record');
+        } else {
+            element.innerHTML = 'بدون رکورد';
+            element.classList.add('no-record');
+        }
+    });
+}
+
+// ======================
+// Timer Functions
+// ======================
+function startTimer() {
+    gameState.timerSeconds = 0;
+    updateTimerDisplay();
+    gameState.timerInterval = setInterval(() => {
+        gameState.timerSeconds++;
+        updateTimerDisplay();
+    }, 1000);
+}
+
+function stopTimer() {
+    if (gameState.timerInterval) {
+        clearInterval(gameState.timerInterval);
+        gameState.timerInterval = null;
+    }
+}
+
+function updateTimerDisplay() {
+    const minutes = Math.floor(gameState.timerSeconds / 60);
+    const seconds = gameState.timerSeconds % 60;
+    const display = `${String(minutes).padStart(2, '۰')}:${String(seconds).padStart(2, '۰')}`;
+    document.getElementById("timerDisplay").textContent = display;
+}
+
+function formatTime(totalSeconds) {
+    const minutes = Math.floor(totalSeconds / 60);
+    const seconds = totalSeconds % 60;
+    return `${minutes} دقیقه و ${seconds} ثانیه`;
+}
+
+// ======================
+// Start Game
+// ======================
+function startGame(level) {
+    const studentName = document.getElementById("studentName").value.trim();
+    
+    if (studentName === "") {
+        alert("لطفاً نام و نام خانوادگی خود را وارد کنید.");
+        return;
+    }
+
+    gameState.studentName = studentName;
+    gameState.level = level;
+    gameState.errors = 0;
+
+    // Select 9 random words
+    const shuffled = [...wordBank].sort(() => Math.random() - 0.5);
+    gameState.selectedWords = shuffled.slice(0, 9);
+    
+    // Assign colors and remaining counts to words
+    gameState.wordColorMap = {};
+    gameState.wordRemaining = {};
+    
+    gameState.selectedWords.forEach((word, index) => {
+        gameState.wordColorMap[word] = wordColors[index];
+        // Count how many times this word needs to be placed
+        gameState.wordRemaining[word] = 9;
+    });
+
+    // Generate Sudoku puzzle
+    generateSudoku(level);
+    
+    // Update remaining counts based on pre-filled cells
+    for (let row = 0; row < 9; row++) {
+        for (let col = 0; col < 9; col++) {
+            if (gameState.puzzle[row][col] !== null) {
+                const word = gameState.selectedWords[gameState.puzzle[row][col]];
+                gameState.wordRemaining[word]--;
+            }
+        }
+    }
+    
+    // Switch to game view
+    document.getElementById("mainMenu").style.display = "none";
+    document.getElementById("gameBoard").style.display = "block";
+    
+    // Update display
+    document.getElementById("displayName").textContent = studentName;
+    
+    const levelNames = { easy: "آسان 🟢", medium: "متوسط 🟡", hard: "سخت 🔴" };
+    document.getElementById("displayLevel").textContent = levelNames[level];
+    document.getElementById("errorCount").textContent = "۰";
+    
+    // Start timer
+    startTimer();
+    
+    // Render game
+    renderLegend();
+    renderGrid();
+    renderPalette();
+}
+
+// ======================
+// Generate Sudoku
+// ======================
+function generateSudoku(level) {
+    // Create empty 9x9 grid
+    const grid = Array(9).fill().map(() => Array(9).fill(null));
+    
+    // Fill grid with valid Sudoku (using word indices 0-8)
+    fillSudoku(grid);
+    
+    // Save solution
+    gameState.solution = grid.map(row => [...row]);
+    
+    // Create puzzle by removing cells based on difficulty
+    const cellsToRemove = {
+        easy: 35,
+        medium: 45,
+        hard: 55
+    };
+    
+    gameState.puzzle = grid.map(row => [...row]);
+    
+    let removed = 0;
+    const totalToRemove = cellsToRemove[level];
+    
+    while (removed < totalToRemove) {
+        const row = Math.floor(Math.random() * 9);
+        const col = Math.floor(Math.random() * 9);
+        
+        if (gameState.puzzle[row][col] !== null) {
+            gameState.puzzle[row][col] = null;
+            removed++;
+        }
+    }
+}
+
+function fillSudoku(grid) {
+    const numbers = [0, 1, 2, 3, 4, 5, 6, 7, 8];
+    
+    function isValid(grid, row, col, num) {
+        // Check row
+        for (let x = 0; x < 9; x++) {
+            if (grid[row][x] === num) return false;
+        }
+        
+        // Check column
+        for (let x = 0; x < 9; x++) {
+            if (grid[x][col] === num) return false;
+        }
+        
+        // Check 3x3 box
+        const startRow = Math.floor(row / 3) * 3;
+        const startCol = Math.floor(col / 3) * 3;
+        
+        for (let i = 0; i < 3; i++) {
+            for (let j = 0; j < 3; j++) {
+                if (grid[startRow + i][startCol + j] === num) return false;
+            }
+        }
+        
+        return true;
+    }
+    
+    function solve(grid) {
+        for (let row = 0; row < 9; row++) {
+            for (let col = 0; col < 9; col++) {
+                if (grid[row][col] === null) {
+                    const shuffled = [...numbers].sort(() => Math.random() - 0.5);
+                    
+                    for (let num of shuffled) {
+                        if (isValid(grid, row, col, num)) {
+                            grid[row][col] = num;
+                            
+                            if (solve(grid)) {
+                                return true;
+                            }
+                            
+                            grid[row][col] = null;
+                        }
+                    }
+                    
+                    return false;
+                }
+            }
+        }
+        
+        return true;
+    }
+    
+    solve(grid);
+}
+
+// ======================
+// Render Functions
+// ======================
+function renderLegend() {
+    const legend = document.getElementById("legend");
+    legend.innerHTML = gameState.selectedWords.map(word => `
+        <div class="legend-item">
+            <div class="color-box" style="background-color:${gameState.wordColorMap[word]}"></div>
+            <span>${word}</span>
+        </div>
+    `).join("");
+}
+
+function renderGrid() {
+    const grid = document.getElementById("sudokuGrid");
+    grid.innerHTML = "";
+    
+    for (let row = 0; row < 9; row++) {
+        for (let col = 0; col < 9; col++) {
+            const cell = document.createElement("div");
+            cell.className = "cell";
+            cell.dataset.row = row;
+            cell.dataset.col = col;
+            
+            const value = gameState.puzzle[row][col];
+            
+            if (value !== null) {
+                cell.classList.add("fixed");
+                const word = gameState.selectedWords[value];
+                cell.textContent = word;
+                cell.style.backgroundColor = gameState.wordColorMap[word];
+                cell.style.color = "white";
+                cell.style.textShadow = "1px 1px 2px rgba(0,0,0,0.3)";
+            } else {
+                cell.addEventListener("click", () => selectCell(row, col));
+            }
+            
+            grid.appendChild(cell);
+        }
+    }
+}
+
+function renderPalette() {
+    const palette = document.getElementById("wordPalette");
+    palette.innerHTML = gameState.selectedWords.map((word, index) => {
+        const remaining = gameState.wordRemaining[word];
+        const isDepleted = remaining <= 0;
+        
+        return `
+            <div class="palette-word ${isDepleted ? 'depleted' : ''} ${gameState.selectedWord === word ? 'selected-word' : ''}" 
+                 style="background-color:${gameState.wordColorMap[word]}; color:white; text-shadow:1px 1px 2px rgba(0,0,0,0.3);"
+                 data-word="${word}"
+                 onclick="${isDepleted ? '' : `selectPaletteWord('${word}')`}">
+                <span>${word}</span>
+                <span class="word-count">${remaining}</span>
+            </div>
+        `;
+    }).join("");
+}
+
+// ======================
+// Game Logic
+// ======================
+function selectCell(row, col) {
+    // Remove previous selection
+    document.querySelectorAll(".cell.selected").forEach(cell => {
+        cell.classList.remove("selected");
+    });
+    
+    // Add selection to current cell
+    const cell = document.querySelector(`.cell[data-row="${row}"][data-col="${col}"]`);
+    if (cell && !cell.classList.contains("fixed")) {
+        cell.classList.add("selected");
+        gameState.selectedCell = { row, col };
+        
+        // If a word is already selected, try to place it
+        if (gameState.selectedWord) {
+            placeWord(row, col, gameState.selectedWord);
+        }
+    }
+}
+
+function selectPaletteWord(word) {
+    // Don't select if depleted
+    if (gameState.wordRemaining[word] <= 0) return;
+    
+    // Remove previous palette selection
+    document.querySelectorAll(".palette-word.selected-word").forEach(w => {
+        w.classList.remove("selected-word");
+    });
+    
+    // Add selection to current word
+    const wordElement = document.querySelector(`.palette-word[data-word="${word}"]`);
+    if (wordElement) {
+        wordElement.classList.add("selected-word");
+        gameState.selectedWord = word;
+    }
+    
+    // If a cell is already selected, try to place the word
+    if (gameState.selectedCell) {
+        placeWord(gameState.selectedCell.row, gameState.selectedCell.col, word);
+    }
+}
+
+function placeWord(row, col, word) {
+    // Check if word is depleted
+    if (gameState.wordRemaining[word] <= 0) return;
+    
+    const wordIndex = gameState.selectedWords.indexOf(word);
+    const correctIndex = gameState.solution[row][col];
+    
+    if (wordIndex === correctIndex) {
+        // Correct placement
+        gameState.puzzle[row][col] = wordIndex;
+        gameState.wordRemaining[word]--;
+        
+        renderGrid();
+        renderPalette();
+        
+        // Clear selections
+        gameState.selectedCell = null;
+        gameState.selectedWord = null;
+        
+        // Check if puzzle is complete
+        if (isPuzzleComplete()) {
+            stopTimer();
+            
+            // Try to save record
+            const isNewRecord = saveRecord(gameState.level, gameState.studentName, gameState.timerSeconds);
+            
+            const timeStr = formatTime(gameState.timerSeconds);
+            
+            // Show game over
+            document.getElementById("gameOverMessage").textContent = "🎉 آفرین!";
+            document.getElementById("gameOverDetails").textContent = "شما با موفقیت پازل را کامل کردید!";
+            document.getElementById("gameOverTime").textContent = `⏱ زمان شما: ${timeStr}`;
+            
+            if (isNewRecord) {
+                document.getElementById("newRecordBadge").style.display = "inline-block";
+            } else {
+                document.getElementById("newRecordBadge").style.display = "none";
+            }
+            
+            document.getElementById("gameOverOverlay").style.display = "flex";
+        }
+    } else {
+        // Wrong placement
+        gameState.errors++;
+        document.getElementById("errorCount").textContent = gameState.errors;
+        
+        // Show error animation
+        const cell = document.querySelector(`.cell[data-row="${row}"][data-col="${col}"]`);
+        if (cell) {
+            cell.classList.add("error");
+            setTimeout(() => cell.classList.remove("error"), 500);
+        }
+        
+        // Clear selections after error
+        gameState.selectedCell = null;
+        gameState.selectedWord = null;
+        document.querySelectorAll(".palette-word.selected-word").forEach(w => {
+            w.classList.remove("selected-word");
+        });
+        document.querySelectorAll(".cell.selected").forEach(c => {
+            c.classList.remove("selected");
+        });
+        
+        // Check if game over
+        if (gameState.errors >= 3) {
+            stopTimer();
+            const timeStr = formatTime(gameState.timerSeconds);
+            
+            document.getElementById("gameOverMessage").textContent = "😔 بازی تمام شد!";
+            document.getElementById("gameOverDetails").textContent = "متأسفانه ۳ خطا ثبت شد. دوباره تلاش کنید!";
+            document.getElementById("gameOverTime").textContent = `⏱ زمان سپری شده: ${timeStr}`;
+            document.getElementById("newRecordBadge").style.display = "none";
+            document.getElementById("gameOverOverlay").style.display = "flex";
+        }
+    }
+}
+
+function isPuzzleComplete() {
+    for (let row = 0; row < 9; row++) {
+        for (let col = 0; col < 9; col++) {
+            if (gameState.puzzle[row][col] === null) {
+                return false;
+            }
+        }
+    }
+    return true;
+}
+
+// ======================
+// Navigation
+// ======================
+function goBack() {
+    stopTimer();
+    document.getElementById("mainMenu").style.display = "block";
+    document.getElementById("gameBoard").style.display = "none";
+    document.getElementById("gameOverOverlay").style.display = "none";
+    
+    // Update records display
+    updateRecordsDisplay();
+    
+    // Reset game state
+    gameState = {
+        studentName: '',
+        level: '',
+        selectedWords: [],
+        solution: [],
+        puzzle: [],
+        errors: 0,
+        selectedCell: null,
+        selectedWord: null,
+        wordColorMap: {},
+        wordRemaining: {},
+        timerSeconds: 0,
+        timerInterval: null
+    };
+}
+
+// ======================
+// Initialize on load
+// ======================
+window.onload = function() {
+    updateRecordsDisplay();
+};
+
+</script>
+
+<!-- ===== منوی شبکه‌های اجتماعی (دقیقاً از فایل اصلی، بدون تغییر) ===== -->
+<style>
+:root {
+  --neon-primary: #0ff;
+  --neon-secondary: #f0f;
+  --bg-dark: #121212;
+}
+
+.circular-menu {
+  position: fixed;
+  bottom: 25px;
+  left: 25px;
+  width: 60px;
+  height: 60px;
+  z-index: 9999;
+}
+
+.circular-menu .menu-button {
+  position: absolute;
+  top: 0; left: 0;
+  width: 58px; height: 58px;
+  border-radius: 50%;
+  background-color: var(--bg-dark);
+  color: var(--neon-primary);
+  border: 2px solid var(--neon-primary);
+  cursor: pointer;
+  z-index: 2;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  box-shadow: 0 0 8px var(--neon-primary),
+              0 0 15px var(--neon-primary),
+              0 0 30px var(--neon-primary),
+              inset 0 0 15px rgba(0, 255, 255, 0.2);
+  transition: all 0.4s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+  -webkit-tap-highlight-color: transparent;
+}
+
+.circular-menu .menu-button:focus-visible {
+  outline: 3px solid #fff;
+  outline-offset: 3px;
+}
+
+.circular-menu.active .menu-button {
+  background-color: #1a0a1a;
+  color: var(--neon-secondary);
+  border-color: var(--neon-secondary);
+  transform: rotate(135deg);
+  box-shadow: 0 0 10px var(--neon-secondary),
+              0 0 20px var(--neon-secondary),
+              0 0 40px var(--neon-secondary),
+              inset 0 0 20px rgba(255, 0, 255, 0.3);
+}
+
+.circular-menu .menu-item {
+  position: absolute;
+  top: 0; left: 0;
+  width: 52px; height: 52px;
+  border-radius: 50%;
+  background-color: #ffffff;
+  color: #2c3e50;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  opacity: 0;
+  transform: scale(0);
+  z-index: -1;
+  text-decoration: none;
+  -webkit-tap-highlight-color: transparent;
+  pointer-events: none;
+  visibility: hidden;
+}
+
+.circular-menu.active .menu-item {
+  pointer-events: auto;
+  visibility: visible;
+}
+
+.menu-item:focus-visible {
+  outline: 3px solid #fff;
+  outline-offset: 2px;
+}
+
+.menu-item.instagram:hover, .menu-item.instagram:focus-visible { background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888); color: white; }
+.menu-item.telegram:hover, .menu-item.telegram:focus-visible { background: #0088cc; color: white; }
+.menu-item.aparat:hover, .menu-item.aparat:focus-visible { background: #ed1c24; color: white; }
+.menu-item.website:hover, .menu-item.website:focus-visible { background: #4facfe; color: white; }
+.menu-item.webapp:hover, .menu-item.webapp:focus-visible { background: #6c5ce7; color: white; }
+
+.circular-menu.ready.active .menu-item {
+  animation-duration: 0.45s;
+  animation-timing-function: cubic-bezier(0.68, -0.55, 0.27, 1.55);
+  animation-fill-mode: forwards;
+}
+.circular-menu.ready.active .menu-item:nth-child(1) { animation-name: expand1; animation-delay: 0.00s; }
+.circular-menu.ready.active .menu-item:nth-child(2) { animation-name: expand2; animation-delay: 0.07s; }
+.circular-menu.ready.active .menu-item:nth-child(3) { animation-name: expand3; animation-delay: 0.14s; }
+.circular-menu.ready.active .menu-item:nth-child(4) { animation-name: expand4; animation-delay: 0.21s; }
+.circular-menu.ready.active .menu-item:nth-child(5) { animation-name: expand5; animation-delay: 0.28s; }
+
+.circular-menu.ready:not(.active) .menu-item {
+  animation-duration: 0.35s;
+  animation-timing-function: ease-in;
+  animation-fill-mode: forwards;
+}
+.circular-menu.ready:not(.active) .menu-item:nth-child(1) { animation-name: collapse1; animation-delay: 0.28s; }
+.circular-menu.ready:not(.active) .menu-item:nth-child(2) { animation-name: collapse2; animation-delay: 0.21s; }
+.circular-menu.ready:not(.active) .menu-item:nth-child(3) { animation-name: collapse3; animation-delay: 0.14s; }
+.circular-menu.ready:not(.active) .menu-item:nth-child(4) { animation-name: collapse4; animation-delay: 0.07s; }
+.circular-menu.ready:not(.active) .menu-item:nth-child(5) { animation-name: collapse5; animation-delay: 0.00s; }
+
+@keyframes expand1 { 0% { opacity:0; transform:scale(0); z-index:1; } 100% { opacity:1; transform:translate(0,-150px) scale(1); z-index:1; } }
+@keyframes expand2 { 0% { opacity:0; transform:scale(0); z-index:1; } 100% { opacity:1; transform:translate(57px,-139px) scale(1); z-index:1; } }
+@keyframes expand3 { 0% { opacity:0; transform:scale(0); z-index:1; } 100% { opacity:1; transform:translate(106px,-106px) scale(1); z-index:1; } }
+@keyframes expand4 { 0% { opacity:0; transform:scale(0); z-index:1; } 100% { opacity:1; transform:translate(139px,-57px) scale(1); z-index:1; } }
+@keyframes expand5 { 0% { opacity:0; transform:scale(0); z-index:1; } 100% { opacity:1; transform:translate(150px,0) scale(1); z-index:1; } }
+
+@keyframes collapse1 { 0% { opacity:1; transform:translate(0,-150px) scale(1); z-index:1; } 100% { opacity:0; transform:translate(0,-150px) scale(0); z-index:-1; } }
+@keyframes collapse2 { 0% { opacity:1; transform:translate(57px,-139px) scale(1); z-index:1; } 100% { opacity:0; transform:translate(57px,-139px) scale(0); z-index:-1; } }
+@keyframes collapse3 { 0% { opacity:1; transform:translate(106px,-106px) scale(1); z-index:1; } 100% { opacity:0; transform:translate(106px,-106px) scale(0); z-index:-1; } }
+@keyframes collapse4 { 0% { opacity:1; transform:translate(139px,-57px) scale(1); z-index:1; } 100% { opacity:0; transform:translate(139px,-57px) scale(0); z-index:-1; } }
+@keyframes collapse5 { 0% { opacity:1; transform:translate(150px,0) scale(1); z-index:1; } 100% { opacity:0; transform:translate(150px,0) scale(0); z-index:-1; } }
+
+.circular-menu svg { width: 24px; height: 24px; fill: currentColor; }
+</style>
+
+<div class="circular-menu" id="circularMenu">
+  <a href="https://instagram.com/heydarzadehteacher" target="_blank" rel="noopener noreferrer"
+     class="menu-item instagram" title="اینستاگرام" aria-label="صفحه‌ی اینستاگرام" tabindex="-1">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.204-.012 3.583-.069 4.849-.148 3.227-1.664 4.771-4.919 4.919-1.266.058-1.645.069-4.849.069-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.791-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.209-1.791 4-4 4zm6.406-11.845c-.796 0-1.44.645-1.44 1.44s.644 1.44 1.44 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
+  </a>
+
+  <a href="https://t.me/bazieamouzeshi" target="_blank" rel="noopener noreferrer"
+     class="menu-item telegram" title="تلگرام" aria-label="کانال تلگرام" tabindex="-1">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.38-.94-2.23-1.5-.99-.65-.35-1.01.22-1.59.15-.15 2.71-2.48 2.76-2.69.01-.03.01-.14-.07-.2-.08-.06-.19-.04-.27-.02-.12.02-1.96 1.25-5.54 3.66-.52.36-1 .53-1.42.52-.47-.01-1.37-.26-2.03-.48-.82-.27-1.47-.42-1.41-.88.03-.24.37-.49 1.02-.74 3.98-1.73 6.63-2.87 7.96-3.42 3.79-1.58 4.58-1.85 5.09-1.86.11 0 .37.03.53.16.14.11.18.25.2.39-.01.06.01.23-.02.37z"/></svg>
+  </a>
+
+  <a href="https://www.aparat.com/heydarzadehteacher" target="_blank" rel="noopener noreferrer"
+     class="menu-item aparat" title="آپارات" aria-label="صفحه‌ی آپارات" tabindex="-1">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 8.64v6.72L15.27 12 10 8.64zM12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z"/></svg>
+  </a>
+
+  <a href="https://sites.google.com/view/heydarzadehteacher" target="_blank" rel="noopener noreferrer"
+     class="menu-item website" title="وب‌سایت" aria-label="وب‌سایت" tabindex="-1">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/></svg>
+  </a>
+
+  <a href="https://heydarzadehteacher.github.io/Educational-Games-app/index.html" target="_blank" rel="noopener noreferrer"
+     class="menu-item webapp" title="وب‌اپ" aria-label="وب‌اپ آموزشی" tabindex="-1">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M17 1.01L7 1c-1.1 0-2 .9-2 2v18c0 1.1.9 2 2 2h10c1.1 0 2-.9 2-2V3c0-1.1-.9-1.99-2-1.99zM17 19H7V5h10v14z"/></svg>
+  </a>
+
+  <button class="menu-button" title="شبکه‌های اجتماعی" aria-label="باز کردن منوی شبکه‌های اجتماعی"
+          aria-haspopup="true" aria-expanded="false">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92 1.61 0 2.92-1.31 2.92-2.92s-1.31-2.92-2.92-2.92z"/></svg>
+  </button>
+</div>
+
+<!-- ===== اسکریپت منوی شبکه‌های اجتماعی (دقیقاً از فایل اصلی، بدون تغییر) ===== -->
+<script>
+(function() {
+    const menu = document.getElementById('circularMenu');
+    const menuButton = document.querySelector('.menu-button');
+    const menuItems = Array.from(document.querySelectorAll('.menu-item'));
+    let isMenuOpen = false;
+    let isInitialized = false;
+    let isAnimating = false;
+    const ANIMATION_LOCK_MS = 730;
+
+    function setMenuState(open) {
+        isMenuOpen = open;
+        menu.classList.toggle('active', open);
+        menuButton.setAttribute('aria-expanded', String(open));
+        menuItems.forEach(item => item.setAttribute('tabindex', open ? '0' : '-1'));
+    }
+
+    function toggleMenu() {
+        if (isAnimating) return;
+        if (!isInitialized) {
+            menu.classList.add('ready');
+            isInitialized = true;
+        }
+        isAnimating = true;
+        setMenuState(!isMenuOpen);
+        setTimeout(() => { isAnimating = false; }, ANIMATION_LOCK_MS);
+    }
+
+    menuButton.addEventListener('click', function(e) {
+        e.stopPropagation();
+        toggleMenu();
+    });
+
+    document.addEventListener('click', function(e) {
+        if (isMenuOpen && !menu.contains(e.target)) {
+            setMenuState(false);
+        }
+    });
+
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape' && isMenuOpen) {
+            setMenuState(false);
+            menuButton.focus();
+        }
+    });
+
+    menu.addEventListener('click', function(e) {
+        e.stopPropagation();
+    });
+})();
+</script>
+
+</body>
+</html>

@@ -15,7 +15,6 @@
 </head>
 
 
-<body>
 
 <header class="main-header">
 
@@ -137,16 +136,94 @@
     <h2>📢 اطلاع‌رسانی</h2>
 
     <p>
-        🌱 بازی‌های آموزشی جدید به‌زودی اضافه خواهند شد.
+        🆕 بازی‌های آموزشی جدید اضافه شده‌اند!
         <br>
-        برای اطلاع از آخرین تغییرات همراه ما باشید.
+        برای مشاهده جزئیات و اطلاع از آخرین تغییرات، اطلاعیه‌ها را ببینید.
     </p>
 
-    <button class="main-btn">
-    مشاهده اطلاعیه‌ها
-</button>
+    <button class="main-btn" onclick="openNoticeModal()">
+        📢 مشاهده اطلاعیه‌ها
+    </button>
 
 </section>
+
+
+<!-- پاپ‌آپ اطلاع‌رسانی -->
+
+<div class="notice-modal" id="noticeModal">
+
+    <div class="notice-modal-content">
+
+        <button
+            class="notice-close"
+            onclick="closeNoticeModal()"
+            aria-label="بستن">
+            ✕
+        </button>
+
+
+        <h2>
+            📢 اطلاعیه‌های جدید
+        </h2>
+
+
+        <div class="notice-modal-body">
+
+            <h3>
+                🆕 بازی‌های جدید اضافه شدند!
+            </h3>
+
+            <p>
+                چندین بازی آموزشی جدید به مجموعه بازی‌های حیدرزاده اضافه شده است.
+                می‌توانید از بخش «🎮 بازی‌ها» آن‌ها را انتخاب و اجرا کنید.
+            </p>
+
+
+            <hr>
+
+
+    <h3>
+    📱 وب‌اپ بازی را نصب کنید!
+</h3>
+
+<p>
+    با نصب وب‌اپ بازی‌های آموزشی حیدرزاده،
+    همیشه با یک کلیک وارد صفحه بازی‌ها شوید
+    و از بازی و یادگیری لذت ببرید. 🎮🌱
+</p>
+
+
+            <button
+                class="install-guide-btn"
+                onclick="showInstallGuide()">
+                📲 راهنمای نصب بازی‌ها
+            </button>
+
+
+            <hr>
+
+
+<h3>
+    📱 وب‌اپ بازی را نصب کنید!
+</h3>
+
+<p>
+    📣 توضیحات کامل‌تر بازی‌ها را می‌توانید از کانال تلگرام بخوانید. ✈️
+</p>
+
+            <a
+                href="https://t.me/bazieamouzeshi"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="main-btn">
+                ✈️ ورود به کانال تلگرام
+            </a>
+
+        </div>
+
+    </div>
+
+</div>
 
 <section class="home-card recent-section">
 
@@ -189,6 +266,58 @@
 
 </section>
 
+<section class="home-card social-section">
+
+    <h2>
+    📣 ما را در شبکه‌های اجتماعی دنبال کنید
+    </h2>
+
+    <p class="social-description">
+        برای دیدن آموزش‌ها و محتوای بیشتر، همراه ما باشید 🌱
+    </p>
+
+    <div class="social-links">
+
+        <a href="https://instagram.com/heydarzadehteacher"
+           target="_blank"
+           rel="noopener noreferrer"
+           class="social-link instagram"
+           aria-label="اینستاگرام">
+            <span class="social-icon">◎</span>
+            <span>اینستاگرام</span>
+        </a>
+
+        <a href="https://t.me/bazieamouzeshi"
+           target="_blank"
+           rel="noopener noreferrer"
+           class="social-link telegram"
+           aria-label="تلگرام">
+            <span class="social-icon">✈</span>
+            <span>تلگرام</span>
+        </a>
+
+        <a href="https://www.aparat.com/heydarzadehteacher"
+           target="_blank"
+           rel="noopener noreferrer"
+           class="social-link aparat"
+           aria-label="آپارات">
+            <span class="social-icon">▶</span>
+            <span>آپارات</span>
+        </a>
+
+        <a href="https://sites.google.com/view/heydarzadehteacher"
+           target="_blank"
+           rel="noopener noreferrer"
+           class="social-link website"
+           aria-label="وب‌سایت">
+            <span class="social-icon">🌐</span>
+            <span>وب‌سایت</span>
+        </a>
+
+    </div>
+
+</section>
+  
 
         <section class="home-card grade-section">
 
@@ -253,6 +382,48 @@
 
     </main>
 
+
+
+<!-- پاپ‌آپ اطلاع‌رسانی -->
+
+<div class="notice-modal" id="noticeModal">
+
+    <div class="notice-modal-content">
+
+        <button class="notice-close" id="noticeClose" aria-label="بستن">
+            ✕
+        </button>
+
+        <h2>📢 اطلاع‌رسانی</h2>
+
+        <div class="notice-modal-body">
+
+            <h3>🎉 بازی‌های جدید اضافه شدند!</h3>
+
+            <p>
+                مجموعه بازی‌های آموزشی حیدرزاده به‌روزرسانی شد
+                و حالا <strong>۲۹ بازی آموزشی</strong> در دسترس شماست.
+            </p>
+
+            <hr>
+
+            <h3>📱 وب‌اپ را روی گوشی خود نصب کنید</h3>
+
+            <p>
+                با نصب بازی‌های آموزشی حیدرزاده،
+                آیکون 🎮 آن روی صفحه اصلی گوشی شما قرار می‌گیرد
+                و دسترسی به بازی‌ها سریع‌تر و راحت‌تر می‌شود.
+            </p>
+
+            <button class="install-guide-btn" id="installGuideBtn">
+                📥 راهنمای نصب
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
 
 
 <script src="games-data.js"></script>

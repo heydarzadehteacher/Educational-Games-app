@@ -1,0 +1,2431 @@
+* {
+    box-sizing: border-box;
+}
+
+
+body {
+
+    margin: 0;
+    padding: 20px;
+
+    direction: rtl;
+
+    font-family: Tahoma, sans-serif;
+
+    background: linear-gradient(
+        135deg,
+        #e3f2fd,
+        #e0f7fa
+    );
+
+    color: #222;
+
+}
+
+
+
+header {
+
+    text-align: center;
+
+    margin-bottom: 30px;
+
+}
+
+
+header h1 {
+
+    color: #0277bd;
+
+    font-size: 28px;
+
+}
+
+
+
+header p {
+
+    font-size: 18px;
+
+    line-height: 2;
+
+}
+
+
+
+.games-section h2,
+.recent-section h2,
+.new-games-section h2,
+.favorites-section h2 {
+
+    text-align: center;
+
+    color: #00695c;
+
+    margin-bottom: 20px;
+
+}
+
+
+
+.games-container {
+
+    display: grid;
+
+    grid-template-columns: repeat(2, 1fr);
+
+    gap: 15px;
+
+}
+
+
+
+.game-card {
+
+
+    background: rgba(255,255,255,0.8);
+
+    border-radius: 20px;
+
+    padding: 15px;
+
+    text-align: center;
+
+    box-shadow: 0 5px 15px rgba(0,0,0,0.12);
+
+}
+
+
+
+.game-cover {
+
+    font-size: 45px;
+
+    margin-bottom: 10px;
+
+}
+
+
+
+.game-info h3 {
+
+    margin: 10px 0;
+
+    color: #0277bd;
+
+}
+
+
+
+.game-info p {
+
+    font-size: 14px;
+
+}
+
+
+
+.game-actions {
+
+    display: flex;
+
+    justify-content: space-between;
+
+    align-items: center;
+
+    margin-top: 15px;
+
+}
+
+
+
+.game-actions span {
+
+    font-size: 28px;
+
+    cursor: pointer;
+
+}
+
+
+
+.start-btn {
+
+    border: none;
+
+    padding: 8px 18px;
+
+    border-radius: 20px;
+
+    background: #009688;
+
+    color: white;
+
+    font-size: 15px;
+
+}
+
+
+
+@media(max-width:600px){
+
+    .games-container {
+
+        grid-template-columns: repeat(2,1fr);
+
+    }
+
+}
+
+
+
+/* ========================= */
+/* بخش اطلاع رسانی */
+/* ========================= */
+
+
+.notice-section {
+
+    margin-bottom: 30px;
+
+}
+
+
+.notice-section h2,
+.grades-section h2 {
+
+    text-align: center;
+
+    color: #00695c;
+
+    margin-bottom: 15px;
+
+}
+
+
+
+.notice-card {
+
+    background: rgba(255,255,255,0.65);
+
+    backdrop-filter: blur(10px);
+
+    border-radius: 25px;
+
+    padding: 20px;
+
+    text-align: center;
+
+    box-shadow: 0 8px 20px rgba(0,0,0,0.12);
+
+}
+
+
+
+.notice-card p {
+
+    font-size: 16px;
+
+    line-height: 2;
+
+}
+
+
+
+.main-btn {
+
+    border: none;
+
+    background: #0277bd;
+
+    color: white;
+
+    padding: 10px 25px;
+
+    border-radius: 25px;
+
+    font-size: 15px;
+
+    cursor: pointer;
+
+}
+
+
+
+/* ========================= */
+/* انتخاب پایه تحصیلی */
+/* ========================= */
+
+
+.grades-section {
+
+    margin-bottom: 35px;
+
+}
+
+
+
+.grades-container {
+
+    display: grid;
+
+    grid-template-columns: repeat(4,1fr);
+
+    gap: 12px;
+
+}
+
+
+
+.grade-btn {
+
+    border: none;
+
+    padding: 15px 5px;
+
+    border-radius: 18px;
+
+    color: white;
+
+    font-size: 16px;
+
+    box-shadow: 0 5px 12px rgba(0,0,0,0.15);
+
+}
+
+
+
+.grade-1 {
+
+    background: #ef5350;
+
+}
+
+
+.grade-2 {
+
+    background: #ff9800;
+
+}
+
+
+.grade-3 {
+
+    background: #fdd835;
+
+    color: #333;
+
+}
+
+
+.grade-4 {
+
+    background: #43a047;
+
+}
+
+
+.grade-5 {
+
+    background: #1e88e5;
+
+}
+
+
+.grade-6 {
+
+    background: #5e35b1;
+
+}
+
+
+.grade-other {
+
+    background: #8e24aa;
+
+}
+
+
+
+.grade-btn:active {
+
+    transform: scale(0.95);
+
+}
+
+
+
+@media(max-width:600px){
+
+    .grades-container {
+
+        grid-template-columns: repeat(3,1fr);
+
+    }
+
+}
+
+/* ========================= */
+/* آخرین بازی‌های اجرا شده */
+/* ========================= */
+
+
+.recent-section,
+.new-games-section {
+
+    margin-bottom: 35px;
+
+}
+
+
+
+.recent-section h2,
+.new-games-section h2 {
+
+    text-align: center;
+
+    color: #00695c;
+
+    margin-bottom: 20px;
+
+}
+
+
+
+.recent-container,
+.new-games-container {
+
+    display: grid;
+
+    grid-template-columns: repeat(3,1fr);
+
+    gap: 15px;
+
+}
+
+
+
+.mini-game-card {
+
+    background: rgba(255,255,255,0.7);
+
+    backdrop-filter: blur(10px);
+
+    border-radius: 22px;
+
+    padding: 15px;
+
+    text-align: center;
+
+    font-size: 38px;
+
+    box-shadow: 0 6px 15px rgba(0,0,0,0.12);
+
+}
+
+
+
+.mini-game-card p {
+
+    margin: 10px 0 0;
+
+    font-size: 15px;
+
+    color: #0277bd;
+
+}
+
+
+
+.mini-game-card:active {
+
+    transform: scale(0.95);
+
+}
+
+
+
+/* نسخه موبایل */
+
+@media(max-width:600px){
+
+
+    .recent-container,
+    .new-games-container {
+
+        grid-template-columns: repeat(2,1fr);
+
+    }
+
+
+}
+
+/* ========================= */
+/* پایه انتخاب شده */
+/* ========================= */
+
+.grade-btn.active {
+
+    transform: scale(1.08) translateY(-4px);
+
+    box-shadow:
+        0 8px 20px rgba(0,0,0,0.35);
+
+    border: 3px solid white;
+
+    position: relative;
+
+}
+
+
+
+.grade-btn.active::after {
+
+    content: "✓";
+
+    position: absolute;
+
+    top: -10px;
+
+    left: -8px;
+
+    background: white;
+
+    color: #009688;
+
+    width: 24px;
+
+    height: 24px;
+
+    border-radius: 50%;
+
+    font-size: 16px;
+
+    font-weight: bold;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+}
+
+/* کارت‌های کوچک بخش‌های ویژه */
+
+.recent-container,
+.new-games-container,
+.favorites-container {
+
+    display: flex;
+
+    gap: 12px;
+
+    overflow-x: auto;
+
+    padding: 10px 5px;
+
+}
+
+
+
+.mini-game-card {
+
+    min-width: 130px;
+
+    background: rgba(255,255,255,0.75);
+
+    backdrop-filter: blur(10px);
+
+    border-radius: 20px;
+
+    padding: 15px 10px;
+
+    text-align: center;
+
+    box-shadow: 0 5px 15px rgba(0,0,0,0.12);
+
+    flex-shrink: 0;
+
+}
+
+
+
+.mini-game-card:first-child {
+
+    margin-right: 5px;
+
+}
+
+
+
+.mini-game-card p {
+
+    margin: 8px 0 0;
+
+    font-size: 14px;
+
+}
+
+/* افکت کارت بازی‌ها */
+
+.game-card {
+
+    transition: 
+        transform 0.25s ease,
+        box-shadow 0.25s ease;
+
+}
+
+
+.game-card:hover {
+
+    transform: translateY(-5px);
+
+    box-shadow: 0 12px 25px rgba(0,0,0,0.18);
+
+}
+
+
+.game-card:active {
+
+    transform: scale(0.96);
+
+}
+
+/* ستاره علاقه‌مندی */
+
+.favorite-btn {
+
+    font-size: 30px;
+
+    cursor: pointer;
+
+    transition: 
+        transform 0.2s ease,
+        color 0.2s ease;
+
+    user-select: none;
+
+}
+
+
+
+.favorite-btn:hover {
+
+    transform: scale(1.2);
+
+}
+
+
+
+.favorite-btn:active {
+
+    transform: scale(0.85);
+
+}
+
+/* کارت‌های کوچک */
+
+.mini-game-card {
+
+    transition:
+        transform 0.25s ease,
+        box-shadow 0.25s ease;
+
+}
+
+
+
+.mini-game-card:hover {
+
+    transform: translateY(-4px);
+
+    box-shadow:
+        0 10px 20px rgba(0,0,0,0.15);
+
+}
+
+
+.mini-game-card:active {
+
+    transform: scale(0.95);
+
+}
+
+.favorite-btn {
+
+    color: #777;
+
+}
+
+
+.favorite-btn.active {
+
+    color: #ffc107;
+
+    animation: starPop 0.3s ease;
+
+}
+
+
+
+@keyframes starPop {
+
+    0% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.4);
+    }
+
+    100% {
+        transform: scale(1);
+    }
+
+}
+
+/* هدر اصلی سایت */
+
+.main-header {
+
+    margin: 10px;
+
+    padding: 25px 20px;
+
+    text-align: center;
+
+    background:
+    linear-gradient(
+        135deg,
+        rgba(255,255,255,0.85),
+        rgba(220,245,255,0.75)
+    );
+
+
+    backdrop-filter: blur(12px);
+
+    border-radius: 30px;
+
+    box-shadow:
+    0 10px 30px rgba(0,0,0,0.12);
+
+
+    animation: headerMove 4s ease-in-out infinite;
+
+}
+
+
+
+.header-icon {
+
+    font-size: 55px;
+
+    margin-bottom: 10px;
+
+}
+
+
+
+.main-header h1 {
+
+    margin: 5px 0;
+
+    color: #00695c;
+
+    font-size: 28px;
+
+}
+
+
+
+.main-header p {
+
+    color: #444;
+
+    font-size: 16px;
+
+    line-height: 2;
+
+}
+
+
+
+.profile-btn {
+
+
+    margin-top: 15px;
+
+    border: none;
+
+    padding: 12px 25px;
+
+    border-radius: 25px;
+
+    background:
+
+    linear-gradient(
+        135deg,
+        #00bcd4,
+        #009688
+    );
+
+
+    color:white;
+
+    font-size:16px;
+
+    cursor:pointer;
+
+}
+
+
+
+.profile-btn:active {
+
+    transform:scale(0.95);
+
+}
+
+
+
+@keyframes headerMove {
+
+
+    0%,100% {
+
+        transform:translateY(0);
+
+    }
+
+
+    50% {
+
+        transform:translateY(-5px);
+
+    }
+
+
+}
+
+@media(max-width:600px){
+
+    .main-header p {
+
+        font-size: 14px;
+
+    }
+
+}
+
+/* پروفایل دانش‌آموز */
+
+
+.profile-section {
+
+    margin: 10px;
+
+}
+
+
+
+.profile-card {
+
+
+    display:flex;
+
+    align-items:center;
+
+    gap:10px;
+
+
+    padding:20px;
+
+
+    background:
+
+    linear-gradient(
+        135deg,
+        rgba(255,255,255,0.85),
+        rgba(230,250,255,0.75)
+    );
+
+
+    backdrop-filter:blur(10px);
+
+
+    border-radius:25px;
+
+
+    box-shadow:
+
+    0 8px 25px rgba(0,0,0,0.1);
+
+
+}
+
+
+
+.profile-avatar {
+
+
+    font-size:50px;
+
+
+    background:white;
+
+
+    width:80px;
+
+    height:80px;
+
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+
+    border-radius:50%;
+
+
+}
+
+
+
+.profile-info h3 {
+
+
+    margin-top:0;
+
+    color:#00695c;
+
+
+}
+
+
+
+.profile-info p {
+
+
+    margin:8px 0;
+
+    color:#444;
+
+
+}
+
+
+
+@media(max-width:600px){
+
+
+    .profile-card {
+
+
+        padding:15px;
+
+    }
+
+
+    .profile-avatar {
+
+
+        width:65px;
+
+        height:65px;
+
+        font-size:38px;
+
+    }
+
+
+    .profile-info {
+
+
+        font-size:14px;
+
+    }
+
+
+}
+
+/* دکمه ثبت نام پروفایل */
+
+.name-btn {
+
+
+    margin: 8px 0 12px;
+
+
+    padding: 8px 18px;
+
+
+    border: none;
+
+
+    border-radius: 20px;
+
+
+    background:
+
+    linear-gradient(
+        135deg,
+        #00bcd4,
+        #009688
+    );
+
+
+    color: white;
+
+
+    font-size: 14px;
+
+
+    cursor: pointer;
+
+}
+
+
+
+.name-btn:active {
+
+
+    transform: scale(0.95);
+
+
+}
+
+/* کارت مشترک بخش‌های صفحه اصلی */
+
+.home-card {
+
+
+    margin: 10px;
+
+
+    padding: 20px;
+
+
+    background:
+
+    linear-gradient(
+        135deg,
+        rgba(255,255,255,0.85),
+        rgba(235,250,255,0.75)
+    );
+
+
+    backdrop-filter: blur(12px);
+
+
+    border-radius: 28px;
+
+
+    box-shadow:
+
+    0 8px 25px rgba(0,0,0,0.10);
+
+
+
+}
+
+
+/* تیترهای بخش‌ها */
+
+
+.home-card h2 {
+
+
+    text-align:center;
+
+
+    margin-top:0;
+
+
+    margin-bottom:20px;
+
+
+    color:#00695c;
+
+
+    font-size:22px;
+
+
+}
+
+.games-section .games-container{
+
+    display:flex;
+    flex-direction:column;
+    gap:16px;
+
+}
+
+
+.games-section .game-card{
+
+    width:100%;
+
+    background:
+    linear-gradient(
+        135deg,
+        rgba(255,255,255,.95),
+        rgba(235,250,255,.90)
+    );
+
+    border-radius:22px;
+
+    padding:15px;
+
+    box-shadow:
+    0 6px 18px rgba(0,0,0,.10);
+
+}
+
+
+
+/* ردیف بالا */
+
+.game-top{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+}
+
+
+
+.game-cover{
+
+    font-size:45px;
+
+}
+
+
+
+.game-grade{
+
+    font-size:14px;
+
+    color:#555;
+
+}
+
+
+
+/* اسم بازی */
+
+.game-title{
+
+    text-align:center;
+
+    margin:18px 0;
+
+    font-size:20px;
+
+    font-weight:bold;
+
+    color:#00695c;
+
+    line-height:1.8;
+
+    word-break:normal;
+
+}
+
+
+
+/* ردیف پایین */
+
+.game-bottom{
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+    gap:25px;
+
+}
+
+
+
+.favorite-btn{
+
+    font-size:32px;
+
+}
+
+
+
+.start-btn{
+
+    border:none;
+
+    padding:9px 25px;
+
+    border-radius:20px;
+
+    background:#009688;
+
+    color:white;
+
+    font-size:15px;
+
+}
+
+
+.games-section .game-info p{
+
+    margin:0;
+
+    color:#666;
+
+    font-size:14px;
+
+}
+
+
+/* ستون چپ */
+
+.games-section .game-actions{
+
+    width:90px;
+
+    display:flex;
+
+    flex-direction:column;
+
+    align-items:center;
+
+    gap:12px;
+
+}
+
+
+.games-section .favorite-btn{
+
+    font-size:28px;
+
+}
+
+
+.games-section .start-btn{
+
+    border:none;
+
+    padding:8px 14px;
+
+    border-radius:18px;
+
+    background:#009688;
+
+    color:white;
+
+    font-size:13px;
+
+    cursor:pointer;
+
+}
+
+
+.games-section .game-card:hover{
+
+    transform:translateY(-3px);
+
+    transition:.25s;
+
+    box-shadow:0 10px 22px rgba(0,0,0,.15);
+
+}
+
+/* اصلاح عنوان و محتوای اطلاع‌رسانی */
+
+.notice-section h2 {
+
+    display:block;
+
+    text-align:center;
+
+    color:#00695c;
+
+    margin:0 0 20px;
+
+}
+
+
+.notice-card {
+
+    display:block;
+
+    width:100%;
+
+}
+
+
+.notice-card p {
+
+    display:block;
+
+    color:#333;
+
+}
+
+/* ========================= */
+/* طراحی کارت بازی‌ها */
+/* ========================= */
+
+.games-section .games-container{
+
+    display:flex;
+    flex-direction:column;
+    gap:14px;
+
+}
+
+
+.games-section .game-card{
+
+    width:100%;
+
+    min-height:130px;
+
+    display:flex;
+
+    align-items:center;
+
+    background:
+    linear-gradient(
+        135deg,
+        rgba(255,255,255,.95),
+        rgba(235,250,255,.9)
+    );
+
+    border-radius:22px;
+
+    padding:12px 18px;
+
+    box-shadow:
+    0 6px 18px rgba(0,0,0,.1);
+
+}
+
+
+/* بخش آیکون و پایه */
+
+.games-section .game-cover{
+
+    width:120px;
+
+    flex-shrink:0;
+
+    text-align:center;
+
+    font-size:38px;
+
+}
+
+
+/* بخش نام بازی */
+
+.games-section .game-info{
+
+    flex:1;
+
+    text-align:center;
+
+    overflow:hidden;
+
+}
+
+
+.games-section .game-info h3{
+
+    margin:0;
+
+    font-size:18px;
+
+    color:#0277bd;
+
+    white-space:normal;
+
+    line-height:1.5;
+
+}
+
+
+/* پایه‌ها */
+
+.games-section .game-info p{
+
+    margin:5px 0 0;
+
+    font-size:13px;
+
+    color:#666;
+
+}
+
+
+/* دکمه و ستاره */
+
+.games-section .game-actions{
+
+    width:120px;
+
+    flex-shrink:0;
+
+    display:flex;
+
+    flex-direction:row;
+
+    justify-content:center;
+
+    align-items:center;
+
+    gap:12px;
+
+}
+
+
+.games-section .start-btn{
+
+    padding:7px 12px;
+
+    border-radius:18px;
+
+    background:#009688;
+
+    color:white;
+
+    border:none;
+
+    font-size:13px;
+
+}
+
+
+.games-section .favorite-btn{
+
+    font-size:28px;
+
+}
+
+/* اصلاح نهایی کارت بازی‌ها */
+
+.games-section .game-card {
+
+    width: 100%;
+
+}
+
+
+.games-section .game-top {
+
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 12px;
+
+}
+
+
+.games-section .game-cover {
+
+    width: auto;
+    font-size: 38px;
+
+}
+
+
+.games-section .game-grade {
+
+    font-size: 14px;
+    color: #555;
+
+}
+
+
+
+.games-section .game-title {
+
+    margin: 10px 0;
+
+    text-align: center;
+
+    font-size: 18px;
+
+    font-weight: bold;
+
+    color: #00695c;
+
+    word-break: normal;
+
+    overflow-wrap: break-word;
+
+}
+
+
+.games-section .game-actions {
+
+    width:100%;
+
+    display:flex;
+
+    flex-direction:row;
+
+    justify-content:center;
+
+    align-items:center;
+
+    gap:15px;
+
+    margin-top:5px;
+
+}
+
+
+.games-section .start-btn {
+
+    padding:7px 16px;
+
+    font-size:14px;
+
+    flex-shrink:0;
+
+}
+
+
+.games-section .favorite-btn {
+
+    font-size:28px;
+
+    flex-shrink:0;
+
+}
+
+
+
+.games-section .start-btn {
+
+    position: static;
+
+}
+
+
+.favorite-btn {
+
+    display: inline-flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+}
+
+/* تثبیت نهایی کارت بازی */
+
+.games-section .game-card {
+
+    width:100%;
+    max-width:100%;
+
+    display:flex;
+    flex-direction:column;
+
+    padding:12px;
+
+    overflow:hidden;
+
+}
+
+
+.games-section .game-top {
+
+    width:100%;
+
+    display:flex;
+
+    flex-direction:row;
+
+    justify-content:flex-start;
+
+    align-items:center;
+
+    gap:10px;
+
+}
+
+
+.games-section .game-title {
+
+    width:100%;
+
+    text-align:center;
+
+    margin:8px 0;
+
+    font-size:18px;
+
+    font-weight:bold;
+
+    overflow-wrap:break-word;
+
+}
+
+
+
+.games-section .game-actions {
+
+    width:100%;
+
+    display:flex;
+
+    flex-direction:row;
+
+    justify-content:center;
+
+    align-items:center;
+
+    gap:20px;
+
+}
+
+
+.games-section .start-btn {
+
+    box-sizing:border-box;
+
+}
+
+
+.games-section .favorite-btn {
+
+    box-sizing:border-box;
+
+}
+
+/* طراحی نهایی کارت بازی */
+
+.games-section .game-card {
+
+    display:grid;
+
+    grid-template-rows:
+    auto
+    1fr
+    auto;
+
+    width:100%;
+
+    min-height:150px;
+
+    padding:12px;
+
+    border-radius:22px;
+
+    background:
+    linear-gradient(
+        135deg,
+        rgba(255,255,255,.95),
+        rgba(235,250,255,.9)
+    );
+
+    box-shadow:
+    0 6px 18px rgba(0,0,0,.1);
+
+}
+
+
+/* ردیف اول: آیکون + پایه */
+
+.games-section .game-cover {
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+    gap:8px;
+
+    font-size:35px;
+
+}
+
+
+/* ردیف دوم: اسم بازی */
+
+.games-section .game-info {
+
+    text-align:center;
+
+    padding:5px;
+
+}
+
+
+.games-section .game-info h3 {
+
+    margin:5px 0;
+
+    font-size:18px;
+
+    color:#0277bd;
+
+    white-space:normal;
+
+    overflow-wrap:anywhere;
+
+}
+
+
+.games-section .game-info p {
+
+    display:none;
+
+}
+
+
+
+/* ردیف سوم: دکمه و ستاره */
+
+.games-section .game-actions {
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+    gap:20px;
+
+}
+
+
+.games-section .start-btn {
+
+    padding:7px 18px;
+
+}
+
+
+.games-section .favorite-btn {
+
+    font-size:28px;
+
+}
+
+/* تنظیم اندازه آیکون و پایه‌ها */
+
+.games-section .game-cover {
+
+    font-size:40px;
+
+}
+
+
+.games-section .game-cover span {
+
+    font-size:13px;
+
+    color:#555;
+
+    font-weight:normal;
+
+}
+
+
+/* بزرگ‌تر شدن نام بازی */
+
+.games-section .game-info h3 {
+
+    font-size:20px;
+
+    font-weight:bold;
+
+}
+
+/* اصلاح ردیف اول کارت بازی */
+
+.games-section .game-cover {
+
+    justify-content:center;
+
+    align-items:center;
+
+    text-align:center;
+
+    width:100%;
+
+    gap:8px;
+
+}
+
+
+.games-section .game-cover span {
+
+    display:inline-flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    font-size:13px;
+
+}
+
+.games-section .game-cover {
+
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    gap:10px;
+
+}
+
+
+.games-section .game-grade {
+
+    font-size:13px;
+    color:#555;
+
+}
+
+/* تنظیم بخش اطلاع رسانی */
+
+.notice-section {
+
+    text-align: center;
+
+}
+
+
+.notice-section p {
+
+    text-align: center;
+
+    font-size: 16px;
+
+    line-height: 2;
+
+    color: #444;
+
+}
+
+
+/* دکمه اطلاعیه */
+
+.notice-section button {
+
+    margin-top: 15px;
+
+    padding: 10px 25px;
+
+    border: none;
+
+    border-radius: 25px;
+
+    background: linear-gradient(
+        135deg,
+        #0277bd,
+        #009688
+    );
+
+    color: white;
+
+    font-size: 15px;
+
+    cursor: pointer;
+
+    box-shadow:
+        0 5px 12px rgba(0,0,0,0.15);
+
+}
+
+
+.notice-section button:active {
+
+    transform: scale(0.95);
+
+}
+
+/* ========================= */
+/* ظاهر آمار پروفایل */
+/* ========================= */
+
+.profile-stat {
+
+    margin: 12px 0;
+
+    padding: 8px 10px;
+
+    background: rgba(255,255,255,0.55);
+
+    border-radius: 15px;
+
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 6px;
+
+}
+
+
+.profile-stat span {
+
+    color: #00695c;
+
+    font-size: 15px;
+
+    font-weight: bold;
+
+}
+
+
+.profile-stat strong {
+
+    color: #0277bd;
+
+    font-size: 22px;
+text-align: center;
+}
+
+
+.profile-stat small {
+
+    color: #555;
+
+    font-size: 14px;
+
+    line-height: 1.8;
+
+}
+
+/* ========================= */
+/* استایل مشترک دکمه‌ها */
+/* ========================= */
+
+.main-btn {
+
+    border: none;
+
+    background: #0277bd;
+
+    color: white;
+
+    padding: 10px 25px;
+
+    border-radius: 25px;
+
+    font-size: 15px;
+
+    cursor: pointer;
+
+}
+
+/* ========================= */
+/* انیمیشن‌های نرم رابط کاربری */
+/* ========================= */
+
+.game-card{
+
+    transition: transform .25s ease,
+                box-shadow .25s ease;
+
+}
+
+.game-card:hover,
+.game-card:active{
+
+    transform: scale(1.02);
+
+    box-shadow: 0 10px 24px rgba(0,0,0,.18);
+
+}
+
+
+
+button{
+
+    transition: transform .15s ease,
+                opacity .15s ease;
+
+}
+
+button:active{
+
+    transform: scale(.96);
+
+    opacity:.9;
+
+}
+
+
+
+.favorite-btn{
+
+    transition: transform .15s ease;
+
+}
+
+.favorite-btn:active{
+
+    transform: scale(1.25);
+
+}
+
+/* =========================================
+   کارت شبکه‌های اجتماعی
+========================================= */
+
+.social-section {
+    text-align: center;
+}
+
+.social-description {
+    margin: 8px 0 20px;
+    font-size: 0.9rem;
+    opacity: 0.8;
+}
+
+.social-links {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+    width: 100%;
+    max-width: 520px;
+    margin: 0 auto;
+}
+
+.social-link {
+    min-height: 82px;
+    padding: 10px 5px;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 7px;
+
+    box-sizing: border-box;
+
+    text-decoration: none;
+    color: inherit;
+
+    background: rgba(255, 255, 255, 0.55);
+
+    border: 1px solid rgba(255, 255, 255, 0.8);
+    border-radius: 16px;
+
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.07);
+
+    transition:
+        transform 0.25s ease,
+        box-shadow 0.25s ease,
+        background 0.25s ease;
+    
+    -webkit-tap-highlight-color: transparent;
+}
+
+/* آیکون */
+
+.social-icon {
+    width: 38px;
+    height: 38px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 50%;
+
+    background: rgba(255, 255, 255, 0.9);
+
+    font-size: 20px;
+    font-weight: bold;
+
+    box-shadow: 0 2px 7px rgba(0, 0, 0, 0.08);
+
+    transition:
+        transform 0.25s ease,
+        color 0.25s ease,
+        background 0.25s ease;
+}
+
+/* نام شبکه */
+
+.social-link span:last-child {
+    font-size: 0.72rem;
+    font-weight: 600;
+}
+
+/* افکت لمس / هاور */
+
+.social-link:hover,
+.social-link:focus-visible {
+    transform: translateY(-3px);
+
+    box-shadow:
+        0 7px 16px rgba(0, 0, 0, 0.12);
+}
+
+.social-link:hover .social-icon,
+.social-link:focus-visible .social-icon {
+    transform: scale(1.08);
+}
+
+/* اینستاگرام */
+
+.social-link.instagram:hover,
+.social-link.instagram:focus-visible {
+    background: linear-gradient(
+        135deg,
+        #f9ce34,
+        #ee2a7b,
+        #6228d7
+    );
+
+    color: white;
+}
+
+/* تلگرام */
+
+.social-link.telegram:hover,
+.social-link.telegram:focus-visible {
+    background: #0088cc;
+    color: white;
+}
+
+/* آپارات */
+
+.social-link.aparat:hover,
+.social-link.aparat:focus-visible {
+    background: #ed1c24;
+    color: white;
+}
+
+/* وب‌سایت */
+
+.social-link.website:hover,
+.social-link.website:focus-visible {
+    background: #4facfe;
+    color: white;
+}
+
+
+/* =========================================
+   نمایش موبایل
+========================================= */
+
+@media (max-width: 600px) {
+
+    .social-links {
+        grid-template-columns: repeat(4, 1fr);
+        gap: 7px;
+    }
+
+    .social-link {
+        min-height: 76px;
+        padding: 8px 3px;
+        border-radius: 14px;
+    }
+
+    .social-icon {
+        width: 34px;
+        height: 34px;
+        font-size: 18px;
+    }
+
+    .social-link span:last-child {
+        font-size: 0.65rem;
+    }
+
+}
+
+/* =========================================
+   پاپ‌آپ اطلاع‌رسانی
+========================================= */
+
+.notice-modal {
+
+    display: none;
+
+    position: fixed;
+
+    inset: 0;
+
+    z-index: 9999;
+
+    background: rgba(0, 0, 0, 0.55);
+
+    backdrop-filter: blur(5px);
+
+    align-items: center;
+
+    justify-content: center;
+
+    padding: 20px;
+
+}
+
+
+.notice-modal-content {
+
+    position: relative;
+
+    width: 100%;
+
+    max-width: 500px;
+
+    max-height: 85vh;
+
+    overflow-y: auto;
+
+    padding: 25px 20px;
+
+    background:
+        linear-gradient(
+            135deg,
+            rgba(255,255,255,0.96),
+            rgba(235,250,255,0.94)
+        );
+
+    border-radius: 28px;
+
+    box-shadow:
+        0 15px 40px rgba(0,0,0,0.25);
+
+    text-align: center;
+
+    animation: noticeModalIn 0.3s ease;
+
+}
+
+
+.notice-modal-content h2 {
+
+    margin: 0 0 20px;
+
+    color: #00695c;
+
+    font-size: 23px;
+
+}
+
+
+.notice-modal-body h3 {
+
+    margin: 15px 0 10px;
+
+    color: #0277bd;
+
+    font-size: 18px;
+
+}
+
+
+.notice-modal-body p {
+
+    margin: 8px 0;
+
+    color: #444;
+
+    font-size: 15px;
+
+    line-height: 2;
+
+}
+
+
+.notice-modal-body hr {
+
+    border: none;
+
+    border-top: 1px solid rgba(0,0,0,0.1);
+
+    margin: 20px 0;
+
+}
+
+
+/* دکمه بستن */
+
+.notice-close {
+
+    position: absolute;
+
+    top: 12px;
+
+    left: 12px;
+
+    width: 36px;
+
+    height: 36px;
+
+    border: none;
+
+    border-radius: 50%;
+
+    background: rgba(0,0,0,0.08);
+
+    color: #555;
+
+    font-size: 18px;
+
+    cursor: pointer;
+
+}
+
+
+.notice-close:active {
+
+    transform: scale(0.9);
+
+}
+
+
+/* بخش ویژه نصب */
+
+.install-guide-btn {
+
+    width: 100%;
+
+    margin-top: 15px;
+
+    padding: 15px 20px;
+
+    border: none;
+
+    border-radius: 22px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #0277bd,
+            #009688
+        );
+
+    color: white;
+
+    font-size: 17px;
+
+    font-weight: bold;
+
+    cursor: pointer;
+
+    box-shadow:
+        0 7px 18px rgba(0,105,92,0.25);
+
+    animation: installPulse 2s ease-in-out infinite;
+
+}
+
+
+.install-guide-btn:active {
+
+    transform: scale(0.96);
+
+}
+
+
+/* انیمیشن ورود پاپ‌آپ */
+
+@keyframes noticeModalIn {
+
+    from {
+
+        opacity: 0;
+
+        transform: scale(0.9) translateY(20px);
+
+    }
+
+    to {
+
+        opacity: 1;
+
+        transform: scale(1) translateY(0);
+
+    }
+
+}
+
+
+/* انیمیشن ملایم دکمه نصب */
+
+@keyframes installPulse {
+
+    0%, 100% {
+
+        transform: scale(1);
+
+    }
+
+    50% {
+
+        transform: scale(1.03);
+
+    }
+
+}
+
+
+@media(max-width:600px){
+
+    .notice-modal {
+
+        padding: 15px;
+
+    }
+
+
+    .notice-modal-content {
+
+        max-height: 88vh;
+
+        padding: 25px 16px 20px;
+
+        border-radius: 25px;
+
+    }
+
+
+    .notice-modal-content h2 {
+
+        font-size: 21px;
+
+    }
+
+
+    .notice-modal-body h3 {
+
+        font-size: 17px;
+
+    }
+
+
+    .notice-modal-body p {
+
+        font-size: 14px;
+
+    }
+
+
+    .install-guide-btn {
+
+        font-size: 16px;
+
+        padding: 14px 15px;
+
+    }
+
+}

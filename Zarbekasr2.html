@@ -1,0 +1,1332 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>پازل ضرب کسرها + شبکه‌های اجتماعی</title>
+
+    <!-- ===== استایل‌های بازی (دقیقاً از فایل اصلی) ===== -->
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            font-family: 'Vazirmatn', 'Segoe UI', Tahoma, sans-serif;
+            background: linear-gradient(135deg, #1a2980 0%, #26d0ce 100%);
+            color: #fff;
+            min-height: 100vh;
+            padding: 15px;
+            touch-action: pan-y;
+        }
+
+        .container {
+            max-width: 500px;
+            margin: 0 auto;
+        }
+
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.9);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 3000;
+            padding: 20px;
+        }
+
+        .modal-content {
+            background: linear-gradient(135deg, #6a11cb, #2575fc);
+            border-radius: 20px;
+            padding: 25px;
+            width: 100%;
+            max-width: 400px;
+            max-height: 90vh;
+            overflow-y: auto;
+            animation: scaleIn 0.3s ease;
+        }
+
+        .modal-title {
+            font-size: 1.8rem;
+            margin-bottom: 20px;
+            text-align: center;
+            color: #ffde59;
+        }
+
+        .instructions {
+            margin-bottom: 25px;
+            line-height: 1.7;
+        }
+
+        .instruction-item {
+            margin-bottom: 15px;
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+        }
+
+        .instruction-item i {
+            color: #ffde59;
+            margin-top: 3px;
+        }
+
+        .close-btn {
+            background: #ffde59;
+            color: #1a2980;
+            border: none;
+            padding: 15px 30px;
+            font-size: 1.1rem;
+            border-radius: 50px;
+            font-weight: bold;
+            cursor: pointer;
+            width: 100%;
+            transition: transform 0.2s;
+        }
+
+        .close-btn:active {
+            transform: scale(0.95);
+        }
+
+        .game-header {
+            text-align: center;
+            margin-bottom: 15px;
+        }
+
+        h1 {
+            font-size: 1.6rem;
+            color: #ffde59;
+            margin-bottom: 8px;
+        }
+
+        .subtitle {
+            font-size: 0.95rem;
+            opacity: 0.9;
+        }
+
+        .game-info {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .info-card {
+            border-radius: 15px;
+            padding: 15px 10px;
+            text-align: center;
+            backdrop-filter: blur(10px);
+        }
+
+        .info-card.score-card {
+            background: linear-gradient(135deg, #f39c12, #e67e22);
+        }
+        .info-card.time-card {
+            background: linear-gradient(135deg, #3498db, #2980b9);
+        }
+        .info-card.lives-card {
+            background: linear-gradient(135deg, #e74c3c, #c0392b);
+        }
+
+        .info-label {
+            font-size: 0.8rem;
+            opacity: 0.95;
+            margin-bottom: 5px;
+        }
+
+        .info-value {
+            font-size: 1.4rem;
+            font-weight: bold;
+            color: #ffffff;
+        }
+
+        .lives {
+            display: flex;
+            justify-content: center;
+            gap: 5px;
+            margin-top: 5px;
+        }
+
+        .life {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #ffffff;
+        }
+
+        .life.lost {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .selection-message {
+            background: linear-gradient(135deg, #fff9c4, #fff176);
+            border: 2px solid #f9a825;
+            border-radius: 15px;
+            padding: 12px 15px;
+            text-align: center;
+            margin-bottom: 20px;
+            font-weight: bold;
+            min-height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.95rem;
+            line-height: 1.5;
+            color: #1e1e1e;
+        }
+
+        .selected-piece {
+            color: #6a11cb;
+            font-size: 1.3rem;
+            margin: 0 5px;
+            font-family: 'Vazirmatn', sans-serif;
+        }
+
+        .pieces-section {
+            margin-bottom: 25px;
+        }
+
+        .section-title {
+            font-size: 1.2rem;
+            margin-bottom: 15px;
+            color: #ffde59;
+            text-align: center;
+        }
+
+        .pieces-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+        }
+
+        @media (min-width: 400px) {
+            .pieces-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+
+        .fraction-piece {
+            background: rgba(155, 89, 182, 0.25);
+            border: 3px solid #9b59b6;
+            border-radius: 15px;
+            padding: 20px 10px;
+            text-align: center;
+            font-size: 1.5rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            user-select: none;
+            touch-action: manipulation;
+            color: #ffde59;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            direction: ltr;
+            min-height: 70px;
+        }
+
+        .fraction-piece.selected {
+            background: rgba(155, 89, 182, 0.5);
+            border-color: #ffde59;
+            transform: scale(0.95);
+            box-shadow: 0 0 20px rgba(255, 222, 89, 0.5);
+        }
+
+        .fraction-piece.solved {
+            opacity: 0.4;
+            cursor: default;
+            border-color: #2ecc71;
+            background: rgba(46, 204, 113, 0.2);
+        }
+
+        .answers-section {
+            margin-bottom: 30px;
+        }
+
+        .answers-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+        }
+
+        .answer-cell {
+            aspect-ratio: 1;
+            background: #fef9e7;
+            border: 3px solid #f9a825;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            user-select: none;
+            touch-action: manipulation;
+            color: #000000;
+            direction: ltr;
+        }
+
+        .answer-cell:hover,
+        .answer-cell:active {
+            transform: scale(0.95);
+            background: #fff176;
+        }
+
+        .answer-cell.correct {
+            background: rgba(46, 204, 113, 0.4);
+            border-color: #2ecc71;
+            color: #000000;
+            cursor: default;
+        }
+
+        .answer-cell.wrong {
+            animation: shake 0.5s ease;
+            background: rgba(231, 76, 60, 0.6);
+            border-color: #e74c3c;
+            color: #ffffff;
+        }
+
+        .frac {
+            display: inline-flex;
+            flex-direction: column;
+            align-items: center;
+            vertical-align: middle;
+            line-height: 1.1;
+            font-family: 'Vazirmatn', sans-serif;
+        }
+        .frac-num,
+        .frac-den {
+            font-size: 0.9em;
+            font-weight: bold;
+        }
+        .frac-bar {
+            width: 100%;
+            height: 2px;
+            background: currentColor;
+            margin: 1px 0;
+        }
+
+        .game-buttons {
+            display: flex;
+            gap: 12px;
+            margin-top: 25px;
+        }
+
+        .game-btn {
+            flex: 1;
+            background: linear-gradient(to right, #ff416c, #ff4b2b);
+            color: white;
+            border: none;
+            padding: 18px;
+            font-size: 1.1rem;
+            border-radius: 15px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-align: center;
+            touch-action: manipulation;
+        }
+
+        .game-btn:active {
+            transform: scale(0.95);
+        }
+
+        .game-btn.secondary {
+            background: linear-gradient(to right, #3498db, #2980b9);
+        }
+
+        #message {
+            position: fixed;
+            bottom: 20px;
+            left: 15px;
+            right: 15px;
+            background: rgba(46, 204, 113, 0.95);
+            color: white;
+            padding: 18px;
+            border-radius: 15px;
+            font-weight: bold;
+            text-align: center;
+            display: none;
+            z-index: 1000;
+            box-shadow: 0 5px 25px rgba(0, 0, 0, 0.3);
+            animation: slideUp 0.3s ease;
+        }
+
+        #message.error {
+            background: rgba(231, 76, 60, 0.95);
+        }
+
+        #endModal {
+            z-index: 2000;
+        }
+
+        .final-score {
+            font-size: 3rem;
+            font-weight: bold;
+            color: #ffde59;
+            margin: 20px 0;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+        }
+
+        @keyframes scaleIn {
+            from {
+                transform: scale(0.8);
+                opacity: 0;
+            }
+            to {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        @keyframes slideUp {
+            from {
+                transform: translateY(100px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        @keyframes shake {
+            0%,
+            100% {
+                transform: translateX(0);
+            }
+            10%,
+            30%,
+            50%,
+            70%,
+            90% {
+                transform: translateX(-5px);
+            }
+            20%,
+            40%,
+            60%,
+            80% {
+                transform: translateX(5px);
+            }
+        }
+
+        @media (orientation: landscape) and (max-height: 600px) {
+            .container {
+                max-width: 100%;
+            }
+
+            .game-area {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 20px;
+            }
+
+            .pieces-section,
+            .answers-section {
+                margin-bottom: 0;
+            }
+
+            .game-info {
+                grid-column: span 2;
+            }
+
+            .selection-message {
+                grid-column: span 2;
+            }
+
+            .game-buttons {
+                grid-column: span 2;
+            }
+
+            .modal-content {
+                max-width: 500px;
+                max-height: 85vh;
+            }
+        }
+
+        @media (max-width: 350px) {
+            .pieces-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .fraction-piece {
+                font-size: 1.3rem;
+                padding: 18px 8px;
+            }
+
+            .answer-cell {
+                font-size: 1.5rem;
+            }
+
+            .game-btn {
+                padding: 16px;
+                font-size: 1rem;
+            }
+        }
+    </style>
+
+    <!-- ===== استایل‌های منوی شبکه‌های اجتماعی (دقیقاً از فایل اصلی، بدون تغییر) ===== -->
+    <style>
+        :root {
+            --neon-primary: #0ff;
+            --neon-secondary: #f0f;
+            --bg-dark: #121212;
+        }
+
+        .circular-menu {
+            position: fixed;
+            bottom: 25px;
+            left: 25px;
+            width: 60px;
+            height: 60px;
+            z-index: 9999;
+        }
+
+        .circular-menu .menu-button {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 58px;
+            height: 58px;
+            border-radius: 50%;
+            background-color: var(--bg-dark);
+            color: var(--neon-primary);
+            border: 2px solid var(--neon-primary);
+            cursor: pointer;
+            z-index: 2;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 0 8px var(--neon-primary),
+                0 0 15px var(--neon-primary),
+                0 0 30px var(--neon-primary),
+                inset 0 0 15px rgba(0, 255, 255, 0.2);
+            transition: all 0.4s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .circular-menu .menu-button:focus-visible {
+            outline: 3px solid #fff;
+            outline-offset: 3px;
+        }
+
+        .circular-menu.active .menu-button {
+            background-color: #1a0a1a;
+            color: var(--neon-secondary);
+            border-color: var(--neon-secondary);
+            transform: rotate(135deg);
+            box-shadow: 0 0 10px var(--neon-secondary),
+                0 0 20px var(--neon-secondary),
+                0 0 40px var(--neon-secondary),
+                inset 0 0 20px rgba(255, 0, 255, 0.3);
+        }
+
+        .circular-menu .menu-item {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 52px;
+            height: 52px;
+            border-radius: 50%;
+            background-color: #ffffff;
+            color: #2c3e50;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            transform: scale(0);
+            z-index: -1;
+            text-decoration: none;
+            -webkit-tap-highlight-color: transparent;
+            pointer-events: none;
+            visibility: hidden;
+        }
+
+        .circular-menu.active .menu-item {
+            pointer-events: auto;
+            visibility: visible;
+        }
+
+        .menu-item:focus-visible {
+            outline: 3px solid #fff;
+            outline-offset: 2px;
+        }
+
+        .menu-item.instagram:hover,
+        .menu-item.instagram:focus-visible {
+            background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888);
+            color: white;
+        }
+        .menu-item.telegram:hover,
+        .menu-item.telegram:focus-visible {
+            background: #0088cc;
+            color: white;
+        }
+        .menu-item.aparat:hover,
+        .menu-item.aparat:focus-visible {
+            background: #ed1c24;
+            color: white;
+        }
+        .menu-item.website:hover,
+        .menu-item.website:focus-visible {
+            background: #4facfe;
+            color: white;
+        }
+        .menu-item.webapp:hover,
+        .menu-item.webapp:focus-visible {
+            background: #6c5ce7;
+            color: white;
+        }
+
+        .circular-menu.ready.active .menu-item {
+            animation-duration: 0.45s;
+            animation-timing-function: cubic-bezier(0.68, -0.55, 0.27, 1.55);
+            animation-fill-mode: forwards;
+        }
+        .circular-menu.ready.active .menu-item:nth-child(1) {
+            animation-name: expand1;
+            animation-delay: 0.00s;
+        }
+        .circular-menu.ready.active .menu-item:nth-child(2) {
+            animation-name: expand2;
+            animation-delay: 0.07s;
+        }
+        .circular-menu.ready.active .menu-item:nth-child(3) {
+            animation-name: expand3;
+            animation-delay: 0.14s;
+        }
+        .circular-menu.ready.active .menu-item:nth-child(4) {
+            animation-name: expand4;
+            animation-delay: 0.21s;
+        }
+        .circular-menu.ready.active .menu-item:nth-child(5) {
+            animation-name: expand5;
+            animation-delay: 0.28s;
+        }
+
+        .circular-menu.ready:not(.active) .menu-item {
+            animation-duration: 0.35s;
+            animation-timing-function: ease-in;
+            animation-fill-mode: forwards;
+        }
+        .circular-menu.ready:not(.active) .menu-item:nth-child(1) {
+            animation-name: collapse1;
+            animation-delay: 0.28s;
+        }
+        .circular-menu.ready:not(.active) .menu-item:nth-child(2) {
+            animation-name: collapse2;
+            animation-delay: 0.21s;
+        }
+        .circular-menu.ready:not(.active) .menu-item:nth-child(3) {
+            animation-name: collapse3;
+            animation-delay: 0.14s;
+        }
+        .circular-menu.ready:not(.active) .menu-item:nth-child(4) {
+            animation-name: collapse4;
+            animation-delay: 0.07s;
+        }
+        .circular-menu.ready:not(.active) .menu-item:nth-child(5) {
+            animation-name: collapse5;
+            animation-delay: 0.00s;
+        }
+
+        @keyframes expand1 {
+            0% {
+                opacity: 0;
+                transform: scale(0);
+                z-index: 1;
+            }
+            100% {
+                opacity: 1;
+                transform: translate(0, -150px) scale(1);
+                z-index: 1;
+            }
+        }
+        @keyframes expand2 {
+            0% {
+                opacity: 0;
+                transform: scale(0);
+                z-index: 1;
+            }
+            100% {
+                opacity: 1;
+                transform: translate(57px, -139px) scale(1);
+                z-index: 1;
+            }
+        }
+        @keyframes expand3 {
+            0% {
+                opacity: 0;
+                transform: scale(0);
+                z-index: 1;
+            }
+            100% {
+                opacity: 1;
+                transform: translate(106px, -106px) scale(1);
+                z-index: 1;
+            }
+        }
+        @keyframes expand4 {
+            0% {
+                opacity: 0;
+                transform: scale(0);
+                z-index: 1;
+            }
+            100% {
+                opacity: 1;
+                transform: translate(139px, -57px) scale(1);
+                z-index: 1;
+            }
+        }
+        @keyframes expand5 {
+            0% {
+                opacity: 0;
+                transform: scale(0);
+                z-index: 1;
+            }
+            100% {
+                opacity: 1;
+                transform: translate(150px, 0) scale(1);
+                z-index: 1;
+            }
+        }
+
+        @keyframes collapse1 {
+            0% {
+                opacity: 1;
+                transform: translate(0, -150px) scale(1);
+                z-index: 1;
+            }
+            100% {
+                opacity: 0;
+                transform: translate(0, -150px) scale(0);
+                z-index: -1;
+            }
+        }
+        @keyframes collapse2 {
+            0% {
+                opacity: 1;
+                transform: translate(57px, -139px) scale(1);
+                z-index: 1;
+            }
+            100% {
+                opacity: 0;
+                transform: translate(57px, -139px) scale(0);
+                z-index: -1;
+            }
+        }
+        @keyframes collapse3 {
+            0% {
+                opacity: 1;
+                transform: translate(106px, -106px) scale(1);
+                z-index: 1;
+            }
+            100% {
+                opacity: 0;
+                transform: translate(106px, -106px) scale(0);
+                z-index: -1;
+            }
+        }
+        @keyframes collapse4 {
+            0% {
+                opacity: 1;
+                transform: translate(139px, -57px) scale(1);
+                z-index: 1;
+            }
+            100% {
+                opacity: 0;
+                transform: translate(139px, -57px) scale(0);
+                z-index: -1;
+            }
+        }
+        @keyframes collapse5 {
+            0% {
+                opacity: 1;
+                transform: translate(150px, 0) scale(1);
+                z-index: 1;
+            }
+            100% {
+                opacity: 0;
+                transform: translate(150px, 0) scale(0);
+                z-index: -1;
+            }
+        }
+
+        .circular-menu svg {
+            width: 24px;
+            height: 24px;
+            fill: currentColor;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ===== بخش بازی "پازل ضرب کسرها" (دقیقاً از فایل اصلی) ===== -->
+    <div class="modal-overlay" id="startModal">
+        <div class="modal-content">
+            <div class="modal-title">📚 راهنمای بازی پازل ضرب کسرها</div>
+            <div class="instructions">
+                <div class="instruction-item">
+                    <div>🎯 <strong>هدف بازی:</strong> هر عبارت ضرب کسر را به جواب صحیح آن وصل کنید.</div>
+                </div>
+                <div class="instruction-item">
+                    <div>1️⃣ <strong>انتخاب عبارت:</strong> روی یک عبارت ضرب کلیک کنید.</div>
+                </div>
+                <div class="instruction-item">
+                    <div>2️⃣ <strong>انتخاب جواب:</strong> روی جواب مورد نظر در جدول کلیک کنید.</div>
+                </div>
+                <div class="instruction-item">
+                    <div>✅ <strong>پاسخ صحیح:</strong> خانه جواب سبز می‌شود (امتیاز +۱۰).</div>
+                </div>
+                <div class="instruction-item">
+                    <div>❌ <strong>پاسخ اشتباه:</strong> خانه قرمز می‌شود (۳ جان مجاز).</div>
+                </div>
+                <div class="instruction-item">
+                    <div>⏱️ <strong>زمان:</strong> ۵ دقیقه فرصت دارید.</div>
+                </div>
+                <div class="instruction-item">
+                    <div>💡 <strong>راهنمایی:</strong> با هزینه ۵۰ امتیاز، جواب درست را ببینید.</div>
+                </div>
+                <div class="instruction-item">
+                    <div>↩️ <strong>لغو انتخاب:</strong> با کلیک مجدد روی عبارت انتخاب شده، آن را لغو کنید.</div>
+                </div>
+            </div>
+            <button class="close-btn" id="startGameBtn">شروع بازی</button>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="game-header">
+            <h1>🧮 پازل ضرب کسرها</h1>
+            <p class="subtitle">عبارت ضرب و جواب صحیح را انتخاب کنید</p>
+        </div>
+
+        <div class="game-info">
+            <div class="info-card score-card">
+                <div class="info-label">⭐ امتیاز</div>
+                <div class="info-value" id="score">0</div>
+            </div>
+            <div class="info-card time-card">
+                <div class="info-label">⏱️ زمان</div>
+                <div class="info-value" id="timer">05:00</div>
+            </div>
+            <div class="info-card lives-card">
+                <div class="info-label">❤️ جان‌ها</div>
+                <div class="lives" id="livesContainer"></div>
+            </div>
+        </div>
+
+        <div class="selection-message" id="selectionMessage">
+            یکی از عبارت‌ها را انتخاب کن.
+        </div>
+
+        <div class="game-area">
+            <div class="pieces-section">
+                <div class="section-title">عبارت‌های ضرب</div>
+                <div class="pieces-grid" id="piecesContainer"></div>
+            </div>
+
+            <div class="answers-section">
+                <div class="section-title">جدول جواب‌ها</div>
+                <div class="answers-grid" id="answersGrid"></div>
+            </div>
+        </div>
+
+        <div class="game-buttons">
+            <button class="game-btn secondary" id="hintBtn">💡 راهنمایی (۵۰-)</button>
+            <button class="game-btn" id="resetBtn">🔄 ریستارت</button>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="endModal" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-title" id="endTitle">🎮 بازی تمام شد</div>
+            <div class="instructions" id="endMessage"></div>
+            <div class="final-score" id="finalScore">0</div>
+            <div style="text-align: center; margin-bottom: 20px; font-size: 1.1rem;">امتیاز نهایی شما</div>
+            <button class="close-btn" id="playAgainBtn">بازی مجدد</button>
+        </div>
+    </div>
+
+    <div id="message"></div>
+
+    <!-- ===== اسکریپت بازی (دقیقاً از فایل اصلی) ===== -->
+    <script>
+        // ==================== صداها ====================
+        let audioCtx = null;
+
+        function getAudioCtx() {
+            if (!audioCtx) audioCtx = new(window.AudioContext || window.webkitAudioContext)();
+            return audioCtx;
+        }
+
+        function playTone(type, freqStart, freqEnd, duration, vol = 0.2) {
+            try {
+                const ctx = getAudioCtx();
+                const o = ctx.createOscillator();
+                const g = ctx.createGain();
+                o.connect(g);
+                g.connect(ctx.destination);
+                o.type = type;
+                o.frequency.setValueAtTime(freqStart, ctx.currentTime);
+                if (freqEnd) o.frequency.linearRampToValueAtTime(freqEnd, ctx.currentTime + duration);
+                g.gain.setValueAtTime(vol, ctx.currentTime);
+                g.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + duration);
+                o.start();
+                o.stop(ctx.currentTime + duration);
+            } catch (e) {}
+        }
+
+        function playSelectSound() { playTone("sine", 600, 800, 0.15, 0.15); }
+
+        function playCorrectSound() {
+            playTone("sine", 523, 784, 0.3, 0.2);
+            setTimeout(() => playTone("sine", 659, 1047, 0.3, 0.2), 100);
+        }
+
+        function playWrongSound() { playTone("square", 200, 100, 0.4, 0.15); }
+
+        function playHintSound() { playTone("triangle", 500, 700, 0.3, 0.15); }
+
+        function playEndSound() {
+            playTone("sine", 523, 659, 0.2, 0.2);
+            setTimeout(() => playTone("sine", 659, 784, 0.2, 0.2), 200);
+            setTimeout(() => playTone("sine", 784, 1047, 0.4, 0.2), 400);
+        }
+
+        // ==================== فارسی‌سازی و کسر افقی ====================
+        const persianDigits = ['۰', '۱', '۲', '۳', '۴', '۵', '۶', '۷', '۸', '۹'];
+
+        function toPersianNum(num) {
+            return num.toString().replace(/\d/g, d => persianDigits[d]);
+        }
+
+        function fracHTML(num, den) {
+            return `<span class="frac"><span class="frac-num">${toPersianNum(num)}</span><span class="frac-bar"></span><span class="frac-den">${toPersianNum(den)}</span></span>`;
+        }
+
+        function parseExpressionToHTML(expr) {
+            const parts = expr.split(' × ');
+            function renderPart(part) {
+                const match = part.match(/(\d+)\/(\d+)/);
+                if (match) {
+                    return fracHTML(match[1], match[2]);
+                }
+                return toPersianNum(part);
+            }
+            return `${renderPart(parts[0])} × ${renderPart(parts[1])}`;
+        }
+
+        function parseAnswerToHTML(ans) {
+            const match = ans.match(/(\d+)\/(\d+)/);
+            if (match) {
+                return fracHTML(match[1], match[2]);
+            }
+            return toPersianNum(ans);
+        }
+
+        // داده‌های بازی
+        const fractionProblems = [
+            { expression: "1/2 × 1/4", answer: "1/8" },
+            { expression: "1/3 × 1/2", answer: "1/6" },
+            { expression: "1/4 × 2/3", answer: "1/6" },
+            { expression: "2/3 × 3/4", answer: "1/2" },
+            { expression: "1/3 × 1/3", answer: "1/9" },
+            { expression: "3/4 × 2/3", answer: "1/2" },
+            { expression: "2/5 × 1/2", answer: "1/5" },
+            { expression: "3/4 × 1/3", answer: "1/4" },
+            { expression: "2/3 × 1/3", answer: "2/9" },
+            { expression: "1/2 × 2/5", answer: "1/5" },
+            { expression: "3/5 × 1/2", answer: "3/10" },
+            { expression: "1/4 × 4/5", answer: "1/5" },
+            { expression: "2/3 × 2/5", answer: "4/15" },
+            { expression: "3/4 × 4/5", answer: "3/5" },
+            { expression: "5/6 × 2/3", answer: "5/9" },
+            { expression: "7/8 × 1/2", answer: "7/16" }
+        ];
+
+        // متغیرهای بازی
+        let score = 0;
+        let timeLeft = 300;
+        let lives = 3;
+        let selectedPiece = null;
+        let solvedPieces = 0;
+        let timerInterval;
+        let gameActive = false;
+
+        const scoreElement = document.getElementById('score');
+        const timerElement = document.getElementById('timer');
+        const livesContainer = document.getElementById('livesContainer');
+        const selectionMessage = document.getElementById('selectionMessage');
+        const piecesContainer = document.getElementById('piecesContainer');
+        const answersGrid = document.getElementById('answersGrid');
+        const messageElement = document.getElementById('message');
+        const startModal = document.getElementById('startModal');
+        const endModal = document.getElementById('endModal');
+        const endTitle = document.getElementById('endTitle');
+        const endMessage = document.getElementById('endMessage');
+        const finalScore = document.getElementById('finalScore');
+
+        const startGameBtn = document.getElementById('startGameBtn');
+        const hintBtn = document.getElementById('hintBtn');
+        const resetBtn = document.getElementById('resetBtn');
+        const playAgainBtn = document.getElementById('playAgainBtn');
+
+        function setupLives() {
+            livesContainer.innerHTML = '';
+            for (let i = 0; i < 3; i++) {
+                const life = document.createElement('div');
+                life.className = i < lives ? 'life' : 'life lost';
+                livesContainer.appendChild(life);
+            }
+        }
+
+        function startGame() {
+            gameActive = true;
+            startModal.style.display = 'none';
+            endModal.style.display = 'none';
+
+            score = 0;
+            timeLeft = 300;
+            lives = 3;
+            selectedPiece = null;
+            solvedPieces = 0;
+
+            updateUI();
+            setupLives();
+            createGameBoard();
+            startTimer();
+
+            showMessage('بازی شروع شد! یک عبارت را انتخاب کنید', 'success');
+        }
+
+        function createGameBoard() {
+            piecesContainer.innerHTML = '';
+            answersGrid.innerHTML = '';
+
+            const shuffledProblems = [...fractionProblems].sort(() => Math.random() - 0.5);
+
+            shuffledProblems.forEach(problem => {
+                const piece = document.createElement('div');
+                piece.className = 'fraction-piece';
+                piece.innerHTML = parseExpressionToHTML(problem.expression);
+                piece.dataset.expression = problem.expression;
+                piece.dataset.correctAnswer = problem.answer;
+
+                piece.addEventListener('click', () => selectPiece(piece));
+
+                piecesContainer.appendChild(piece);
+            });
+
+            const shuffledAnswers = shuffledProblems.map(p => p.answer)
+                .sort(() => Math.random() - 0.5);
+
+            shuffledAnswers.forEach(answer => {
+                const cell = document.createElement('div');
+                cell.className = 'answer-cell';
+                cell.innerHTML = parseAnswerToHTML(answer);
+                cell.dataset.answer = answer;
+
+                cell.addEventListener('click', () => selectAnswer(cell));
+
+                answersGrid.appendChild(cell);
+            });
+
+            updateSelectionMessage();
+        }
+
+        function selectPiece(piece) {
+            if (!gameActive || piece.classList.contains('solved')) return;
+
+            playSelectSound();
+
+            if (selectedPiece === piece) {
+                piece.classList.remove('selected');
+                selectedPiece = null;
+                updateSelectionMessage();
+                return;
+            }
+
+            if (selectedPiece) {
+                selectedPiece.classList.remove('selected');
+            }
+
+            selectedPiece = piece;
+            selectedPiece.classList.add('selected');
+            updateSelectionMessage();
+        }
+
+        function selectAnswer(cell) {
+            if (!gameActive || !selectedPiece || cell.classList.contains('correct')) return;
+
+            const correctAnswer = selectedPiece.dataset.correctAnswer;
+            const selectedAnswer = cell.dataset.answer;
+
+            if (correctAnswer === selectedAnswer) {
+                cell.classList.add('correct');
+                selectedPiece.classList.remove('selected');
+                selectedPiece.classList.add('solved');
+
+                score += 10;
+                solvedPieces++;
+                selectedPiece = null;
+
+                playCorrectSound();
+                showMessage('آفرین! پاسخ صحیح است 🎯 (+۱۰ امتیاز)', 'success');
+
+                if (solvedPieces === 16) {
+                    endGame(true);
+                }
+            } else {
+                cell.classList.add('wrong');
+                lives--;
+                setupLives();
+
+                playWrongSound();
+
+                setTimeout(() => {
+                    cell.classList.remove('wrong');
+                }, 500);
+
+                showMessage(`پاسخ نادرست! ${toPersianNum(lives)} جان باقی مانده`, 'error');
+
+                if (lives === 0) {
+                    setTimeout(() => endGame(false), 1000);
+                }
+            }
+
+            updateUI();
+            updateSelectionMessage();
+        }
+
+        function updateSelectionMessage() {
+            if (!selectedPiece) {
+                selectionMessage.innerHTML = 'یکی از عبارت‌ها را انتخاب کن.';
+            } else {
+                selectionMessage.innerHTML = `
+                        <span style="font-weight: bold;">عبارت انتخاب شده</span><br>
+                        <small>(برای لغو انتخاب، مجدداً روی عبارت کلیک کنید)</small>
+                    `;
+            }
+        }
+
+        function startTimer() {
+            clearInterval(timerInterval);
+            timerInterval = setInterval(() => {
+                if (!gameActive) return;
+
+                timeLeft--;
+                updateUI();
+
+                if (timeLeft <= 0) {
+                    endGame(false);
+                }
+            }, 1000);
+        }
+
+        function updateUI() {
+            scoreElement.textContent = toPersianNum(score);
+
+            const minutes = Math.floor(timeLeft / 60);
+            const seconds = timeLeft % 60;
+            timerElement.textContent =
+                `${toPersianNum(minutes.toString().padStart(2, '0'))}:${toPersianNum(seconds.toString().padStart(2, '0'))}`;
+
+            if (timeLeft <= 60) {
+                timerElement.style.color = '#ff6b6b';
+            } else {
+                timerElement.style.color = '#ffffff';
+            }
+        }
+
+        hintBtn.addEventListener('click', () => {
+            if (!gameActive || !selectedPiece) {
+                showMessage('ابتدا یک عبارت را انتخاب کنید', 'error');
+                return;
+            }
+
+            if (score < 50) {
+                showMessage('برای راهنمایی حداقل ۵۰ امتیاز نیاز دارید', 'error');
+                return;
+            }
+
+            const correctAnswer = selectedPiece.dataset.correctAnswer;
+            const correctCell = document.querySelector(`.answer-cell[data-answer="${correctAnswer}"]:not(.correct)`);
+
+            if (!correctCell) return;
+
+            const originalBorder = correctCell.style.border;
+            const originalBackground = correctCell.style.background;
+            const originalBoxShadow = correctCell.style.boxShadow;
+
+            correctCell.style.border = '3px solid #ffde59';
+            correctCell.style.boxShadow = '0 0 20px #ffde59';
+            correctCell.style.background = 'rgba(255, 222, 89, 0.4)';
+
+            score = Math.max(0, score - 50);
+            updateUI();
+            playHintSound();
+
+            showMessage('جواب صحیح مشخص شد (۵۰ امتیاز کسر شد)', 'info');
+
+            setTimeout(() => {
+                correctCell.style.border = originalBorder;
+                correctCell.style.boxShadow = originalBoxShadow;
+                correctCell.style.background = originalBackground;
+            }, 4000);
+        });
+
+        resetBtn.addEventListener('click', () => {
+            if (confirm('آیا مطمئنید می‌خواهید بازی را از اول شروع کنید؟')) {
+                startGame();
+            }
+        });
+
+        function endGame(isWin) {
+            gameActive = false;
+            clearInterval(timerInterval);
+
+            playEndSound();
+
+            if (isWin) {
+                const timeBonus = Math.floor(timeLeft * 2);
+                score += timeBonus;
+                updateUI();
+
+                endTitle.textContent = '🎉 تبریک!';
+                endMessage.textContent = `شما با موفقیت همه پازل‌ها را حل کردید! 
+                                             ${timeBonus > 0 ? `+${toPersianNum(timeBonus)} امتیاز برای زمان باقی‌مانده` : ''}`;
+            } else if (lives === 0) {
+                endTitle.textContent = '💔 جان‌ها تمام شد';
+                endMessage.textContent = 'شما ۳ بار پاسخ اشتباه دادید!';
+            } else {
+                endTitle.textContent = '⏰ زمان تمام شد';
+                endMessage.textContent = 'زمان ۵ دقیقه‌ای شما به پایان رسید!';
+            }
+
+            finalScore.textContent = toPersianNum(score);
+            endModal.style.display = 'flex';
+        }
+
+        function showMessage(text, type = 'success') {
+            messageElement.textContent = text;
+            messageElement.className = '';
+            messageElement.style.display = 'block';
+
+            if (type === 'error') {
+                messageElement.style.background = 'rgba(231, 76, 60, 0.95)';
+            } else if (type === 'info') {
+                messageElement.style.background = 'rgba(52, 152, 219, 0.95)';
+            } else {
+                messageElement.style.background = 'rgba(46, 204, 113, 0.95)';
+            }
+
+            setTimeout(() => {
+                messageElement.style.display = 'none';
+            }, 3000);
+        }
+
+        startGameBtn.addEventListener('click', startGame);
+        playAgainBtn.addEventListener('click', startGame);
+
+        window.addEventListener('load', () => {
+            startModal.style.display = 'flex';
+        });
+    </script>
+
+    <!-- ===== منوی شبکه‌های اجتماعی (دقیقاً از فایل اصلی، بدون تغییر) ===== -->
+    <div class="circular-menu" id="circularMenu">
+        <a href="https://instagram.com/heydarzadehteacher" target="_blank" rel="noopener noreferrer"
+        class="menu-item instagram" title="اینستاگرام" aria-label="صفحه‌ی اینستاگرام" tabindex="-1">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.204-.012 3.583-.069 4.849-.148 3.227-1.664 4.771-4.919 4.919-1.266.058-1.645.069-4.849.069-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.791-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.209-1.791 4-4 4zm6.406-11.845c-.796 0-1.44.645-1.44 1.44s.644 1.44 1.44 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
+    </a>
+
+    <a href="https://t.me/bazieamouzeshi" target="_blank" rel="noopener noreferrer"
+    class="menu-item telegram" title="تلگرام" aria-label="کانال تلگرام" tabindex="-1">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.38-.94-2.23-1.5-.99-.65-.35-1.01.22-1.59.15-.15 2.71-2.48 2.76-2.69.01-.03.01-.14-.07-.2-.08-.06-.19-.04-.27-.02-.12.02-1.96 1.25-5.54 3.66-.52.36-1 .53-1.42.52-.47-.01-1.37-.26-2.03-.48-.82-.27-1.47-.42-1.41-.88.03-.24.37-.49 1.02-.74 3.98-1.73 6.63-2.87 7.96-3.42 3.79-1.58 4.58-1.85 5.09-1.86.11 0 .37.03.53.16.14.11.18.25.2.39-.01.06.01.23-.02.37z"/></svg>
+</a>
+
+<a href="https://www.aparat.com/heydarzadehteacher" target="_blank" rel="noopener noreferrer"
+class="menu-item aparat" title="آپارات" aria-label="صفحه‌ی آپارات" tabindex="-1">
+<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 8.64v6.72L15.27 12 10 8.64zM12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z"/></svg>
+</a>
+
+<a href="https://sites.google.com/view/heydarzadehteacher" target="_blank" rel="noopener noreferrer"
+class="menu-item website" title="وب‌سایت" aria-label="وب‌سایت" tabindex="-1">
+<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/></svg>
+</a>
+
+<a href="https://heydarzadehteacher.github.io/Educational-Games-app/index.html" target="_blank" rel="noopener noreferrer"
+class="menu-item webapp" title="وب‌اپ" aria-label="وب‌اپ آموزشی" tabindex="-1">
+<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M17 1.01L7 1c-1.1 0-2 .9-2 2v18c0 1.1.9 2 2 2h10c1.1 0 2-.9 2-2V3c0-1.1-.9-1.99-2-1.99zM17 19H7V5h10v14z"/></svg>
+</a>
+
+<button class="menu-button" title="شبکه‌های اجتماعی" aria-label="باز کردن منوی شبکه‌های اجتماعی"
+aria-haspopup="true" aria-expanded="false">
+<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92 1.61 0 2.92-1.31 2.92-2.92s-1.31-2.92-2.92-2.92z"/></svg>
+</button>
+</div>
+
+<!-- ===== اسکریپت منوی شبکه‌های اجتماعی (دقیقاً از فایل اصلی، بدون تغییر) ===== -->
+<script>
+    (function() {
+        const menu = document.getElementById('circularMenu');
+        const menuButton = document.querySelector('.menu-button');
+        const menuItems = Array.from(document.querySelectorAll('.menu-item'));
+        let isMenuOpen = false;
+        let isInitialized = false;
+        let isAnimating = false;
+        const ANIMATION_LOCK_MS = 730;
+
+        function setMenuState(open) {
+            isMenuOpen = open;
+            menu.classList.toggle('active', open);
+            menuButton.setAttribute('aria-expanded', String(open));
+            menuItems.forEach(item => item.setAttribute('tabindex', open ? '0' : '-1'));
+        }
+
+        function toggleMenu() {
+            if (isAnimating) return;
+            if (!isInitialized) {
+                menu.classList.add('ready');
+                isInitialized = true;
+            }
+            isAnimating = true;
+            setMenuState(!isMenuOpen);
+            setTimeout(() => { isAnimating = false; }, ANIMATION_LOCK_MS);
+        }
+
+        menuButton.addEventListener('click', function(e) {
+            e.stopPropagation();
+            toggleMenu();
+        });
+
+        document.addEventListener('click', function(e) {
+            if (isMenuOpen && !menu.contains(e.target)) {
+                setMenuState(false);
+            }
+        });
+
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape' && isMenuOpen) {
+                setMenuState(false);
+                menuButton.focus();
+            }
+        });
+
+        menu.addEventListener('click', function(e) {
+            e.stopPropagation();
+        });
+    })();
+</script>
+
+</body>
+</html>

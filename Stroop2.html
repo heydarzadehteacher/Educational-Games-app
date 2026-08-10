@@ -1,0 +1,686 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>چالش دقت و تمرکز</title>
+<style>
+/* ===== استایل‌های بازی ===== */
+body{
+    margin:0;
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+    background:linear-gradient(135deg,#a8edea,#fed6e3);
+    min-height:100vh;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+}
+.container{
+    width:100%;
+    max-width:420px;
+    border-radius:25px;
+    overflow:hidden;
+    padding:20px;
+    text-align:center;
+    background: rgba(255,255,255,0.15);
+    backdrop-filter: blur(10px);
+}
+header{
+    font-size:2em;
+    font-weight:bold;
+    margin-bottom:20px;
+}
+.rules{
+    text-align:right;
+    font-size:1em;
+    line-height:1.6;
+    background: rgba(255,255,255,0.25);
+    padding:15px;
+    border-radius:15px;
+    backdrop-filter: blur(5px);
+    margin-bottom:20px;
+    color:#000;
+}
+.rules p span.inline{
+    display:inline-block;
+}
+.btn{
+    width:100%;
+    padding:20px;
+    margin:10px 0;
+    border:none;
+    border-radius:20px;
+    font-size:1.5em;
+    font-weight:bold;
+    cursor:pointer;
+    background:#4caf50;
+    color:#fff;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+.btn:hover{
+    transform: translateY(-5px) scale(1.03);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+}
+.btn:active{
+    transform: translateY(0) scale(1);
+}
+#section3{
+    display:none;
+    margin-top:20px;
+    background: rgba(144, 238, 144, 0.25);
+    backdrop-filter: blur(10px);
+    border-radius:25px;
+    padding:15px;
+}
+.stats{
+    display:flex;
+    justify-content:space-between;
+    font-weight:bold;
+    margin-bottom:10px;
+}
+.shapeBox{
+    margin:15px auto;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-weight:bold;
+    font-size:1.2em;
+    text-align:center;
+    color:black;
+    position:relative;
+}
+.shapeBox svg{
+    display:block;
+}
+.shapeBox .shapeText{
+    position:absolute;
+    top:50%;
+    left:50%;
+    transform:translate(-50%,-50%);
+    font-size:18px;
+    font-weight:bold;
+    text-shadow: 0 0 8px rgba(0,0,0,0.5);
+    pointer-events:none;
+}
+select{
+    width:100%;
+    padding:12px;
+    font-size:1em;
+    margin:6px 0;
+    border-radius:10px;
+}
+/* ===== انیمیشن‌های بازخورد ===== */
+@keyframes correctFlash {
+    0% { transform: scale(1); background: #4caf50; }
+    50% { transform: scale(1.05); background: #66bb6a; }
+    100% { transform: scale(1); background: #4caf50; }
+}
+@keyframes wrongShake {
+    0% { transform: translateX(0); background: #f44336; }
+    25% { transform: translateX(-10px); background: #ef5350; }
+    50% { transform: translateX(10px); background: #f44336; }
+    75% { transform: translateX(-5px); background: #ef5350; }
+    100% { transform: translateX(0); background: #f44336; }
+}
+.correct{
+    animation: correctFlash 0.6s ease;
+    background: #4caf50!important;
+    color:#fff;
+}
+.wrong{
+    animation: wrongShake 0.5s ease;
+    background: #f44336!important;
+    color:#fff;
+}
+.answerBtn{
+    width:100%;
+    padding:15px;
+    margin:8px 0;
+    border:none;
+    border-radius:15px;
+    font-size:1.1em;
+    font-weight:bold;
+    cursor:pointer;
+    background:#2196f3;
+    color:#fff;
+}
+/* ===== پایان بازی: کانفتی ===== */
+#confettiContainer{
+    position:fixed;
+    top:0;
+    left:0;
+    width:100%;
+    height:100%;
+    pointer-events:none;
+    z-index:999;
+    overflow:hidden;
+}
+.confettiPiece{
+    position:absolute;
+    width:10px;
+    height:10px;
+    border-radius:2px;
+    animation: confettiFall linear forwards;
+}
+@keyframes confettiFall{
+    0%{ transform: translateY(-10vh) rotate(0deg); opacity:1; }
+    100%{ transform: translateY(110vh) rotate(720deg); opacity:0; }
+}
+/* ===== پاپ‌آپ پایان ===== */
+#finishPopup{
+    display:none;
+    position:fixed;
+    top:50%;
+    left:50%;
+    transform:translate(-50%,-50%);
+    width:90%;
+    max-width:360px;
+    background:#fff;
+    border-radius:20px;
+    box-shadow:0 10px 25px rgba(0,0,0,0.3);
+    padding:20px;
+    text-align:center;
+    z-index:100;
+}
+#finishPopup h2{
+    margin-bottom:15px;
+}
+#finishPopup p{
+    font-size:1.2em;
+    margin:8px 0;
+}
+.finishBtn{
+    width:45%;
+    padding:12px;
+    margin:8px 2%;
+    border:none;
+    border-radius:15px;
+    font-size:1em;
+    font-weight:bold;
+    cursor:pointer;
+    background:#4caf50;
+    color:#fff;
+}
+
+/* ===== استایل‌های منوی شبکه‌های اجتماعی (اضافه شده) ===== */
+:root {
+  --neon-primary: #0ff;
+  --neon-secondary: #f0f;
+  --bg-dark: #121212;
+}
+
+.circular-menu {
+  position: fixed;
+  bottom: 25px;
+  left: 25px;
+  width: 60px;
+  height: 60px;
+  z-index: 9999;
+}
+
+.circular-menu .menu-button {
+  position: absolute;
+  top: 0; left: 0;
+  width: 58px; height: 58px;
+  border-radius: 50%;
+  background-color: var(--bg-dark);
+  color: var(--neon-primary);
+  border: 2px solid var(--neon-primary);
+  cursor: pointer;
+  z-index: 2;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  box-shadow: 0 0 8px var(--neon-primary),
+              0 0 15px var(--neon-primary),
+              0 0 30px var(--neon-primary),
+              inset 0 0 15px rgba(0, 255, 255, 0.2);
+  transition: all 0.4s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+  -webkit-tap-highlight-color: transparent;
+}
+
+.circular-menu .menu-button:focus-visible {
+  outline: 3px solid #fff;
+  outline-offset: 3px;
+}
+
+.circular-menu.active .menu-button {
+  background-color: #1a0a1a;
+  color: var(--neon-secondary);
+  border-color: var(--neon-secondary);
+  transform: rotate(135deg);
+  box-shadow: 0 0 10px var(--neon-secondary),
+              0 0 20px var(--neon-secondary),
+              0 0 40px var(--neon-secondary),
+              inset 0 0 20px rgba(255, 0, 255, 0.3);
+}
+
+.circular-menu .menu-item {
+  position: absolute;
+  top: 0; left: 0;
+  width: 52px; height: 52px;
+  border-radius: 50%;
+  background-color: #ffffff;
+  color: #2c3e50;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  opacity: 0;
+  transform: scale(0);
+  z-index: -1;
+  text-decoration: none;
+  -webkit-tap-highlight-color: transparent;
+  pointer-events: none;
+  visibility: hidden;
+}
+
+.circular-menu.active .menu-item {
+  pointer-events: auto;
+  visibility: visible;
+}
+
+.menu-item:focus-visible {
+  outline: 3px solid #fff;
+  outline-offset: 2px;
+}
+
+.menu-item.instagram:hover, .menu-item.instagram:focus-visible { background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888); color: white; }
+.menu-item.telegram:hover, .menu-item.telegram:focus-visible { background: #0088cc; color: white; }
+.menu-item.aparat:hover, .menu-item.aparat:focus-visible { background: #ed1c24; color: white; }
+.menu-item.website:hover, .menu-item.website:focus-visible { background: #4facfe; color: white; }
+.menu-item.webapp:hover, .menu-item.webapp:focus-visible { background: #6c5ce7; color: white; }
+
+.circular-menu.ready.active .menu-item {
+  animation-duration: 0.45s;
+  animation-timing-function: cubic-bezier(0.68, -0.55, 0.27, 1.55);
+  animation-fill-mode: forwards;
+}
+.circular-menu.ready.active .menu-item:nth-child(1) { animation-name: expand1; animation-delay: 0.00s; }
+.circular-menu.ready.active .menu-item:nth-child(2) { animation-name: expand2; animation-delay: 0.07s; }
+.circular-menu.ready.active .menu-item:nth-child(3) { animation-name: expand3; animation-delay: 0.14s; }
+.circular-menu.ready.active .menu-item:nth-child(4) { animation-name: expand4; animation-delay: 0.21s; }
+.circular-menu.ready.active .menu-item:nth-child(5) { animation-name: expand5; animation-delay: 0.28s; }
+
+.circular-menu.ready:not(.active) .menu-item {
+  animation-duration: 0.35s;
+  animation-timing-function: ease-in;
+  animation-fill-mode: forwards;
+}
+.circular-menu.ready:not(.active) .menu-item:nth-child(1) { animation-name: collapse1; animation-delay: 0.28s; }
+.circular-menu.ready:not(.active) .menu-item:nth-child(2) { animation-name: collapse2; animation-delay: 0.21s; }
+.circular-menu.ready:not(.active) .menu-item:nth-child(3) { animation-name: collapse3; animation-delay: 0.14s; }
+.circular-menu.ready:not(.active) .menu-item:nth-child(4) { animation-name: collapse4; animation-delay: 0.07s; }
+.circular-menu.ready:not(.active) .menu-item:nth-child(5) { animation-name: collapse5; animation-delay: 0.00s; }
+
+@keyframes expand1 { 0% { opacity:0; transform:scale(0); z-index:1; } 100% { opacity:1; transform:translate(0,-150px) scale(1); z-index:1; } }
+@keyframes expand2 { 0% { opacity:0; transform:scale(0); z-index:1; } 100% { opacity:1; transform:translate(57px,-139px) scale(1); z-index:1; } }
+@keyframes expand3 { 0% { opacity:0; transform:scale(0); z-index:1; } 100% { opacity:1; transform:translate(106px,-106px) scale(1); z-index:1; } }
+@keyframes expand4 { 0% { opacity:0; transform:scale(0); z-index:1; } 100% { opacity:1; transform:translate(139px,-57px) scale(1); z-index:1; } }
+@keyframes expand5 { 0% { opacity:0; transform:scale(0); z-index:1; } 100% { opacity:1; transform:translate(150px,0) scale(1); z-index:1; } }
+
+@keyframes collapse1 { 0% { opacity:1; transform:translate(0,-150px) scale(1); z-index:1; } 100% { opacity:0; transform:translate(0,-150px) scale(0); z-index:-1; } }
+@keyframes collapse2 { 0% { opacity:1; transform:translate(57px,-139px) scale(1); z-index:1; } 100% { opacity:0; transform:translate(57px,-139px) scale(0); z-index:-1; } }
+@keyframes collapse3 { 0% { opacity:1; transform:translate(106px,-106px) scale(1); z-index:1; } 100% { opacity:0; transform:translate(106px,-106px) scale(0); z-index:-1; } }
+@keyframes collapse4 { 0% { opacity:1; transform:translate(139px,-57px) scale(1); z-index:1; } 100% { opacity:0; transform:translate(139px,-57px) scale(0); z-index:-1; } }
+@keyframes collapse5 { 0% { opacity:1; transform:translate(150px,0) scale(1); z-index:1; } 100% { opacity:0; transform:translate(150px,0) scale(0); z-index:-1; } }
+
+.circular-menu svg { width: 24px; height: 24px; fill: currentColor; }
+</style>
+</head>
+<body>
+<div class="container">
+<header>🎯 چالش دقت و تمرکز</header>
+<div id="intro">
+<div class="rules">
+<p>در هر مرحله از بازی یک شکل هندسی با رنگ مشخص ظاهر می‌شود و داخلش یک نوشته شامل اسم یک شکل هندسی و یک رنگ وجود دارد که ممکن است با شکل و رنگ متفاوت باشد.</p>
+<p>شکل به مدت <strong>۵ ثانیه</strong> نمایش داده می‌شود و پس از آن، سوالی مطرح می‌شود و شما باید پاسخ صحیح را از منوهای کشویی انتخاب کنید.</p>
+<p>زمان کل بازی <strong>120 ثانیه</strong> است. پس کافی است فقط شکل هندسی، رنگ آن و نوشته‌ی داخلش را به خاطر بسپارید. امیدوارم لذت‌بخش باشد برایتان.</p>
+<p><span class="inline">🧠 هدف بازی افزایش تمرکز، دقت و هماهنگی چشم و مغز است.</span></p>
+</div>
+<button class="btn" id="startBtn">شروع بازی</button>
+</div>
+<div id="section3">
+<div class="stats">
+    <span>⏱ <span id="time3">120</span></span>
+    <span>✔ <span id="c3">0</span></span>
+    <span>✖ <span id="w3">0</span></span>
+</div>
+<div id="shapeArea" class="shapeBox"></div>
+<div id="question3"></div>
+<div id="answerArea">
+    <select id="shapeSelect">
+        <option value="">انتخاب شکل</option>
+    </select>
+    <select id="colorSelect">
+        <option value="">انتخاب رنگ</option>
+    </select>
+    <button class="answerBtn" onclick="submitAnswer()">ثبت پاسخ</button>
+</div>
+</div>
+<!-- پاپ‌آپ پایان -->
+<div id="finishPopup">
+<h2>⏰ زمان تمام شد!</h2>
+<p>✔ تعداد پاسخ‌های درست: <span id="finalCorrect">0</span></p>
+<p>✖ تعداد پاسخ‌های غلط: <span id="finalWrong">0</span></p>
+<button class="finishBtn" id="restartBtn">شروع دوباره</button>
+<button class="finishBtn" id="menuBtn">صفحه اصلی</button>
+</div>
+<!-- محفظه کانفتی -->
+<div id="confettiContainer"></div>
+</div>
+
+<!-- ===== منوی شبکه‌های اجتماعی ===== -->
+<div class="circular-menu" id="circularMenu">
+  <!-- ۱. اینستاگرام -->
+  <a href="https://instagram.com/heydarzadehteacher" target="_blank" rel="noopener noreferrer"
+     class="menu-item instagram" title="اینستاگرام" aria-label="صفحه‌ی اینستاگرام" tabindex="-1">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.204-.012 3.583-.069 4.849-.148 3.227-1.664 4.771-4.919 4.919-1.266.058-1.645.069-4.849.069-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.791-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.209-1.791 4-4 4zm6.406-11.845c-.796 0-1.44.645-1.44 1.44s.644 1.44 1.44 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
+  </a>
+
+  <!-- ۲. تلگرام -->
+  <a href="https://t.me/bazieamouzeshi" target="_blank" rel="noopener noreferrer"
+     class="menu-item telegram" title="تلگرام" aria-label="کانال تلگرام" tabindex="-1">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.38-.94-2.23-1.5-.99-.65-.35-1.01.22-1.59.15-.15 2.71-2.48 2.76-2.69.01-.03.01-.14-.07-.2-.08-.06-.19-.04-.27-.02-.12.02-1.96 1.25-5.54 3.66-.52.36-1 .53-1.42.52-.47-.01-1.37-.26-2.03-.48-.82-.27-1.47-.42-1.41-.88.03-.24.37-.49 1.02-.74 3.98-1.73 6.63-2.87 7.96-3.42 3.79-1.58 4.58-1.85 5.09-1.86.11 0 .37.03.53.16.14.11.18.25.2.39-.01.06.01.23-.02.37z"/></svg>
+  </a>
+
+  <!-- ۳. آپارات -->
+  <a href="https://www.aparat.com/heydarzadehteacher" target="_blank" rel="noopener noreferrer"
+     class="menu-item aparat" title="آپارات" aria-label="صفحه‌ی آپارات" tabindex="-1">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 8.64v6.72L15.27 12 10 8.64zM12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z"/></svg>
+  </a>
+
+  <!-- ۴. وب‌سایت -->
+  <a href="https://sites.google.com/view/heydarzadehteacher" target="_blank" rel="noopener noreferrer"
+     class="menu-item website" title="وب‌سایت" aria-label="وب‌سایت" tabindex="-1">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/></svg>
+  </a>
+
+  <!-- ۵. وب‌اپ -->
+  <a href="https://heydarzadehteacher.github.io/Educational-Games-app/index.html" target="_blank" rel="noopener noreferrer"
+     class="menu-item webapp" title="وب‌اپ" aria-label="وب‌اپ آموزشی" tabindex="-1">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M17 1.01L7 1c-1.1 0-2 .9-2 2v18c0 1.1.9 2 2 2h10c1.1 0 2-.9 2-2V3c0-1.1-.9-1.99-2-1.99zM17 19H7V5h10v14z"/></svg>
+  </a>
+
+  <button class="menu-button" title="شبکه‌های اجتماعی" aria-label="باز کردن منوی شبکه‌های اجتماعی"
+          aria-haspopup="true" aria-expanded="false">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92 1.61 0 2.92-1.31 2.92-2.92s-1.31-2.92-2.92-2.92z"/></svg>
+  </button>
+</div>
+
+<script>
+// ===== اسکریپت بازی =====
+const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+function playTone(freq, duration, type='sine', volume=0.3){
+    const osc = audioCtx.createOscillator();
+    const gain = audioCtx.createGain();
+    osc.type = type;
+    osc.frequency.value = freq;
+    gain.gain.setValueAtTime(volume, audioCtx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
+    osc.connect(gain);
+    gain.connect(audioCtx.destination);
+    osc.start();
+    osc.stop(audioCtx.currentTime + duration);
+}
+
+function playCorrectSound(){
+    playTone(523, 0.15, 'sine', 0.3);
+    setTimeout(()=>playTone(659, 0.15, 'sine', 0.3), 150);
+    setTimeout(()=>playTone(784, 0.25, 'sine', 0.4), 300);
+}
+
+function playWrongSound(){
+    playTone(200, 0.4, 'sawtooth', 0.25);
+}
+
+function playFinishSound(){
+    playTone(523, 0.3, 'sine', 0.3);
+    setTimeout(()=>playTone(659, 0.3, 'sine', 0.3), 300);
+    setTimeout(()=>playTone(784, 0.5, 'sine', 0.5), 600);
+}
+
+function launchConfetti(count=80){
+    const container = document.getElementById('confettiContainer');
+    container.innerHTML = '';
+    const colors = ['#ff0','#f0f','#0ff','#f00','#0f0','#00f','#ffa500','#ff69b4'];
+    for(let i=0; i<count; i++){
+        const piece = document.createElement('div');
+        piece.className = 'confettiPiece';
+        const size = Math.random()*8 + 4;
+        const left = Math.random()*100;
+        const delay = Math.random()*2;
+        const duration = Math.random()*2 + 2;
+        const color = colors[Math.floor(Math.random()*colors.length)];
+        Object.assign(piece.style, {
+            left: left+'%',
+            width: size+'px',
+            height: size*0.6+'px',
+            background: color,
+            animationDuration: duration+'s',
+            animationDelay: delay+'s',
+            borderRadius: Math.random()>0.5 ? '50%' : '2px'
+        });
+        container.appendChild(piece);
+    }
+    setTimeout(()=>container.innerHTML='', 5000);
+}
+
+const shapes=["دایره","مربع","مستطیل","مثلث","متوازی‌الاضلاع","ذوزنقه","لوزی"];
+const colors=[
+ {name:"آبی",code:"blue"},
+ {name:"قرمز",code:"red"},
+ {name:"زرد",code:"yellow"},
+ {name:"سفید",code:"white"},
+ {name:"مشکی",code:"black"}
+];
+
+let realShape, realColor, textShape, textColor, questionType;
+let t3=120, correct3=0, wrong3=0, timer3;
+
+const startBtn=document.getElementById("startBtn");
+const intro=document.getElementById("intro");
+const section3=document.getElementById("section3");
+const shapeArea=document.getElementById("shapeArea");
+const question3=document.getElementById("question3");
+const answerArea=document.getElementById("answerArea");
+const shapeSelect=document.getElementById("shapeSelect");
+const colorSelect=document.getElementById("colorSelect");
+const time3=document.getElementById("time3");
+const c3=document.getElementById("c3");
+const w3=document.getElementById("w3");
+const finishPopup=document.getElementById('finishPopup');
+const restartBtn=document.getElementById('restartBtn');
+const menuBtn=document.getElementById('menuBtn');
+const finalCorrect=document.getElementById('finalCorrect');
+const finalWrong=document.getElementById('finalWrong');
+
+startBtn.onclick=function(){
+    intro.style.display="none";
+    section3.style.display="block";
+
+    shapeSelect.innerHTML = '<option value="">انتخاب شکل</option>';
+    colorSelect.innerHTML = '<option value="">انتخاب رنگ</option>';
+    shapes.forEach(s=>shapeSelect.innerHTML+=`<option>${s}</option>`);
+    colors.forEach(c=>colorSelect.innerHTML+=`<option>${c.name}</option>`);
+
+    clearInterval(timer3);
+    t3=120; correct3=0; wrong3=0;
+    time3.innerText=t3; c3.innerText=0; w3.innerText=0;
+
+    timer3=setInterval(()=>{
+        time3.innerText=--t3;
+        if(t3<=0){
+            clearInterval(timer3);
+            showFinishPopup();
+        }
+    },1000);
+
+    nextRound();
+};
+
+function nextRound(){
+    if(t3<=0) return;
+    shapeArea.style.display="flex";
+    question3.style.display="none";
+    answerArea.style.display="none";
+    shapeSelect.value=""; colorSelect.value="";
+
+    realShape = rnd(shapes);
+    realColor = rnd(colors);
+
+    do { textShape = rnd(shapes); } while(textShape===realShape);
+    do { textColor = rnd(colors); } while(textColor.name===realColor.name);
+
+    questionType = Math.random()<0.5 ? "real":"text";
+
+    let svgHTML="";
+    switch(realShape){
+        case "دایره": svgHTML=`<svg width="160" height="160"><circle cx="80" cy="80" r="80" fill="${realColor.code}"/></svg>`; break;
+        case "مربع": svgHTML=`<svg width="160" height="160"><rect width="160" height="160" fill="${realColor.code}"/></svg>`; break;
+        case "مستطیل": svgHTML=`<svg width="200" height="120"><rect width="200" height="120" fill="${realColor.code}"/></svg>`; break;
+        case "مثلث": svgHTML=`<svg width="160" height="140"><polygon points="80,0 0,140 160,140" fill="${realColor.code}"/></svg>`; break;
+        case "متوازی‌الاضلاع": svgHTML=`<svg width="160" height="100"><polygon points="30,0 160,0 130,100 0,100" fill="${realColor.code}"/></svg>`; break;
+        case "ذوزنقه": svgHTML=`<svg width="160" height="100"><polygon points="20,0 140,0 160,100 0,100" fill="${realColor.code}"/></svg>`; break;
+        case "لوزی": svgHTML=`<svg width="140" height="90"><polygon points="70,0 140,45 70,90 0,45" fill="${realColor.code}"/></svg>`; break;
+    }
+
+    const textColorName = realColor.name;
+    let fontColor = "white";
+    if(["آبی","قرمز","زرد","سفید"].includes(textColorName)) fontColor = "black";
+
+    shapeArea.innerHTML = svgHTML + `<div class="shapeText" style="color:${fontColor};">${textShape} ${textColor.name}</div>`;
+
+    setTimeout(()=>{
+        if(t3<=0) return;
+        shapeArea.style.display="none";
+        question3.style.display="block";
+        answerArea.style.display="block";
+        question3.innerText= questionType==="real" ? "👁️ شکل و رنگ واقعی چه بود؟" : "📝 نوشته‌ی داخل شکل چه بود؟";
+    },5000);
+}
+
+function submitAnswer(){
+    if(t3<=0) return;
+    const s=shapeSelect.value;
+    const c=colorSelect.value;
+    if(!s || !c) return;
+
+    let correctShape, correctColor;
+    if(questionType==="real"){ correctShape=realShape; correctColor=realColor.name; }
+    else { correctShape=textShape; correctColor=textColor.name; }
+
+    const isCorrect = (s===correctShape && c===correctColor);
+
+    if(isCorrect){
+        correct3++; c3.innerText=correct3;
+        answerArea.classList.remove('wrong');
+        answerArea.classList.add('correct');
+        playCorrectSound();
+    } else {
+        wrong3++; w3.innerText=wrong3;
+        answerArea.classList.remove('correct');
+        answerArea.classList.add('wrong');
+        playWrongSound();
+    }
+
+    const btn = document.querySelector('.answerBtn');
+    btn.disabled = true;
+    setTimeout(()=>{
+        answerArea.classList.remove('correct','wrong');
+        btn.disabled = false;
+        nextRound();
+    },800);
+}
+
+function rnd(a){return a[Math.floor(Math.random()*a.length)];}
+
+function showFinishPopup(){
+    finishPopup.style.display='block';
+    finalCorrect.innerText=correct3;
+    finalWrong.innerText=wrong3;
+    playFinishSound();
+    launchConfetti(100);
+}
+
+restartBtn.onclick=()=>{
+    finishPopup.style.display='none';
+    confettiContainer.innerHTML='';
+    clearInterval(timer3);
+    t3=120; correct3=0; wrong3=0;
+    time3.innerText=t3; c3.innerText=0; w3.innerText=0;
+    shapeSelect.disabled=false;
+    colorSelect.disabled=false;
+    document.querySelector('.answerBtn').disabled=false;
+    timer3=setInterval(()=>{
+        time3.innerText=--t3;
+        if(t3<=0){
+            clearInterval(timer3);
+            showFinishPopup();
+        }
+    },1000);
+    nextRound();
+};
+
+menuBtn.onclick=()=>{
+    clearInterval(timer3);
+    finishPopup.style.display='none';
+    confettiContainer.innerHTML='';
+    section3.style.display='none';
+    intro.style.display='block';
+};
+
+// ===== اسکریپت منوی شبکه‌های اجتماعی (اضافه شده) =====
+(function() {
+  const menu = document.getElementById('circularMenu');
+  const menuButton = document.querySelector('.menu-button');
+  const menuItems = Array.from(document.querySelectorAll('.menu-item'));
+  let isMenuOpen = false;
+  let isInitialized = false;
+  let isAnimating = false;
+  const ANIMATION_LOCK_MS = 730;
+
+  function setMenuState(open) {
+    isMenuOpen = open;
+    menu.classList.toggle('active', open);
+    menuButton.setAttribute('aria-expanded', String(open));
+    menuItems.forEach(item => item.setAttribute('tabindex', open ? '0' : '-1'));
+  }
+
+  function toggleMenu() {
+    if (isAnimating) return;
+    if (!isInitialized) {
+      menu.classList.add('ready');
+      isInitialized = true;
+    }
+    isAnimating = true;
+    setMenuState(!isMenuOpen);
+    setTimeout(() => { isAnimating = false; }, ANIMATION_LOCK_MS);
+  }
+
+  menuButton.addEventListener('click', function(e) {
+    e.stopPropagation();
+    toggleMenu();
+  });
+
+  document.addEventListener('click', function(e) {
+    if (isMenuOpen && !menu.contains(e.target)) {
+      setMenuState(false);
+    }
+  });
+
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape' && isMenuOpen) {
+      setMenuState(false);
+      menuButton.focus();
+    }
+  });
+
+  menu.addEventListener('click', function(e) {
+    e.stopPropagation();
+  });
+})();
+</script>
+</body>
+</html>

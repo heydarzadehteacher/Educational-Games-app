@@ -1,0 +1,1052 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes, viewport-fit=cover">
+  <title>آزمون تستی علوم پنجم</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    /* ========== استایل‌های اصلی برنامه ========== */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background-color: #efe9e9;
+      font-family: 'Vazirmatn', sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      min-height: 100vh;
+      padding: 16px 16px 30px;
+      direction: rtl;
+      overflow-y: auto;
+    }
+
+    .menu-container, .quiz-container {
+      max-width: 400px;
+      width: 100%;
+      background: #efe9e9;
+      border-radius: 36px;
+      padding: 24px 18px;
+      box-shadow: 15px 15px 30px #cbc6c6, -15px -15px 30px #ffffff;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      margin-top: 10px;
+    }
+
+    .title {
+      font-size: 24px;
+      font-weight: 700;
+      color: #2d2d2d;
+      text-align: center;
+      line-height: 1.4;
+      margin-bottom: 4px;
+    }
+
+    .neumorph-input {
+      background: #efe9e9;
+      box-shadow: inset 6px 6px 12px #cbc6c6, inset -6px -6px 12px #ffffff;
+      border: none;
+      border-radius: 16px;
+      padding: 12px 16px;
+      font-size: 16px;
+      color: #333;
+      font-family: 'Vazirmatn', sans-serif;
+      transition: 0.2s;
+    }
+    .neumorph-input:focus {
+      outline: none;
+      box-shadow: inset 4px 4px 8px #cbc6c6, inset -4px -4px 8px #ffffff;
+    }
+
+    .input-name {
+      border-right: 6px solid #021f94;
+    }
+    .select-lesson {
+      border-right: 6px solid #126b78;
+      appearance: none;
+      background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23126b78'%3e%3cpath d='M7 10l5 5 5-5z'/%3e%3c/svg%3e");
+      background-repeat: no-repeat;
+      background-position: left 12px center;
+      background-size: 20px;
+    }
+
+    .field-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .field-label {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-weight: bold;
+      font-size: 15px;
+      color: #2d2d2d;
+    }
+    .field-label i {
+      width: 22px;
+      color: #021f94;
+      font-size: 16px;
+    }
+
+    .lesson-range {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .lesson-range select {
+      flex: 1;
+      min-width: 100px;
+    }
+    .range-sep {
+      font-weight: bold;
+      color: #126b78;
+    }
+
+    .radio-group {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+    }
+    .radio-option input {
+      display: none;
+    }
+    .radio-option label {
+      display: block;
+      background: #efe9e9;
+      box-shadow: 6px 6px 12px #cbc6c6, -6px -6px 12px #ffffff;
+      border-radius: 16px;
+      padding: 12px 22px;
+      font-weight: bold;
+      font-size: 18px;
+      color: #666;
+      cursor: pointer;
+      transition: all 0.25s;
+      text-align: center;
+      min-width: 70px;
+      border: 2px solid transparent;
+    }
+    .radio-option input:checked + label {
+      box-shadow: inset 6px 6px 12px #cbc6c6, inset -6px -6px 12px #ffffff;
+      color: #021f94;
+      background: #ddd7d7;
+      border-color: #021f94;
+      font-weight: 800;
+      transform: scale(1.02);
+    }
+    .radio-option input:disabled + label {
+      opacity: 0.45;
+      cursor: not-allowed;
+      box-shadow: 4px 4px 8px #cbc6c6, -4px -4px 8px #ffffff;
+    }
+
+    .rules-box {
+      max-height: 120px;
+      overflow-y: auto;
+      background: #efe9e9;
+      box-shadow: inset 6px 6px 12px #cbc6c6, inset -6px -6px 12px #ffffff;
+      border-radius: 18px;
+      padding: 12px;
+      font-size: 13px;
+      line-height: 1.7;
+      color: #444;
+    }
+    .rules-box ul {
+      padding-right: 18px;
+    }
+    .rules-box li {
+      margin-bottom: 6px;
+    }
+
+    .lessons-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      align-items: stretch;
+    }
+    .lesson-card {
+      background: #5b3df5;
+      border-radius: 14px;
+      padding: 10px 4px;
+      text-align: center;
+      color: white;
+      font-weight: bold;
+      font-size: 12px;
+      box-shadow: 3px 3px 6px #cbc6c6, -3px -3px 6px #ffffff;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 3px;
+      min-height: 80px;
+    }
+    .lesson-card i {
+      font-size: 18px;
+      margin-bottom: 2px;
+    }
+    .lesson-num {
+      font-size: 11px;
+      opacity: 0.9;
+    }
+
+    .start-btn, .quiz-btn {
+      background: #021f94;
+      color: white;
+      font-size: 19px;
+      font-weight: bold;
+      border: none;
+      border-radius: 20px;
+      padding: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      box-shadow: 6px 6px 12px #011a7a, -6px -6px 12px #0324ae;
+      transition: 0.2s;
+      cursor: pointer;
+      font-family: 'Vazirmatn', sans-serif;
+    }
+    .start-btn:active, .quiz-btn:active {
+      box-shadow: inset 6px 6px 12px #011a7a, inset -6px -6px 12px #0324ae;
+      transform: scale(0.97);
+    }
+
+    .hint {
+      font-size: 11px;
+      color: #666;
+      margin-top: 4px;
+    }
+    .rules-box::-webkit-scrollbar {
+      width: 5px;
+    }
+    .rules-box::-webkit-scrollbar-thumb {
+      background: #aaa;
+      border-radius: 10px;
+    }
+
+    /* استایل‌های آزمون */
+    .question-box {
+      background: #efe9e9;
+      box-shadow: inset 6px 6px 12px #cbc6c6, inset -6px -6px 12px #ffffff;
+      border-radius: 20px;
+      padding: 20px 16px;
+      font-size: 18px;
+      font-weight: 600;
+      color: #1e1e1e;
+      text-align: center;
+      line-height: 1.6;
+    }
+
+    .options-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin: 16px 0;
+    }
+
+    .option-btn {
+      background: #efe9e9;
+      box-shadow: 6px 6px 12px #cbc6c6, -6px -6px 12px #ffffff;
+      border: none;
+      border-radius: 16px;
+      padding: 14px 16px;
+      font-size: 17px;
+      font-weight: 500;
+      color: #333;
+      cursor: pointer;
+      transition: 0.2s;
+      text-align: right;
+      font-family: 'Vazirmatn', sans-serif;
+    }
+    .option-btn:active {
+      box-shadow: inset 6px 6px 12px #cbc6c6, inset -6px -6px 12px #ffffff;
+      transform: scale(0.98);
+    }
+    .option-btn.correct-highlight {
+      background: #a5d6a5;
+    }
+    .option-btn.wrong-highlight {
+      background: #ef9a9a;
+    }
+
+    .timer-display {
+      font-size: 22px;
+      font-weight: bold;
+      color: #021f94;
+      text-align: center;
+      background: #efe9e9;
+      box-shadow: inset 4px 4px 8px #cbc6c6, inset -4px -4px 8px #ffffff;
+      border-radius: 16px;
+      padding: 8px;
+      margin-bottom: 8px;
+    }
+
+    .progress-text {
+      text-align: center;
+      font-size: 14px;
+      color: #555;
+    }
+
+    .popup-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.5);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+    }
+    .popup-card {
+      background: #efe9e9;
+      border-radius: 28px;
+      padding: 24px;
+      max-width: 320px;
+      width: 90%;
+      box-shadow: 20px 20px 40px #00000030;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .popup-card h3 {
+      color: #021f94;
+    }
+    .popup-card .score {
+      font-size: 40px;
+      font-weight: bold;
+      color: #021f94;
+    }
+    .popup-card .message {
+      font-size: 16px;
+      font-weight: 500;
+      color: #333;
+    }
+    .popup-buttons {
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+    .popup-btn {
+      background: #021f94;
+      color: white;
+      border: none;
+      border-radius: 14px;
+      padding: 10px 18px;
+      font-family: 'Vazirmatn', sans-serif;
+      font-weight: bold;
+      cursor: pointer;
+      box-shadow: 4px 4px 8px #011a7a, -4px -4px 8px #0324ae;
+      transition: 0.2s;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .popup-btn:active {
+      box-shadow: inset 4px 4px 8px #011a7a, inset -4px -4px 8px #0324ae;
+    }
+
+    /* ========== منوی دایره‌ای نئونی ========== */
+    :root {
+      --neon-primary: #0ff;
+      --neon-secondary: #f0f;
+      --bg-dark: #121212;
+    }
+
+    .circular-menu {
+      position: fixed;
+      bottom: 25px;
+      left: 25px;
+      width: 60px;
+      height: 60px;
+      z-index: 9999;
+      /* عدم تأثیر اسکرول */
+    }
+
+    .circular-menu .menu-button {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 58px;
+      height: 58px;
+      border-radius: 50%;
+      background-color: var(--bg-dark);
+      color: var(--neon-primary);
+      border: 2px solid var(--neon-primary);
+      cursor: pointer;
+      z-index: 2;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      box-shadow: 0 0 8px var(--neon-primary),
+                  0 0 15px var(--neon-primary),
+                  0 0 30px var(--neon-primary),
+                  inset 0 0 15px rgba(0, 255, 255, 0.2);
+      transition: all 0.4s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .circular-menu .menu-button:focus-visible {
+      outline: 3px solid #fff;
+      outline-offset: 3px;
+    }
+
+    .circular-menu.active .menu-button {
+      background-color: #1a0a1a;
+      color: var(--neon-secondary);
+      border-color: var(--neon-secondary);
+      transform: rotate(135deg);
+      box-shadow: 0 0 10px var(--neon-secondary),
+                  0 0 20px var(--neon-secondary),
+                  0 0 40px var(--neon-secondary),
+                  inset 0 0 20px rgba(255, 0, 255, 0.3);
+    }
+
+    .circular-menu .menu-item {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 52px;
+      height: 52px;
+      border-radius: 50%;
+      background-color: #ffffff;
+      color: #2c3e50;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      opacity: 0;
+      transform: scale(0);
+      z-index: -1;
+      text-decoration: none;
+      -webkit-tap-highlight-color: transparent;
+      pointer-events: none;
+      visibility: hidden;
+    }
+
+    .circular-menu.active .menu-item {
+      pointer-events: auto;
+      visibility: visible;
+    }
+
+    .menu-item:focus-visible {
+      outline: 3px solid #fff;
+      outline-offset: 2px;
+    }
+
+    .menu-item.instagram:hover, .menu-item.instagram:focus-visible { background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888); color: white; }
+    .menu-item.telegram:hover, .menu-item.telegram:focus-visible { background: #0088cc; color: white; }
+    .menu-item.aparat:hover, .menu-item.aparat:focus-visible { background: #ed1c24; color: white; }
+    .menu-item.website:hover, .menu-item.website:focus-visible { background: #4facfe; color: white; }
+    .menu-item.webapp:hover, .menu-item.webapp:focus-visible { background: #6c5ce7; color: white; }
+
+    .circular-menu.ready.active .menu-item {
+      animation-duration: 0.45s;
+      animation-timing-function: cubic-bezier(0.68, -0.55, 0.27, 1.55);
+      animation-fill-mode: forwards;
+    }
+    .circular-menu.ready.active .menu-item:nth-child(1) { animation-name: expand1; animation-delay: 0.00s; }
+    .circular-menu.ready.active .menu-item:nth-child(2) { animation-name: expand2; animation-delay: 0.07s; }
+    .circular-menu.ready.active .menu-item:nth-child(3) { animation-name: expand3; animation-delay: 0.14s; }
+    .circular-menu.ready.active .menu-item:nth-child(4) { animation-name: expand4; animation-delay: 0.21s; }
+    .circular-menu.ready.active .menu-item:nth-child(5) { animation-name: expand5; animation-delay: 0.28s; }
+
+    .circular-menu.ready:not(.active) .menu-item {
+      animation-duration: 0.35s;
+      animation-timing-function: ease-in;
+      animation-fill-mode: forwards;
+    }
+    .circular-menu.ready:not(.active) .menu-item:nth-child(1) { animation-name: collapse1; animation-delay: 0.28s; }
+    .circular-menu.ready:not(.active) .menu-item:nth-child(2) { animation-name: collapse2; animation-delay: 0.21s; }
+    .circular-menu.ready:not(.active) .menu-item:nth-child(3) { animation-name: collapse3; animation-delay: 0.14s; }
+    .circular-menu.ready:not(.active) .menu-item:nth-child(4) { animation-name: collapse4; animation-delay: 0.07s; }
+    .circular-menu.ready:not(.active) .menu-item:nth-child(5) { animation-name: collapse5; animation-delay: 0.00s; }
+
+    @keyframes expand1 { 0% { opacity:0; transform:scale(0); z-index:1; } 100% { opacity:1; transform:translate(0,-150px) scale(1); z-index:1; } }
+    @keyframes expand2 { 0% { opacity:0; transform:scale(0); z-index:1; } 100% { opacity:1; transform:translate(57px,-139px) scale(1); z-index:1; } }
+    @keyframes expand3 { 0% { opacity:0; transform:scale(0); z-index:1; } 100% { opacity:1; transform:translate(106px,-106px) scale(1); z-index:1; } }
+    @keyframes expand4 { 0% { opacity:0; transform:scale(0); z-index:1; } 100% { opacity:1; transform:translate(139px,-57px) scale(1); z-index:1; } }
+    @keyframes expand5 { 0% { opacity:0; transform:scale(0); z-index:1; } 100% { opacity:1; transform:translate(150px,0) scale(1); z-index:1; } }
+
+    @keyframes collapse1 { 0% { opacity:1; transform:translate(0,-150px) scale(1); z-index:1; } 100% { opacity:0; transform:translate(0,-150px) scale(0); z-index:-1; } }
+    @keyframes collapse2 { 0% { opacity:1; transform:translate(57px,-139px) scale(1); z-index:1; } 100% { opacity:0; transform:translate(57px,-139px) scale(0); z-index:-1; } }
+    @keyframes collapse3 { 0% { opacity:1; transform:translate(106px,-106px) scale(1); z-index:1; } 100% { opacity:0; transform:translate(106px,-106px) scale(0); z-index:-1; } }
+    @keyframes collapse4 { 0% { opacity:1; transform:translate(139px,-57px) scale(1); z-index:1; } 100% { opacity:0; transform:translate(139px,-57px) scale(0); z-index:-1; } }
+    @keyframes collapse5 { 0% { opacity:1; transform:translate(150px,0) scale(1); z-index:1; } 100% { opacity:0; transform:translate(150px,0) scale(0); z-index:-1; } }
+
+    .circular-menu svg { width: 24px; height: 24px; fill: currentColor; }
+  </style>
+</head>
+<body>
+  <!-- ========== صفحه منو ========== -->
+  <div id="menuScreen" class="menu-container">
+    <div class="title">🧪 آزمون تستی علوم پنجم</div>
+
+    <div class="field-group">
+      <div class="field-label"><i class="fas fa-user"></i> نام و نام خانوادگی</div>
+      <input type="text" id="studentName" placeholder="نام خود را بنویسید..." class="neumorph-input input-name" autocomplete="off">
+    </div>
+
+    <div class="field-group">
+      <div class="field-label"><i class="fas fa-gavel"></i> قوانین بازی</div>
+      <div class="rules-box">
+        <ul>
+          <li>تمام سوالات آزمون، ۴ گزینه‌ای هستند.</li>
+          <li>در مدت ۴۵ ثانیه به هر سوال پاسخ دهید.</li>
+          <li>می‌توانید بازه‌ی دروس آزمون و همین طور تعداد سوالات را خودتان مشخص کنید.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="field-group">
+      <div class="field-label"><i class="fas fa-book-open"></i> بازه‌ی درس‌ها</div>
+      <div class="lesson-range">
+        <select id="fromLesson" class="neumorph-input select-lesson"></select>
+        <span class="range-sep">تا</span>
+        <select id="toLesson" class="neumorph-input select-lesson"></select>
+      </div>
+    </div>
+
+    <div class="field-group">
+      <div class="field-label"><i class="fas fa-question-circle"></i> تعداد سوال</div>
+      <div class="radio-group" id="questionCountGroup">
+        <div class="radio-option"><input type="radio" name="qcount" id="q10" value="10" checked><label for="q10">۱۰</label></div>
+        <div class="radio-option"><input type="radio" name="qcount" id="q15" value="15"><label for="q15">۱۵</label></div>
+        <div class="radio-option"><input type="radio" name="qcount" id="q20" value="20"><label for="q20">۲۰</label></div>
+      </div>
+      <div class="hint">* در حالت تک‌درس فقط ۱۰ سوال ممکن است.</div>
+    </div>
+
+    <div class="field-group">
+      <div class="field-label"><i class="fas fa-th-large"></i> درس‌های علوم پنجم</div>
+      <div class="lessons-grid" id="lessonCards"></div>
+    </div>
+
+    <button id="startQuizBtn" class="start-btn"><i class="fas fa-play"></i> شروع آزمون</button>
+  </div>
+
+  <!-- ========== صفحه آزمون (مخفی) ========== -->
+  <div id="quizScreen" class="quiz-container" style="display: none;">
+    <div class="timer-display" id="timerDisplay">۴۵</div>
+    <div class="progress-text" id="progressText">سوال ۱ از ۱۰</div>
+    <div class="question-box" id="questionText"></div>
+    <div class="options-grid" id="optionsContainer"></div>
+  </div>
+
+  <!-- ========== منوی دایره‌ای نئونی (ثابت در گوشه پایین چپ) ========== -->
+  <div class="circular-menu" id="circularMenu">
+    <!-- ۱. اینستاگرام -->
+    <a href="https://instagram.com/heydarzadehteacher" target="_blank" rel="noopener noreferrer"
+       class="menu-item instagram" title="اینستاگرام" aria-label="صفحه‌ی اینستاگرام" tabindex="-1">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.204-.012 3.583-.069 4.849-.148 3.227-1.664 4.771-4.919 4.919-1.266.058-1.645.069-4.849.069-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.791-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.209-1.791 4-4 4zm6.406-11.845c-.796 0-1.44.645-1.44 1.44s.644 1.44 1.44 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
+    </a>
+
+    <!-- ۲. تلگرام -->
+    <a href="https://t.me/bazieamouzeshi" target="_blank" rel="noopener noreferrer"
+       class="menu-item telegram" title="تلگرام" aria-label="کانال تلگرام" tabindex="-1">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.38-.94-2.23-1.5-.99-.65-.35-1.01.22-1.59.15-.15 2.71-2.48 2.76-2.69.01-.03.01-.14-.07-.2-.08-.06-.19-.04-.27-.02-.12.02-1.96 1.25-5.54 3.66-.52.36-1 .53-1.42.52-.47-.01-1.37-.26-2.03-.48-.82-.27-1.47-.42-1.41-.88.03-.24.37-.49 1.02-.74 3.98-1.73 6.63-2.87 7.96-3.42 3.79-1.58 4.58-1.85 5.09-1.86.11 0 .37.03.53.16.14.11.18.25.2.39-.01.06.01.23-.02.37z"/></svg>
+    </a>
+
+    <!-- ۳. آپارات -->
+    <a href="https://www.aparat.com/heydarzadehteacher" target="_blank" rel="noopener noreferrer"
+       class="menu-item aparat" title="آپارات" aria-label="صفحه‌ی آپارات" tabindex="-1">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 8.64v6.72L15.27 12 10 8.64zM12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z"/></svg>
+    </a>
+
+    <!-- ۴. وب‌سایت -->
+    <a href="https://sites.google.com/view/heydarzadehteacher" target="_blank" rel="noopener noreferrer"
+       class="menu-item website" title="وب‌سایت" aria-label="وب‌سایت" tabindex="-1">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/></svg>
+    </a>
+
+    <!-- ۵. وب‌اپ -->
+    <a href="https://heydarzadehteacher.github.io/Educational-Games-app/index.html" target="_blank" rel="noopener noreferrer"
+       class="menu-item webapp" title="وب‌اپ" aria-label="وب‌اپ آموزشی" tabindex="-1">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M17 1.01L7 1c-1.1 0-2 .9-2 2v18c0 1.1.9 2 2 2h10c1.1 0 2-.9 2-2V3c0-1.1-.9-1.99-2-1.99zM17 19H7V5h10v14z"/></svg>
+    </a>
+
+    <button class="menu-button" title="شبکه‌های اجتماعی" aria-label="باز کردن منوی شبکه‌های اجتماعی"
+            aria-haspopup="true" aria-expanded="false">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92 1.61 0 2.92-1.31 2.92-2.92s-1.31-2.92-2.92-2.92z"/></svg>
+    </button>
+  </div>
+
+  <script>
+    // ********* داده‌های سوالات *********
+    const allQuestions = [
+      { lesson:1, text:"در کاوش علمی کدام دیرتر اتفاق می‌افتد؟", options:["فرضیه سازی","طرح پرسش","آزمایش","نتیجه گیری"], correct:3 },
+      { lesson:1, text:"برای این که بدانیم چه خاکی برای رشد گیاه مناسب تر است باید چه چیزی را تغییر دهیم؟", options:["نوع گیاه","نوع خاک","مقدار خاک","محل گیاه"], correct:1 },
+      { lesson:1, text:"کدام مورد در مدت زمان پرواز فرفره تاثیر ندارد ؟", options:["طول بال فرفره","جرم کاغذ","پهنای بال فرفره","ساعت رها کردن فرفره"], correct:3 },
+      { lesson:1, text:"این عبارت که آیا افزایش دمای چایی در سرعت حل شدن قند تاثیر دارد بیانگر کدام مرحله از کاوش است؟", options:["طرح پرسش","فرضیه","آزمایش","نتیجه گیری"], correct:0 },
+      { lesson:1, text:"کلماتی مثل احتمالا به نظر من ... در کدام مرحله کاوش کاربرد دارد", options:["نتیجه","سوال","مشاهده","پیش‌بینی"], correct:3 },
+      { lesson:1, text:"برای اطمینان از درستی نتیجه‌ی آزمایش....", options:["آزمایش را تکرار می‌کنیم","فرضیه را عوض می‌کنیم","نوع آزمایش را عوض می‌کنیم","لوازم ازمایش را عوض می‌کنیم"], correct:0 },
+      { lesson:1, text:"مریم می‌گوید: به نظر من هر چه رطوبت بیشتر باشد، گیاه بهتر رشد می‌کند. این جمله‌ی او بیانگر کدام مرحله از روش علمی است؟", options:["مشاهده‌ی دقیق","فرضیه‌سازی","نتیجه گیری","آزمایش"], correct:1 },
+      { lesson:1, text:"کدام مورد در مدت زمان پرواز فرفره تاثیر ندارد؟", options:["جنس کاغذ","تعداد گیره‌ها","رنگ کاغذ","هیچ کدام"], correct:2 },
+      { lesson:1, text:"می‌خواهیم اثر طول دم فرفره بر مدت زمان پرواز فرفره را بررسی کنیم. در طراحی فرفره‌ها برای این آزمایش، چه چیزی را باید تغییر دهیم؟", options:["تعداد گیره‌ها","پهنای بال‌ها","طول دم فرفره‌ها","ارتفاع رها کردن فرفره‌ها"], correct:2 },
+      { lesson:1, text:"در یک کاوش علمی...", options:["آزمایش قبل از فرضیه‌سازی اتفاق می‌افتد","طرح پرسش آخرین مرحله است","آزمایش بعد از فرضیه‌سازی اتفاق می‌افتد","فرضیه‌سازی آخرین مرحله است"], correct:2 },
+      { lesson:2, text:"در کدام تغییر زیر فقط حالت ماده عوض می شود؟", options:["زنگ زدن آهن","سوختن نان","تبخیر آب","سوختن چوب"], correct:2 },
+      { lesson:2, text:"کدام تغییر فیزیکی نیست؟", options:["بریدن پارچه","سوختن کاغذ","حل شدن قند در چایی","آب شدن بستنی"], correct:1 },
+      { lesson:2, text:"در اثر حرارت جنس کدام ماده تغییر نمی‌کند؟", options:["قند","آب","کاغذ","چوب"], correct:1 },
+      { lesson:2, text:"کدام تغییر با بقیه تفاوت بیشتری دارد؟", options:["فاسد شدن میوه","پختن غذا","ترش شدن شیر","بریدن کاغذ"], correct:3 },
+      { lesson:2, text:"مهم ترین تفاوت بین ریز شدن کاغذ و سوختن کاغذ چیست؟", options:["تغییر اندازه","تغییر شکل","تغییر جنس","تغییر حالت"], correct:2 },
+      { lesson:2, text:"اگر پارچه را با قیچی ببریم کدام ویژگی تغییر کرده است ؟", options:["اندازه","رنگ","جنس","حالت"], correct:0 },
+      { lesson:2, text:"کدام تغییر بدون دخالت انسان است؟", options:["ساخت تونل","کندن زمین","تغییر فصل","صاف کردن زمین"], correct:2 },
+      { lesson:2, text:"در کدام مورد تغییر شیمیایی آهسته تر اتفاق می افتد؟", options:["سوختن بنزین","سوختن چوب کبریت","زنگ زدن آهن","شکستن شیشه"], correct:2 },
+      { lesson:2, text:"کدام مورد با بقیه متفاوت است؟", options:["بریدن نان","درست کردن نیم و","سرخ کردن پیاز","تهیه پنیر"], correct:0 },
+      { lesson:2, text:"کدام تغییر شیمیایی تند است؟", options:["تبدیل گل به میوه","سوختن بنزین","زنگ زدن آهن","پاره کردن کاغذ"], correct:1 },
+      { lesson:3, text:"کدام جمله نادرست است؟", options:["ذره بین نور را در یک نقطه جمع می کند","به کمک ذره بین نوشته ها را بزرگتر می بینیم","منشور ضخیم نقطه کانونی قوی تر دارد","منشور نور را تجزیه می کند"], correct:2 },
+      { lesson:3, text:"در کدام از ذره بین استفاده نمی شود؟", options:["تلسکوپ","دوربین شکاری","میکروسکوپ","آینه ی دندان پزشکی"], correct:3 },
+      { lesson:3, text:"منشور نور را ..... می کند.", options:["متمرکز","بازتاب","جذب","تجزیه"], correct:3 },
+      { lesson:3, text:"با کدام مورد نمی توان نور را تجزیه کرد؟", options:["منشور","ذرات آب معلق در هوا","لوله ی خودکار شفاف","عدسی"], correct:3 },
+      { lesson:3, text:"برای دیدن سلول های بدن چه وسیله ای کاربرد دارد؟", options:["عینک","آینه","ذره بین","میکروسکوپ"], correct:3 },
+      { lesson:3, text:"با کدام وسیله می‌توان تصاویر را روی پرده نمایش داد؟", options:["آینه","شیشه","عدسی","منشور"], correct:2 },
+      { lesson:3, text:"نقش قطرات آب در تشکیل رنگین کمان مثل ..... است.", options:["ذره بین","کانون","عدسی","منشور"], correct:3 },
+      { lesson:3, text:"کاربرد کدام مورد نادرست است؟", options:["تجزیه‌ی نور - منشور","بزرگ نشان دادن - میکروسکوپ","جمع شدن نور در کانون - منشور","دیدن سیارات - تلسکوپ"], correct:2 },
+      { lesson:3, text:"کدام عبارت درست است؟", options:["ذره بین از جنس شیشه و پلاستیک است","منشور به شکل عدس است و نور سفید را تجزیه می کند","لیوان شیشه ای پر از آب مثل منشور عمل می کند","نور خورشید در نقطه ای به نام کانون منشور جمع می شود"], correct:0 },
+      { lesson:3, text:"کانون عدسی جایی است که نور....", options:["پراکنده می‌شود","جذب می‌شود","جمع می‌شود","عبور نمی‌کند"], correct:2 },
+      { lesson:4, text:"از بدن کدام جانور فسیل بهتری تشکیل می شود؟", options:["اردک","سگ","نهنگ","عروس دریایی"], correct:2 },
+      { lesson:4, text:"از بدن کدام جانور فسیل کمتری تشکیل می شود؟", options:["ماهی","صدف دو کفه ای","مارماهی","عروس دریایی"], correct:3 },
+      { lesson:4, text:"در کدام محیط فسیل بیشتری تشکیل می شود؟", options:["دریا","بیابان","جنگل","دامنه کوه"], correct:0 },
+      { lesson:4, text:"از کدام قسمت فسیل کمتری تشکیل می شود؟", options:["دندان","پوست","صدف","استخوان"], correct:1 },
+      { lesson:4, text:"احتمال تشکیل فسیل از بدن کدام جانور بیشتر است؟", options:["مورچه","صدف","کرم خاکی","پشه"], correct:1 },
+      { lesson:4, text:"کدام جمله می تواند کامل تر باشد؟ اگر گوزنی در یخچال قطبی گرفتار شود ...", options:["فقط شاخ او فسیل می شود","فقط دندان و زبان او فسیل می شود","فقط پوست او باقی می ماند","امکان فسیل شدن تمام بدن وجود دارد"], correct:3 },
+      { lesson:4, text:"با مطالعه ی اثر رد پای دایناسور می توان به کدام ویژگی پی برد؟", options:["نوع تغذیه","سرعت جانور","جثه ی جانور","همه موارد"], correct:3 },
+      { lesson:4, text:"از کدام مورد فسیل خوبی تشکیل نمی شود؟", options:["ماهی","کرم خاکی","صدف","برگ سرخس"], correct:1 },
+      { lesson:4, text:"کدام گزینه برای تشکیل فسیل مناسب تر است؟", options:["رس","گچ","ماسه","قلوه سنگ"], correct:0 },
+      { lesson:4, text:"بقایای جاندار در کدام لایه‌ی رسوبی قدیمی تر است؟", options:["لایه‌های رویی","لایه‌های پایینی","لایه‌های میانی","تفاوتی ندارد"], correct:1 },
+      { lesson:5, text:"کدام فرمانده ی بدن است؟", options:["نخاع","رشته های عصبی","مغز","گیرنده های حسی"], correct:2 },
+      { lesson:5, text:"از سوراخ بین ستون مهره ها ..... عبور می کند.", options:["غضروف","مفصل","نخاع","عصب"], correct:2 },
+      { lesson:5, text:"کار کدام مورد ارادی است؟", options:["روده - معده","بازو- ران","قلب - ران","مری- روده"], correct:1 },
+      { lesson:5, text:"حرکت کدام ماهیچه گوارشی است؟", options:["قلب","معده","شش","هیچ کدام"], correct:1 },
+      { lesson:5, text:"کدام جمله درست است؟", options:["مغز توسط جمجمه حفاظت می شود","رشته های عصبی در بیشتر بخش های بدن وجود ندارند","ماهیچه های بدن همه ارادی هستند","اسکلت نقشی در حرکت و فرم بدن ندارد"], correct:0 },
+      { lesson:5, text:"اگر دستمان به جسم داغی بخورد و ما آن را عقب بکشیم، این عمل چه نوع کاری است و توسط کدام قسمت کنترل می شود؟", options:["ارادی - نخاع","غیر ارادی - رشته های عصبی","ارادی - رشته های عصبی","غیر ارادی - نخاع"], correct:3 },
+      { lesson:5, text:"کدام مفصل تحرک در جهات مختلف کمتری دارد؟", options:["زانو","ران و لگن","بازو","مچ"], correct:0 },
+      { lesson:5, text:"رشته های عصبی کدام حس در سراسر بدن پراکنده است؟", options:["بویایی","چشایی","لامسه","شنوایی"], correct:2 },
+      { lesson:5, text:"کدام اتفاق در خم شدن ساعد صورت می گیرد؟", options:["جمع شدن عضله ی پشت بازو","باز شدن عضله ی روی بازو و پشت ساعد","جمع شدن عضله ی روی بازو","باز شدن عضله ی روی بازو"], correct:2 },
+      { lesson:5, text:"کدام در رشد استخوانی موثر است؟", options:["ورزش","مصرف لبنیات","نور آفتاب","همه ی موارد"], correct:3 },
+      { lesson:6, text:"کدام یک نور وارد شده به چشم را کنترل می کند؟", options:["قرنیه","عنبیه","عدسی","مردمک"], correct:3 },
+      { lesson:6, text:"رنگ چشم مربوط به کدام بخش است؟", options:["شبکیه","عنبیه","قرنیه","مردمک"], correct:1 },
+      { lesson:6, text:"سلول های ویژه ی دریافت نور در کدام قسمت چشم قرار دارند؟", options:["شبکیه","عنبیه","قرنیه","مردمک"], correct:0 },
+      { lesson:6, text:"تصویر اجسام در کجا تشکیل می شود؟", options:["قرنیه","عنبیه","عدسی","شبکیه"], correct:3 },
+      { lesson:6, text:"در افراد نزدیک بین تصویر اجسام به طور واضح روی .......... تشکیل نمی شود؟", options:["قرنیه","عصب بینایی","شبکیه","عدسی"], correct:2 },
+      { lesson:6, text:"راه ورودی نور هنگام ورود به چشم از کدام قسمت است؟", options:["مردمک","عدسی","شبکیه","عنبیه"], correct:0 },
+      { lesson:6, text:"کدام قسمت در انتهای مجرای گوش قرار دارد؟", options:["سوراخ گوش","لاله گوش","پرده ی گوش","بخش حلزونی"], correct:2 },
+      { lesson:6, text:"صدا از طریق سلول های گیرنده ی صدا در ............. دریافت می شود.", options:["بخش حلزونی","لاله ی گوش","پرده ی گوش","مجرای گوش"], correct:0 },
+      { lesson:6, text:"کدام یک از موارد زیر مرکز پردازش و درک تصویر است؟", options:["شبکیه","عدسی","عصب بینایی","مغز"], correct:3 },
+      { lesson:6, text:"با رسیدن پیام صدا به کدام قسمت آن را می شنویم", options:["بخش حلزونی","پرده ی گوش","لاله ی گوش","مغز"], correct:3 },
+      { lesson:7, text:"کدام یک از وظایف زبان نیست؟", options:["خنک کردن بدن","جابجا کردن غذا در دهان","کمک کردن به مخلوط شدن غذا با بزاق","حس مزه ها"], correct:0 },
+      { lesson:7, text:"گیرنده های بویایی در کدام قسمت قرار دارند؟", options:["انتهای بینی","پایین بینی","بالای حفره ی بینی","خارج از بینی"], correct:2 },
+      { lesson:7, text:"کدام دو حس به هم وابسته اند؟", options:["بینایی – چشایی","بویایی – بینایی","بویایی – چشایی","لامسه – بویایی"], correct:2 },
+      { lesson:7, text:"برای آن که مزه ی غذاهای مختلف را تشخیص دهیم، کدام عضو پیام را از سلول های گیرنده دریافت می‌کند؟", options:["زبان","چشم","بینی","مغز"], correct:3 },
+      { lesson:7, text:"رشته های عصبی کدام حس در سراسر بدن پراکنده است؟", options:["بینایی","چشایی","لامسه","بویایی"], correct:2 },
+      { lesson:7, text:"کدام قسمت پوست حساس تر است؟", options:["کف دست","نوک انگشتان دست","پاشنه ی پا","سراسر انگشتان دست و پا"], correct:1 },
+      { lesson:7, text:"افراد نابینا از کدام حس برای خواندن استفاده می‌کنند؟", options:["بینایی","لامسه","چشایی","بویایی"], correct:1 },
+      { lesson:7, text:"مزه ی کدام را سریع تر حس می کنید؟", options:["نان","آبمیوه","بیسکوییت","برنج"], correct:1 },
+      { lesson:7, text:"کدام یک در سطح رویی پوست قرار ندارد ؟", options:["غده ی چربی","سلول های مرده ی پوست","مو","گزینه ب و ج"], correct:0 },
+      { lesson:7, text:"کدام جمله درست نیست ؟", options:["سطح رویی پوست از سلول های مرده تشکیل شده است","تعداد گیرندگان لمسی در همه جای بدن به یک اندازه است","افراد نابینا با استفاده از لامسه و بویایی و چشایی و شنوایی می توانند با محیط اطراف ارتباط برقرار کنند","پوست مانع ورود میکروب می شود"], correct:1 },
+      { lesson:8, text:"جای تکیه گاه در کدام وسیله با بقیه فرق دارد؟", options:["قیچی","سیم چین","الاکلنگ","فرغون"], correct:3 },
+      { lesson:8, text:"کدام یک از اهرم‌های زیر نیروی ما را افزایش می دهد؟", options:["میخ کش","در بازکن","فرغون","همه ی موارد"], correct:3 },
+      { lesson:8, text:"در کدام اهرم نیرو بین جسم و تکیه گاه قرار دارد ؟", options:["منگنه","دربازکن","قیچی","فرغون"], correct:0 },
+      { lesson:8, text:"در کدام اهرم زیر جسم بین تکیه گاه و نیرو قرار دارد؟", options:["الاکلنگ","قیچی","فرغون","سیم چین"], correct:2 },
+      { lesson:8, text:"در کدام یک جای جسم با بقیه فرق دارد؟", options:["گردو شکن","سیم چین","الاکلنگ","میخ کش"], correct:0 },
+      { lesson:8, text:"در کدام یک جای نیرو با بقیه فرق دارد؟", options:["گردو شکن","دربازکن","منگنه","فرغون"], correct:2 },
+      { lesson:8, text:"در کدام گزینه تکیه گاه دقیقا در وسط قرار دارد؟", options:["منگنه","دربازکن","ترازوی دو کفه ای","فرغون"], correct:2 },
+      { lesson:8, text:"در کدام وسیله تکیه گاه بین نیرو و جسم نیست؟", options:["انبردست","منگنه","قیچی","الاکلنگ"], correct:1 },
+      { lesson:8, text:"کدام گزینه درست است؟", options:["اهرم ها فقط میله هستند","محل تکیه گاه در همه ی اهرم ها یکی است","کاربرد اهرم ها وقتی بیشتر است که تکیه گاه در وسط باشد","در گردوشکن، جسم میان نیرو و تکیه‌گاه قرار دارد"], correct:3 },
+      { lesson:8, text:"برای این که نیروی ما افزایش داشته باشد؛ .....", options:["تکیه گاه باید بزرگ تر باشد","جسم سنگین تر به تکیه گاه نزدیک تر شود","فاصله جسم تا تکیه گاه با فاصله نیرو تا تکیه گاه یکسان باشد","نیرو را به تکیه‌گاه نزدیک کنیم"], correct:1 },
+      { lesson:9, text:"کدام نوعی گوه است؟", options:["راه پله","مغار","دوچرخه","سرسره"], correct:1 },
+      { lesson:9, text:"کدام نوعی سطح شیب دار است ؟", options:["نردبان","چرخ و فلک","الاکلنگ","دربازکن"], correct:0 },
+      { lesson:9, text:"کدام یک از خانواده سطح شیب دار نیست و عملکرد متفاوتی دارد؟", options:["جاده های کوهستانی","پله","سرسره","پنکه"], correct:3 },
+      { lesson:9, text:"کدام ماشین با بقیه متفاوت است؟", options:["دستگیره‌ی در","دربازکن","پدال دوچرخه","چرخ و فلک"], correct:1 },
+      { lesson:9, text:"در بطری آب شبیه کدام ماشین زیر کار می کند؟", options:["منگنه","چرخ و فلک","سرپیچ لامپ","پدال دوچرخه"], correct:2 },
+      { lesson:9, text:"در کدام گروه از گوه استفاده می شود ؟", options:["مغار و فرغون","مغار و سرپیچ لامپ","مغار و تبر","تبر و فرغون"], correct:2 },
+      { lesson:9, text:"کدام مانند گوه عمل می کند ؟", options:["دندان","مغار","پدال دوچرخه","موارد الف و ب"], correct:3 },
+      { lesson:9, text:"برای بالا بردن وسایل به طبقات بالاتر کدام مناسب تر است ؟", options:["اهرم","دیلم","قرقره","سطح شیب دار"], correct:2 },
+      { lesson:9, text:"در کدام وسیله قرقره استفاده نشده است؟", options:["میله پرچم","جرثقیل","تورهای ماهیگیری","آسیاب آبی"], correct:3 },
+      { lesson:9, text:"سرپیچ لامپ در خانواده کدام یک از ماشین های ساده قرار می گیرد ؟", options:["چرخ و محور","گوه","پیچ","اهرم"], correct:2 },
+      { lesson:10, text:"کدام خاک آب را کمتر در خود نگه می دارد؟", options:["خاک ماسه","گیاخاک","خاک رس","خاک باغچه"], correct:0 },
+      { lesson:10, text:"در کدام خاک گیاهان بهتر رشد می کنند؟", options:["خاک ماسه","خاک رس","خاک باغچه","شن"], correct:2 },
+      { lesson:10, text:"در کدام خاک آب بیشتری در خود نگه می دارد و نفوذ پذیری کمتری دارد؟", options:["خاک باغچه","خاک ماسه","خاک رس","گیاخاک"], correct:2 },
+      { lesson:10, text:"آب در کدام خاک سریع تر از بقیه نفوذ می کند؟", options:["خاک رس","خاک مزرعه","خاک باغچه","خاک ماسه"], correct:3 },
+      { lesson:10, text:"کدام یک باعث فرسایش خاک نمی شود ؟", options:["چرای زیاد و مدام دام ها","ایجاد پوشش گیاهی","جاری شدن سیل","شخم در جهت شیب زمین"], correct:1 },
+      { lesson:10, text:"کدام یک از فرسایش خاک جلوگیری می کند؟", options:["سیل","درخت کاری","چریدن مدام دام ها","قطع درختان"], correct:1 },
+      { lesson:10, text:"برای تشکیل یک سانتی متر خاک چه مدت زمان لازم است؟", options:["2000 سال","3000 سال","200 سال","100 سال"], correct:2 },
+      { lesson:10, text:"نوع خاک منطقه به ............. بستگی دارد.", options:["آب های منطقه","هوای منطقه","درختان منطقه","جنس سنگ های منطقه"], correct:3 },
+      { lesson:10, text:"کدام گزینه صحیح نیست؟", options:["گیاخاک باعث تقویت خاک می شود","گیاخاک حاصلخیزی خاک را افزایش می دهد","همه خاک ها گیاخاک فراوان دارند","میزان گیاخاک درخاک های متفاوت یکسان نیست"], correct:2 },
+      { lesson:10, text:"هر چه شیب زمین بیشتر باشد چه تاثیری در میزان فرسایش خاک دارد ؟", options:["بیشتر است","کمتر است","تاثیری ندارد","فرسایش خیلی کم است"], correct:0 },
+      { lesson:11, text:"کدام عبارت صحیح است؟", options:["برای تولید محصولات بیشتر و مرغوب باید آبیاری به موقع و به مقدار کافی باشد","گیاهان نیز تنفس می کنند","اگر به گیاه نور نرسد، برگ‌هایش زرد و پژمرده می‌شود","همه موارد صحیح است"], correct:3 },
+      { lesson:11, text:"برای کشاورزی در مناطق کم باران خاکی مناسب است که.....", options:["رس بیشتری داشته باشد","ماسه ی کمتری داشته باشد","ماسه بیشتری داشته باشد","گزینه الف و ب"], correct:3 },
+      { lesson:11, text:"در چهار نوع خاک چهار گیاه یکسان کاشتیم. گیاه کاشته شده در کدام خاک بهتر رشد می کند؟", options:["خاک رس","خاک ماسه","خاک شن","خاک باغچه"], correct:3 },
+      { lesson:11, text:"کدام جمله درست نیست؟", options:["مقدار و نوع آب در رشد گیاه موثر است","همه گیاهان در هر خاکی رشد می کنند","میزان نور در رشد گیاه موثر است","گیاهان برای رشد و تنفس به هوای مناسب نیاز دارند"], correct:1 },
+      { lesson:11, text:"کدام جمله در مورد انواع خاک درست است؟", options:["خاک باغچه از رس تشکیل شده است","ریشه گیاهان در خاک رس به راحتی نفوذ می کند","ماسه باعث می شود آب و هوا در خاک نفوذ بیشتری داشته باشد","نفوذ آب در خاک رس و ماسه یکسان است"], correct:2 },
+      { lesson:11, text:"فواید گیاهان کدام است؟", options:["تولید غذا برای خود و دیگر جانوران","پاکیزگی هوا","زیبایی محیط زیست","همه ی موارد"], correct:3 },
+      { lesson:11, text:"کدام آب برای رشد گیاهان مناسب است؟", options:["آب دریا","آب اقیانوس","آب مقطر","آب معمولی"], correct:3 },
+      { lesson:11, text:"کدام عبارت صحیح است؟", options:["آب مقطر برای رشد گیاهان مناسب است","همه ی گیاهان در آب شور رشد کافی دارند","آب معمولی دارای املاح و مواد مورد نیاز رشد گیاه است","هیچ گیاهی نمی تواند در آب شور رشد کند"], correct:2 },
+      { lesson:11, text:"خاک باغچه چه خاکی است ؟", options:["دانه‌های ریزی دارد و آب زیادی در خود نگه می‌دارد","دانه های درشتی دارد و آب را از خود عبور می دهد","مخلوطی از رس و ماسه و کود است و آب را به اندازه در خود نگه می دارد","برای کشاورزی مناسب نیست چون هیچ املاحی ندارد"], correct:2 },
+      { lesson:11, text:"کدام عبارت درست است؟", options:["نوع آب در رشد گیاه موثر است","میزان نوری که هر نوع گیاه برای رشد لازم دارد در گیاهان مختلف متفاوت است","ماسه باعث نفوذ پذیری راحت تر آب و هوا در خاک می شود","همه ی موارد صحیح است"], correct:3 },
+      { lesson:12, text:"اولین قسمتی که پس از جوانه زدن دانه از آن خارج می شود؟", options:["ریشه","ساقه","برگ","میوه"], correct:0 },
+      { lesson:12, text:"آب و مواد غذایی مورد نیاز برای رشد گیاه توسط ..... از خاک گرفته می شود.", options:["روزنه","برگ","آوند","تارهای کشنده"], correct:3 },
+      { lesson:12, text:"روی ........ تارهای نازکی به نام تار کشنده وجود دارد.", options:["ریشه","برگ","گل","دانه"], correct:0 },
+      { lesson:12, text:"هنگام عوض کردن گلدان، معمولا باید گیاه را با خاک آن عوض کرد تا به ...... آسیب نرسد .", options:["میوه","روزنه","تارهای کشنده","برگ"], correct:2 },
+      { lesson:12, text:"کدام قسمت گیاه تقریبا مانند بینی انسان عمل می‌کند؟", options:["روزنه","آوند","رگبرگ","ریشه"], correct:0 },
+      { lesson:12, text:"هوا از طریق ...... وارد گیاه می شود.", options:["تارهای کشنده","ریشه","آوند","روزنه"], correct:3 },
+      { lesson:12, text:"آوندها در برگ ........ را به وجود می آورند.", options:["روزنه","رگبرگ","میوه","گل"], correct:1 },
+      { lesson:12, text:"کدام گزینه درست است؟", options:["روی ریشه روزنه وجود دارد","آسیب به تار کشنده تاثیری در گیاه ندارد","روزنه ها فقط در بخشی از پشت برگ هستند","لوله های باریک ساقه به نام آوند کار انتقال مواد از ریشه به سایر قسمت ها را انجام می دهند"], correct:3 },
+      { lesson:12, text:"کدام گزینه در مورد ریشه درست است؟", options:["گرفتن آب و مواد غذایی از خاک","اولین قسمتی که از دانه پس از جوانه زدن خارج می شود","گیاه را در خاک محکم نگه می دارد","همه ی موارد در مورد ریشه درست است"], correct:3 },
+      { lesson:12, text:"اگر انتهای چند ساقه جعفری را بصورت مایل ببرید و در محلول آب قند قرار دهیم مزه ی برگ ها تغییر می کند که علت آن این است که .....", options:["آوند های موجود در جعفری محلول آب قند را به برگ ها رسانده است","ریشه های جعفری محلول آب قند را به برگ ها رسانده است","گیاه جعفری آوند ندارد و محلول آب و قند سریع به برگ ها انتقال داده می شود","دلیل مشخصی ندارد"], correct:0 }
+    ];
+
+    // ********* صداها *********
+    let audioCtx = null;
+    function getAudioContext() {
+      if (!audioCtx) {
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      }
+      return audioCtx;
+    }
+
+    function playBeep(type) {
+      try {
+        const ctx = getAudioContext();
+        const now = ctx.currentTime;
+        if (type === 'correct') {
+          const osc = ctx.createOscillator();
+          const gain = ctx.createGain();
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(880, now);
+          osc.frequency.setValueAtTime(1100, now + 0.1);
+          gain.gain.setValueAtTime(0.3, now);
+          gain.gain.exponentialRampToValueAtTime(0.01, now + 0.3);
+          osc.connect(gain);
+          gain.connect(ctx.destination);
+          osc.start(now);
+          osc.stop(now + 0.3);
+        } else if (type === 'wrong') {
+          const osc = ctx.createOscillator();
+          const gain = ctx.createGain();
+          osc.type = 'square';
+          osc.frequency.setValueAtTime(200, now);
+          gain.gain.setValueAtTime(0.25, now);
+          gain.gain.exponentialRampToValueAtTime(0.01, now + 0.4);
+          osc.connect(gain);
+          gain.connect(ctx.destination);
+          osc.start(now);
+          osc.stop(now + 0.4);
+        } else if (type === 'report') {
+          [523.25, 659.25, 783.99].forEach((freq, i) => {
+            const o = ctx.createOscillator();
+            const g = ctx.createGain();
+            o.type = 'triangle';
+            o.frequency.value = freq;
+            g.gain.setValueAtTime(0.2, now + i * 0.15);
+            g.gain.exponentialRampToValueAtTime(0.01, now + 0.8);
+            o.connect(g);
+            g.connect(ctx.destination);
+            o.start(now + i * 0.15);
+            o.stop(now + 0.9);
+          });
+        }
+      } catch (e) { /* ignore */ }
+    }
+
+    // ********* متغیرهای اصلی *********
+    let currentQuestions = [];
+    let currentIndex = 0;
+    let score = 0;
+    let timerInterval;
+    let timeLeft = 45;
+    let studentName = "";
+    let totalQuestions = 10;
+
+    // ********* منوی اصلی *********
+    const lessonsData = [
+      { num: 1, title: "زنگ علوم", icon: "fa-bell" },
+      { num: 2, title: "ماده تغییر می‌کند", icon: "fa-flask" },
+      { num: 3, title: "رنگین کمان", icon: "fa-rainbow" },
+      { num: 4, title: "برگی از تاریخ زمین", icon: "fa-leaf" },
+      { num: 5, title: "حرکت بدن", icon: "fa-person-walking" },
+      { num: 6, title: "چه خبر ۱", icon: "fa-newspaper" },
+      { num: 7, title: "چه خبر ۲", icon: "fa-newspaper" },
+      { num: 8, title: "کارها آسان می‌شود ۱", icon: "fa-gears" },
+      { num: 9, title: "کارها آسان می‌شود ۲", icon: "fa-gear" },
+      { num: 10, title: "خاک با ارزش", icon: "fa-seedling" },
+      { num: 11, title: "بکارید و بخورید", icon: "fa-utensils" },
+      { num: 12, title: "از ریشه تا برگ", icon: "fa-tree" }
+    ];
+
+    const fromSelect = document.getElementById('fromLesson');
+    const toSelect = document.getElementById('toLesson');
+    for (let i = 1; i <= 12; i++) {
+      fromSelect.add(new Option(`درس ${i}`, i));
+      toSelect.add(new Option(`درس ${i}`, i));
+    }
+    fromSelect.value = 1;
+    toSelect.value = 12;
+
+    const cardsContainer = document.getElementById('lessonCards');
+    lessonsData.forEach(lesson => {
+      const card = document.createElement('div');
+      card.className = 'lesson-card';
+      card.innerHTML = `<i class="fas ${lesson.icon}"></i><span class="lesson-num">درس ${lesson.num}</span><span>${lesson.title}</span>`;
+      cardsContainer.appendChild(card);
+    });
+
+    const q10 = document.getElementById('q10');
+    const q15 = document.getElementById('q15');
+    const q20 = document.getElementById('q20');
+
+    function updateQuestionOptions() {
+      const single = fromSelect.value === toSelect.value;
+      q15.disabled = single;
+      q20.disabled = single;
+      if (single && (q15.checked || q20.checked)) {
+        q10.checked = true;
+      }
+    }
+
+    fromSelect.addEventListener('change', () => {
+      if (parseInt(toSelect.value) < parseInt(fromSelect.value)) toSelect.value = fromSelect.value;
+      updateQuestionOptions();
+    });
+    toSelect.addEventListener('change', () => {
+      if (parseInt(fromSelect.value) > parseInt(toSelect.value)) fromSelect.value = toSelect.value;
+      updateQuestionOptions();
+    });
+    updateQuestionOptions();
+
+    // ********* شروع آزمون *********
+    document.getElementById('startQuizBtn').addEventListener('click', () => {
+      studentName = document.getElementById('studentName').value.trim();
+      if (!studentName) {
+        alert('لطفاً نام و نام خانوادگی خود را وارد کنید.');
+        return;
+      }
+      const from = parseInt(fromSelect.value);
+      const to = parseInt(toSelect.value);
+      const qCount = parseInt(document.querySelector('input[name="qcount"]:checked').value);
+      totalQuestions = qCount;
+      
+      const pool = allQuestions.filter(q => q.lesson >= from && q.lesson <= to);
+      if (pool.length === 0) {
+        alert('هیچ سوالی در این بازه وجود ندارد.');
+        return;
+      }
+      const count = Math.min(qCount, pool.length);
+      const shuffledPool = pool.sort(() => Math.random() - 0.5);
+      currentQuestions = shuffledPool.slice(0, count);
+      
+      document.getElementById('menuScreen').style.display = 'none';
+      document.getElementById('quizScreen').style.display = 'flex';
+      currentIndex = 0;
+      score = 0;
+      loadQuestion();
+    });
+
+    function toPersianNum(num) {
+      const persianDigits = ['۰','۱','۲','۳','۴','۵','۶','۷','۸','۹'];
+      return String(num).replace(/[0-9]/g, d => persianDigits[d]);
+    }
+
+    function loadQuestion() {
+      if (currentIndex >= currentQuestions.length) {
+        endQuiz();
+        return;
+      }
+      const q = currentQuestions[currentIndex];
+      document.getElementById('progressText').textContent = `سوال ${toPersianNum(currentIndex+1)} از ${toPersianNum(currentQuestions.length)}`;
+      document.getElementById('questionText').textContent = q.text;
+      
+      const options = q.options.map((text, idx) => ({ text, isCorrect: idx === q.correct }));
+      for (let i = options.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [options[i], options[j]] = [options[j], options[i]];
+      }
+      q.shuffledOptions = options;
+      
+      const container = document.getElementById('optionsContainer');
+      container.innerHTML = '';
+      options.forEach((opt, idx) => {
+        const btn = document.createElement('button');
+        btn.className = 'option-btn';
+        btn.textContent = opt.text;
+        btn.addEventListener('click', () => optionSelected(idx, opt.isCorrect, btn));
+        container.appendChild(btn);
+      });
+      
+      clearInterval(timerInterval);
+      timeLeft = 45;
+      document.getElementById('timerDisplay').textContent = toPersianNum(timeLeft);
+      timerInterval = setInterval(() => {
+        timeLeft--;
+        document.getElementById('timerDisplay').textContent = toPersianNum(timeLeft);
+        if (timeLeft <= 0) {
+          clearInterval(timerInterval);
+          disableOptions();
+          highlightCorrect();
+          playBeep('wrong');
+          setTimeout(() => {
+            currentIndex++;
+            loadQuestion();
+          }, 1500);
+        }
+      }, 1000);
+    }
+
+    function disableOptions() {
+      document.querySelectorAll('.option-btn').forEach(b => b.disabled = true);
+    }
+
+    function highlightCorrect() {
+      const q = currentQuestions[currentIndex];
+      document.querySelectorAll('.option-btn').forEach((btn, idx) => {
+        if (q.shuffledOptions[idx].isCorrect) btn.classList.add('correct-highlight');
+      });
+    }
+
+    function optionSelected(idx, isCorrect, btn) {
+      clearInterval(timerInterval);
+      disableOptions();
+      document.querySelectorAll('.option-btn').forEach((b, i) => {
+        if (currentQuestions[currentIndex].shuffledOptions[i].isCorrect) b.classList.add('correct-highlight');
+        else if (i === idx && !isCorrect) b.classList.add('wrong-highlight');
+      });
+      if (isCorrect) {
+        score++;
+        playBeep('correct');
+      } else {
+        playBeep('wrong');
+      }
+      
+      setTimeout(() => {
+        currentIndex++;
+        loadQuestion();
+      }, 1500);
+    }
+
+    function endQuiz() {
+      document.getElementById('quizScreen').style.display = 'none';
+      playBeep('report');
+      showReportCard();
+    }
+
+    function getMessage() {
+      const total = currentQuestions.length;
+      const perfect = (score === total);
+      let grade = '';
+      if (total === 10) {
+        if (score >= 9) grade = 'خیلی خوب';
+        else if (score >= 7) grade = 'خوب';
+        else if (score >= 5) grade = 'قابل قبول';
+        else grade = 'نیازمند تلاش بیشتر';
+      } else if (total === 15) {
+        if (score >= 13) grade = 'خیلی خوب';
+        else if (score >= 10) grade = 'خوب';
+        else if (score >= 7) grade = 'قابل قبول';
+        else grade = 'نیازمند مطالعه';
+      } else if (total === 20) {
+        if (score >= 17) grade = 'خیلی خوب';
+        else if (score >= 13) grade = 'خوب';
+        else if (score >= 9) grade = 'قابل قبول';
+        else grade = 'نیازمند مطالعه';
+      }
+      if (perfect) grade = 'عالی بودی';
+      
+      let extraMessage = '';
+      if (grade === 'عالی بودی') extraMessage = 'فوق‌العاده! همه سوالات رو درست جواب دادی.';
+      else if (grade === 'خیلی خوب') extraMessage = 'آفرین، تسلط خیلی خوبی داری!';
+      else if (grade === 'خوب') extraMessage = 'نتیجه‌ی خوبی گرفتی، کمی بیشتر مرور کن.';
+      else if (grade === 'قابل قبول') extraMessage = 'قابل قبوله، ولی می‌تونی بهتر بشی.';
+      else extraMessage = 'نیاز به تلاش بیشتری داری، ناامید نشو!';
+      
+      return { grade, message: extraMessage };
+    }
+
+    function showReportCard() {
+      const { grade, message } = getMessage();
+      const overlay = document.createElement('div');
+      overlay.className = 'popup-overlay';
+      overlay.id = 'reportOverlay';
+      overlay.innerHTML = `
+        <div class="popup-card" id="reportCard">
+          <h3>📋 کارنامه ${studentName}</h3>
+          <div class="score">${toPersianNum(score)} از ${toPersianNum(currentQuestions.length)}</div>
+          <div class="message">${grade}</div>
+          <div class="message" style="font-size:14px; color:#444;">${message}</div>
+          <div class="popup-buttons">
+            <button class="popup-btn" id="backToMenuBtn"><i class="fas fa-home"></i> بازگشت به منو</button>
+          </div>
+        </div>
+      `;
+      document.body.appendChild(overlay);
+      
+      document.getElementById('backToMenuBtn').addEventListener('click', () => {
+        document.body.removeChild(overlay);
+        document.getElementById('menuScreen').style.display = 'flex';
+        document.getElementById('quizScreen').style.display = 'none';
+      });
+    }
+
+    // ********* منوی دایره‌ای *********
+    (function() {
+      const menu = document.getElementById('circularMenu');
+      const menuButton = document.querySelector('.menu-button');
+      const menuItems = Array.from(document.querySelectorAll('.menu-item'));
+      let isMenuOpen = false;
+      let isInitialized = false;
+      let isAnimating = false;
+      const ANIMATION_LOCK_MS = 730;
+
+      function setMenuState(open) {
+        isMenuOpen = open;
+        menu.classList.toggle('active', open);
+        menuButton.setAttribute('aria-expanded', String(open));
+        menuItems.forEach(item => item.setAttribute('tabindex', open ? '0' : '-1'));
+      }
+
+      function toggleMenu() {
+        if (isAnimating) return;
+        if (!isInitialized) {
+          menu.classList.add('ready');
+          isInitialized = true;
+        }
+        isAnimating = true;
+        setMenuState(!isMenuOpen);
+        setTimeout(() => { isAnimating = false; }, ANIMATION_LOCK_MS);
+      }
+
+      menuButton.addEventListener('click', function(e) {
+        e.stopPropagation();
+        toggleMenu();
+      });
+
+      document.addEventListener('click', function(e) {
+        if (isMenuOpen && !menu.contains(e.target)) {
+          setMenuState(false);
+        }
+      });
+
+      document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape' && isMenuOpen) {
+          setMenuState(false);
+          menuButton.focus();
+        }
+      });
+
+      menu.addEventListener('click', function(e) {
+        e.stopPropagation();
+      });
+    })();
+  </script>
+</body>
+</html>

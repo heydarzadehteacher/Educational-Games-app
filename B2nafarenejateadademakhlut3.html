@@ -1,0 +1,1386 @@
+<meta name='viewport' content='width=device-width, initial-scale=1'/><!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, maximum-scale=1.0">
+<title>ماموریت نجات کسرها</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;600;700;800&display=swap');
+
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Vazirmatn',sans-serif;}
+
+:root{
+    --gold:#ffd54f;
+    --glass:rgba(255,255,255,.12);
+    --border:rgba(255,255,255,.2);
+    --bg-cell:rgba(0,0,0,.4);
+}
+
+html, body{
+    width:100%;height:100%;
+    overflow:hidden;
+    position:fixed;inset:0;
+}
+
+body{
+    background:radial-gradient(circle at top,#334155 0%,#0f172a 45%,#020617 100%);
+    background-attachment:fixed;
+    color:white;
+}
+
+.stars{
+    position:fixed;inset:0;
+    pointer-events:none;opacity:.4;z-index:0;
+}
+.stars::before,.stars::after{
+    content:"";position:absolute;inset:0;
+    background-image:radial-gradient(white 1px,transparent 1px);
+    background-size:40px 40px;
+    animation:moveStars 40s linear infinite;
+}
+.stars::after{background-size:70px 70px;opacity:.5;animation-duration:70s;}
+@keyframes moveStars{from{transform:translateY(0);}to{transform:translateY(120px);}}
+
+/* ===== منوی اصلی ===== */
+#main-menu{
+    max-width:650px;margin:auto;padding:18px;
+    position:relative;z-index:1;
+    height:100vh;height:100dvh;
+    overflow-y:auto;overflow-x:hidden;
+}
+.header{text-align:center;margin-bottom:18px;}
+.castle{font-size:70px;animation:float 3s ease-in-out infinite;}
+@keyframes float{50%{transform:translateY(-8px);}}
+.title{font-size:2rem;font-weight:800;color:var(--gold);text-shadow:0 0 15px rgba(255,213,79,.6);margin-top:8px;}
+.subtitle{margin-top:8px;color:#cbd5e1;font-size:.95rem;}
+
+.card{
+    background:var(--glass);backdrop-filter:blur(12px);
+    border:1px solid var(--border);border-radius:22px;
+    padding:18px;margin-bottom:16px;
+    box-shadow:0 10px 25px rgba(0,0,0,.25);
+}
+.card-title{font-size:1.1rem;font-weight:700;color:var(--gold);margin-bottom:14px;}
+.player{display:flex;flex-direction:column;gap:12px;}
+
+input[type=text]{
+    width:100%;border:none;outline:none;
+    border-radius:14px;padding:13px;font-size:15px;
+    background:white;text-align:right;
+}
+
+.palette{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;}
+.color-btn{
+    width:38px;height:38px;border-radius:50%;
+    border:3px solid transparent;cursor:pointer;transition:.2s;
+}
+.color-btn.selected{border-color:#ffd54f;transform:scale(1.15);}
+.color-btn.disabled{opacity:.25;}
+
+.avatar-box{flex:1;display:flex;justify-content:center;}
+.hero{width:85px;height:85px;transition:.3s;}
+
+.description{line-height:2;color:#e2e8f0;font-size:.95rem;}
+
+.score-item{display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid rgba(255,255,255,.08);}
+.score-item:last-child{border-bottom:none;}
+.crown{text-align:center;margin-top:12px;font-weight:700;color:var(--gold);}
+
+.buttons{display:flex;flex-direction:column;gap:12px;}
+.btn{
+    border:none;border-radius:18px;padding:16px;
+    font-size:18px;font-weight:700;cursor:pointer;transition:.2s;
+}
+.btn:active{transform:scale(0.96);}
+.start-btn{
+    background:linear-gradient(135deg,#ffd54f,#ffb300);color:#222;
+    box-shadow:0 0 25px rgba(255,213,79,.5);animation:pulse 2s infinite;
+}
+@keyframes pulse{50%{transform:scale(1.03);}}
+.reset-btn{background:#dc2626;color:white;}
+.footer{text-align:center;margin-top:15px;color:#94a3b8;font-size:.85rem;}
+.lock-row{text-align:center;font-size:28px;margin-bottom:10px;}
+
+/* ===== صفحه بازی ===== */
+#game-screen{
+    display:none;
+    position:relative;z-index:1;
+    width:100%;height:100vh;height:100dvh;
+    max-width:600px;margin:auto;
+    padding:5px 7px;
+    flex-direction:column;overflow:hidden;
+}
+
+.top-bar{
+    display:flex;align-items:center;justify-content:space-between;
+    gap:4px;flex-shrink:0;
+}
+.turn-badge{
+    background:var(--glass);backdrop-filter:blur(10px);
+    border:1px solid var(--border);border-radius:12px;
+    padding:7px 12px;font-weight:700;font-size:.8rem;white-space:nowrap;
+}
+.dice-box{
+    background:var(--glass);backdrop-filter:blur(10px);
+    border:1px solid var(--border);border-radius:12px;
+    padding:7px 12px;display:flex;align-items:center;gap:8px;
+}
+.dice-icon{font-size:2.2rem;transition:.3s;line-height:1;}
+.dice-icon.rolling{animation:roll 0.5s ease-out;}
+@keyframes roll{
+    0%{transform:rotateZ(0deg) scale(1);}
+    25%{transform:rotateZ(90deg) scale(1.3);}
+    50%{transform:rotateZ(180deg) scale(1.5);}
+    75%{transform:rotateZ(270deg) scale(1.3);}
+    100%{transform:rotateZ(360deg) scale(1);}
+}
+.roll-btn{
+    background:var(--gold);border:none;border-radius:10px;
+    padding:7px 14px;font-weight:700;font-size:.82rem;
+    cursor:pointer;color:#222;white-space:nowrap;
+}
+.roll-btn:disabled{opacity:.5;cursor:not-allowed;}
+.back-btn{
+    background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.3);
+    color:white;border-radius:10px;padding:7px 12px;
+    font-weight:600;cursor:pointer;font-size:.78rem;white-space:nowrap;
+}
+
+/* پنل آدمک‌ها */
+.prisoners-row{display:flex;gap:6px;margin:5px 0;flex-shrink:0;}
+.prisoner-panel{
+    flex:1;background:var(--glass);backdrop-filter:blur(10px);
+    border:1px solid var(--border);border-radius:14px;
+    padding:8px;text-align:center;min-width:0;
+}
+.prisoner-panel-title{
+    font-weight:700;font-size:.75rem;color:#cbd5e1;
+    margin-bottom:5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+.prisoner-list{display:flex;gap:4px;justify-content:center;flex-wrap:wrap;}
+
+.prisoner-cell{
+    width:44px;height:56px;border-radius:10px;
+    position:relative;
+    display:flex;flex-direction:column;align-items:center;justify-content:center;
+    cursor:pointer;transition:.15s;
+    border:2px solid rgba(255,255,255,.25);
+    background:rgba(0,0,0,.45);
+    user-select:none;-webkit-tap-highlight-color:transparent;
+}
+.prisoner-cell:active{transform:scale(0.92);}
+.prisoner-cell.locked{background:rgba(0,0,0,.6);}
+.prisoner-cell.free{
+    background:rgba(255,215,0,.25);border-color:var(--gold);
+    box-shadow:0 0 12px rgba(255,215,0,.2);
+}
+.prisoner-icon-wrap{position:relative;font-size:22px;line-height:1;}
+
+/* انیمیشن قفل */
+.prisoner-cell.lock-anim{animation:lockShake .6s ease-out;}
+.prisoner-cell.unlock-anim{animation:unlockPop .6s ease-out;}
+
+@keyframes lockShake{
+    0%{transform:scale(1);}
+    15%{transform:scale(1.2);border-color:#ff4444;box-shadow:0 0 20px rgba(255,0,0,.6);}
+    30%{transform:scale(.9) rotate(-5deg);}
+    45%{transform:scale(1.1) rotate(5deg);}
+    60%{transform:scale(.95) rotate(-3deg);}
+    75%{transform:scale(1.05) rotate(3deg);}
+    100%{transform:scale(1);}
+}
+@keyframes unlockPop{
+    0%{transform:scale(1);}
+    20%{transform:scale(1.35);border-color:#ffd54f;box-shadow:0 0 25px rgba(255,215,0,.8);background:rgba(255,215,0,.4);}
+    40%{transform:scale(.85);}
+    60%{transform:scale(1.15);}
+    80%{transform:scale(.95);}
+    100%{transform:scale(1);}
+}
+
+.prisoner-cell.locked .prisoner-icon-wrap::after{
+    content:"🔒";position:absolute;top:-7px;right:-5px;font-size:11px;
+}
+.prisoner-cell.free .prisoner-icon-wrap::after{
+    content:"🔓";position:absolute;top:-7px;right:-5px;font-size:11px;
+}
+.prisoner-badge{
+    font-size:.58rem;color:var(--gold);font-weight:700;
+    margin-top:1px;direction:ltr;display:inline-block;
+}
+
+/* تخته ۷×۷ + ۱ */
+.board-wrapper{
+    background:var(--glass);backdrop-filter:blur(10px);
+    border:1px solid var(--border);border-radius:16px;
+    padding:8px 7px 7px;
+    flex-shrink:1;flex-grow:1;
+    display:flex;flex-direction:column;
+    min-height:0;overflow:hidden;
+}
+.board-title{
+    text-align:center;color:var(--gold);font-weight:700;
+    margin-bottom:4px;font-size:.75rem;flex-shrink:0;
+}
+.board-grid{
+    display:grid;
+    grid-template-columns:repeat(7, 1fr);
+    grid-template-rows:repeat(7, 1fr) auto;
+    gap:3px;width:100%;flex-grow:1;
+}
+
+.board-cell{
+    aspect-ratio:1;border-radius:8px;
+    display:flex;flex-direction:column;align-items:center;justify-content:center;
+    position:relative;transition:all .2s;
+    border:2px solid rgba(255,255,255,.18);
+    background:var(--bg-cell);color:white;padding:2px;
+    user-select:none;-webkit-tap-highlight-color:transparent;
+}
+.board-cell.last-cell{
+    grid-column:4;aspect-ratio:1;max-width:80%;justify-self:center;width:100%;
+}
+.board-cell.piece-landing{animation:landBounce .4s ease-out;}
+@keyframes landBounce{
+    0%{transform:scale(1);}30%{transform:scale(1.2);}60%{transform:scale(.9);}100%{transform:scale(1);}
+}
+
+.cell-index{position:absolute;top:1px;right:3px;font-size:.45rem;opacity:.5;line-height:1;}
+.cell-frac{
+    display:flex;flex-direction:column;align-items:center;
+    justify-content:center;text-align:center;line-height:1.15;width:100%;
+}
+.frac-num{font-size:.78rem;font-weight:700;}
+.frac-bar{width:68%;height:2px;background:white;margin:2px 0;border-radius:1px;}
+.frac-den{font-size:.78rem;font-weight:700;}
+
+/* حذف کلاس‌های ثابت برای موقعیت‌ها – جایگزین با استایل خطی می‌شوند */
+
+.pos-dot{position:absolute;bottom:1px;font-size:12px;line-height:1;}
+
+/* پیام */
+.game-msg{
+    text-align:center;padding:7px 12px;border-radius:12px;
+    font-weight:600;font-size:.75rem;
+    background:var(--glass);backdrop-filter:blur(10px);
+    border:1px solid var(--border);min-height:34px;
+    display:flex;align-items:center;justify-content:center;
+    line-height:1.3;margin-top:4px;flex-shrink:0;
+}
+
+/* پاپ‌آپ انتخاب */
+.pick-overlay{
+    display:none;position:fixed;inset:0;
+    background:rgba(0,0,0,.75);backdrop-filter:blur(5px);
+    z-index:100;align-items:center;justify-content:center;padding:20px;
+}
+.pick-box{
+    background:#1e293b;border:2px solid var(--gold);
+    border-radius:20px;padding:20px;text-align:center;
+    max-width:460px;width:100%;box-shadow:0 0 30px rgba(255,215,0,.25);
+}
+.pick-box h3{color:var(--gold);margin-bottom:4px;font-size:1.05rem;}
+.pick-subtitle{color:#cbd5e1;font-size:.78rem;margin-bottom:12px;line-height:1.5;}
+.pick-prisoners{display:flex;gap:6px;flex-wrap:wrap;justify-content:center;margin-bottom:14px;}
+.pick-prisoners .prisoner-cell{width:48px;height:60px;cursor:pointer;transition:.15s;}
+.pick-prisoners .prisoner-cell:hover{transform:scale(1.08);border-color:var(--gold);}
+.pick-prisoners .prisoner-cell:active{transform:scale(.95);}
+.pick-skip{
+    background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.3);
+    color:#cbd5e1;border-radius:12px;padding:10px 24px;
+    font-weight:600;cursor:pointer;font-size:.82rem;transition:.2s;
+}
+.pick-skip:hover{background:rgba(255,255,255,.2);}
+
+/* تایمر */
+.timer-box{
+    margin:8px 0 12px 0;
+    font-size:1rem;
+    color:var(--gold);
+    font-weight:700;
+}
+.timer-bar{
+    width:100%;height:6px;background:rgba(255,255,255,.2);
+    border-radius:3px;margin-top:4px;overflow:hidden;
+}
+.timer-fill{
+    height:100%;background:var(--gold);
+    border-radius:3px;transition:width 1s linear;
+}
+
+/* برد */
+.win-overlay{
+    position:fixed;inset:0;background:rgba(0,0,0,.8);
+    backdrop-filter:blur(6px);z-index:200;
+    display:flex;align-items:center;justify-content:center;padding:20px;
+}
+.win-card{
+    background:#1e293b;border:2px solid var(--gold);
+    border-radius:24px;padding:28px 24px;text-align:center;
+    max-width:380px;width:100%;box-shadow:0 0 50px rgba(255,215,0,.35);
+}
+.win-card h2{color:var(--gold);font-size:1.6rem;margin-bottom:10px;}
+.win-card p{color:#e2e8f0;margin-bottom:20px;font-size:1rem;line-height:1.6;}
+
+/* مخلوط LTR */
+.mixed-ltr{direction:ltr;display:inline-block;unicode-bidi:embed;}
+.mixed-frac{display:inline-flex;flex-direction:column;align-items:center;vertical-align:middle;line-height:1.1;}
+.mixed-frac .mf-num{font-size:.88em;}
+.mixed-frac .mf-bar{width:100%;height:1.5px;background:currentColor;margin:0;border-radius:1px;}
+.mixed-frac .mf-den{font-size:.88em;}
+
+@media(min-width:600px){
+    .prisoner-cell{width:48px;height:60px;}
+    .prisoner-icon-wrap{font-size:24px;}
+    .prisoner-badge{font-size:.62rem;}
+    .frac-num,.frac-den{font-size:.88rem;}
+    .frac-bar{height:2.5px;}
+    .board-cell{border-radius:10px;}
+    .board-grid{gap:4px;}
+}
+@media(max-width:360px){
+    .prisoner-cell{width:36px;height:46px;}
+    .prisoner-icon-wrap{font-size:18px;}
+    .prisoner-badge{font-size:.5rem;}
+    .frac-num,.frac-den{font-size:.65rem;}
+    .frac-bar{height:1.5px;}
+    .board-grid{gap:2px;}
+    .board-cell{border-radius:5px;}
+    .cell-index{font-size:.38rem;}
+    .turn-badge{font-size:.7rem;padding:5px 8px;}
+    .dice-icon{font-size:1.8rem;}
+    .roll-btn{font-size:.72rem;padding:5px 10px;}
+}
+
+/* ===== استایل‌های منوی شبکه‌های اجتماعی ===== */
+:root {
+    --neon-primary: #0ff;
+    --neon-secondary: #f0f;
+    --bg-dark: #121212;
+}
+
+.circular-menu {
+    position: fixed;
+    bottom: 25px;
+    left: 25px;
+    width: 60px;
+    height: 60px;
+    z-index: 9999;
+}
+
+.circular-menu .menu-button {
+    position: absolute;
+    top: 0; left: 0;
+    width: 58px; height: 58px;
+    border-radius: 50%;
+    background-color: var(--bg-dark);
+    color: var(--neon-primary);
+    border: 2px solid var(--neon-primary);
+    cursor: pointer;
+    z-index: 2;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    box-shadow: 0 0 8px var(--neon-primary),
+                0 0 15px var(--neon-primary),
+                0 0 30px var(--neon-primary),
+                inset 0 0 15px rgba(0, 255, 255, 0.2);
+    transition: all 0.4s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+    -webkit-tap-highlight-color: transparent;
+}
+
+.circular-menu .menu-button:focus-visible {
+    outline: 3px solid #fff;
+    outline-offset: 3px;
+}
+
+.circular-menu.active .menu-button {
+    background-color: #1a0a1a;
+    color: var(--neon-secondary);
+    border-color: var(--neon-secondary);
+    transform: rotate(135deg);
+    box-shadow: 0 0 10px var(--neon-secondary),
+                0 0 20px var(--neon-secondary),
+                0 0 40px var(--neon-secondary),
+                inset 0 0 20px rgba(255, 0, 255, 0.3);
+}
+
+.circular-menu .menu-item {
+    position: absolute;
+    top: 0; left: 0;
+    width: 52px; height: 52px;
+    border-radius: 50%;
+    background-color: #ffffff;
+    color: #2c3e50;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    opacity: 0;
+    transform: scale(0);
+    z-index: -1;
+    text-decoration: none;
+    -webkit-tap-highlight-color: transparent;
+    pointer-events: none;
+    visibility: hidden;
+}
+
+.circular-menu.active .menu-item {
+    pointer-events: auto;
+    visibility: visible;
+}
+
+.menu-item:focus-visible {
+    outline: 3px solid #fff;
+    outline-offset: 2px;
+}
+
+.menu-item.instagram:hover, .menu-item.instagram:focus-visible { background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888); color: white; }
+.menu-item.telegram:hover, .menu-item.telegram:focus-visible { background: #0088cc; color: white; }
+.menu-item.aparat:hover, .menu-item.aparat:focus-visible { background: #ed1c24; color: white; }
+.menu-item.website:hover, .menu-item.website:focus-visible { background: #4facfe; color: white; }
+.menu-item.webapp:hover, .menu-item.webapp:focus-visible { background: #6c5ce7; color: white; }
+
+.circular-menu.ready.active .menu-item {
+    animation-duration: 0.45s;
+    animation-timing-function: cubic-bezier(0.68, -0.55, 0.27, 1.55);
+    animation-fill-mode: forwards;
+}
+.circular-menu.ready.active .menu-item:nth-child(1) { animation-name: expand1; animation-delay: 0.00s; }
+.circular-menu.ready.active .menu-item:nth-child(2) { animation-name: expand2; animation-delay: 0.07s; }
+.circular-menu.ready.active .menu-item:nth-child(3) { animation-name: expand3; animation-delay: 0.14s; }
+.circular-menu.ready.active .menu-item:nth-child(4) { animation-name: expand4; animation-delay: 0.21s; }
+.circular-menu.ready.active .menu-item:nth-child(5) { animation-name: expand5; animation-delay: 0.28s; }
+
+.circular-menu.ready:not(.active) .menu-item {
+    animation-duration: 0.35s;
+    animation-timing-function: ease-in;
+    animation-fill-mode: forwards;
+}
+.circular-menu.ready:not(.active) .menu-item:nth-child(1) { animation-name: collapse1; animation-delay: 0.28s; }
+.circular-menu.ready:not(.active) .menu-item:nth-child(2) { animation-name: collapse2; animation-delay: 0.21s; }
+.circular-menu.ready:not(.active) .menu-item:nth-child(3) { animation-name: collapse3; animation-delay: 0.14s; }
+.circular-menu.ready:not(.active) .menu-item:nth-child(4) { animation-name: collapse4; animation-delay: 0.07s; }
+.circular-menu.ready:not(.active) .menu-item:nth-child(5) { animation-name: collapse5; animation-delay: 0.00s; }
+
+@keyframes expand1 { 0% { opacity:0; transform:scale(0); z-index:1; } 100% { opacity:1; transform:translate(0,-150px) scale(1); z-index:1; } }
+@keyframes expand2 { 0% { opacity:0; transform:scale(0); z-index:1; } 100% { opacity:1; transform:translate(57px,-139px) scale(1); z-index:1; } }
+@keyframes expand3 { 0% { opacity:0; transform:scale(0); z-index:1; } 100% { opacity:1; transform:translate(106px,-106px) scale(1); z-index:1; } }
+@keyframes expand4 { 0% { opacity:0; transform:scale(0); z-index:1; } 100% { opacity:1; transform:translate(139px,-57px) scale(1); z-index:1; } }
+@keyframes expand5 { 0% { opacity:0; transform:scale(0); z-index:1; } 100% { opacity:1; transform:translate(150px,0) scale(1); z-index:1; } }
+
+@keyframes collapse1 { 0% { opacity:1; transform:translate(0,-150px) scale(1); z-index:1; } 100% { opacity:0; transform:translate(0,-150px) scale(0); z-index:-1; } }
+@keyframes collapse2 { 0% { opacity:1; transform:translate(57px,-139px) scale(1); z-index:1; } 100% { opacity:0; transform:translate(57px,-139px) scale(0); z-index:-1; } }
+@keyframes collapse3 { 0% { opacity:1; transform:translate(106px,-106px) scale(1); z-index:1; } 100% { opacity:0; transform:translate(106px,-106px) scale(0); z-index:-1; } }
+@keyframes collapse4 { 0% { opacity:1; transform:translate(139px,-57px) scale(1); z-index:1; } 100% { opacity:0; transform:translate(139px,-57px) scale(0); z-index:-1; } }
+@keyframes collapse5 { 0% { opacity:1; transform:translate(150px,0) scale(1); z-index:1; } 100% { opacity:0; transform:translate(150px,0) scale(0); z-index:-1; } }
+
+.circular-menu svg { width: 24px; height: 24px; fill: currentColor; }
+</style>
+</head>
+<body>
+
+<div class="stars"></div>
+
+<!-- ============== منوی اصلی ============== -->
+<div id="main-menu">
+<div class="header">
+<div class="castle">🏰</div>
+<div class="title">ماموریت نجات کسرها</div>
+<div class="subtitle">قفل اعداد مخلوط را باز کن و برنده شو</div>
+</div>
+
+<div class="lock-row">🔒 🔒 🔒 🔒 🔒 🔓</div>
+
+<div class="card"><div class="card-title">👤 بازیکن اول</div><div class="player">
+<input id="player1" type="text" placeholder="نام و نام خانوادگی" maxlength="30">
+<div class="palette" id="palette1"></div>
+<div class="avatar-box"><svg id="hero1" class="hero" viewBox="0 0 100 100"><circle cx="50" cy="25" r="15" fill="#ffe0bd"/><rect x="35" y="40" width="30" height="35" rx="8" fill="#ef4444"/><line x1="45" y1="75" x2="40" y2="95" stroke="#fff" stroke-width="5"/><line x1="55" y1="75" x2="60" y2="95" stroke="#fff" stroke-width="5"/><line x1="35" y1="50" x2="20" y2="65" stroke="#fff" stroke-width="5"/><line x1="65" y1="50" x2="80" y2="65" stroke="#fff" stroke-width="5"/></svg></div>
+</div></div>
+
+<div class="card"><div class="card-title">👤 بازیکن دوم</div><div class="player">
+<input id="player2" type="text" placeholder="نام و نام خانوادگی" maxlength="30">
+<div class="palette" id="palette2"></div>
+<div class="avatar-box"><svg id="hero2" class="hero" viewBox="0 0 100 100"><circle cx="50" cy="25" r="15" fill="#ffe0bd"/><rect x="35" y="40" width="30" height="35" rx="8" fill="#3b82f6"/><line x1="45" y1="75" x2="40" y2="95" stroke="#fff" stroke-width="5"/><line x1="55" y1="75" x2="60" y2="95" stroke="#fff" stroke-width="5"/><line x1="35" y1="50" x2="20" y2="65" stroke="#fff" stroke-width="5"/><line x1="65" y1="50" x2="80" y2="65" stroke="#fff" stroke-width="5"/></svg></div>
+</div></div>
+
+<div class="card"><div class="card-title">📜 شرح بازی</div>
+<div class="description">
+شما مأموریت دارید قفل آدمک‌های کسری خود را باز کرده و آن‌ها را از زندان اعداد نجات دهید.<br><br>
+🎯 <strong>خلاصه بازی:</strong><br>
+• هر بازیکن ۶ آدمک با ۶ عدد مخلوط متفاوت دارد.<br>
+• بازیکنان به نوبت تاس می‌اندازند و مهره‌شان خودکار حرکت می‌کند.<br>
+• اگر به خانه‌ای با کسر معادل یکی از عدد مخلوط‌ها برسند، باید تشخیص دهند معادل کدام آدمک است.<br>
+• انتخاب درست آدمک خودی: <strong>آزاد شدن</strong> 🔓<br>
+• انتخاب درست آدمک حریف: <strong>زندانی شدن دوباره</strong> 🔒<br><br>
+🏆 <strong>شرط برد:</strong> آزاد کردن ۵ آدمک از ۶ آدمک<br>
+(نیازی به آزاد کردن همه ۶ آدمک نیست)
+</div></div>
+
+<div class="card"><div class="card-title">🏆 تالار قهرمانان</div>
+<div class="score-item"><span>تعداد بازی‌ها</span><span id="games">۰</span></div>
+<div class="score-item"><span>بردهای بازیکن اول</span><span id="wins1">۰</span></div>
+<div class="score-item"><span>بردهای بازیکن دوم</span><span id="wins2">۰</span></div>
+<div id="champion" class="crown">👑 هنوز قهرمانی ثبت نشده است</div></div>
+
+<div class="buttons">
+<button class="btn start-btn" onclick="startGame()">🚀 شروع مأموریت</button>
+<button class="btn reset-btn" onclick="resetScores()">🗑 پاک کردن امتیازات</button>
+</div>
+<div class="footer">نسخه آزمایشی بازی آموزشی «ماموریت نجات کسرها»</div>
+</div>
+
+<!-- ============== صفحه بازی ============== -->
+<div id="game-screen">
+
+<div class="top-bar">
+<div class="turn-badge" id="turn-badge">🎯 نوبت: بازیکن اول</div>
+<div class="dice-box">
+<span class="dice-icon" id="dice-face">🎲</span>
+<button class="roll-btn" id="roll-btn" onclick="rollDice()">🎲 تاس</button>
+</div>
+<button class="back-btn" onclick="goToMenu()">🔙 منو</button>
+</div>
+
+<div class="prisoners-row">
+<div class="prisoner-panel">
+<div class="prisoner-panel-title" id="p1-title">👤 بازیکن اول (۰/۵)</div>
+<div class="prisoner-list" id="p1-prisoners"></div>
+</div>
+<div class="prisoner-panel">
+<div class="prisoner-panel-title" id="p2-title">👤 بازیکن دوم (۰/۵)</div>
+<div class="prisoner-list" id="p2-prisoners"></div>
+</div>
+</div>
+
+<div class="board-wrapper">
+<div class="board-title">🗺️ مسیر نجات • ۵۰ خانه</div>
+<div class="board-grid" id="board-grid"></div>
+</div>
+
+<div class="game-msg" id="game-msg">🎯 برای شروع بازی، تاس بیندازید</div>
+
+</div>
+
+<!-- ============== پاپ‌آپ انتخاب آدمک ============== -->
+<div class="pick-overlay" id="pick-overlay">
+<div class="pick-box">
+<h3 id="pick-title">🎯 یک آدمک انتخاب کنید</h3>
+<p class="pick-subtitle" id="pick-subtitle"></p>
+<div class="timer-box" id="timer-box">
+    ⏳ زمان باقی‌مانده: <span id="timer-text">۴۵</span> ثانیه
+    <div class="timer-bar"><div class="timer-fill" id="timer-fill" style="width:100%"></div></div>
+</div>
+<div class="pick-prisoners" id="pick-prisoners"></div>
+<button class="pick-skip" id="pick-skip-btn" onclick="skipPick()">⏭ رد کردن (نوبت حریف)</button>
+</div>
+</div>
+
+<!-- ============== منوی شبکه‌های اجتماعی ============== -->
+<div class="circular-menu" id="circularMenu">
+    <!-- ۱. اینستاگرام -->
+    <a href="https://instagram.com/heydarzadehteacher" target="_blank" rel="noopener noreferrer"
+       class="menu-item instagram" title="اینستاگرام" aria-label="صفحه‌ی اینستاگرام" tabindex="-1">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.204-.012 3.583-.069 4.849-.148 3.227-1.664 4.771-4.919 4.919-1.266.058-1.645.069-4.849.069-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.791-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.209-1.791 4-4 4zm6.406-11.845c-.796 0-1.44.645-1.44 1.44s.644 1.44 1.44 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
+    </a>
+
+    <!-- ۲. تلگرام -->
+    <a href="https://t.me/bazieamouzeshi" target="_blank" rel="noopener noreferrer"
+       class="menu-item telegram" title="تلگرام" aria-label="کانال تلگرام" tabindex="-1">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.38-.94-2.23-1.5-.99-.65-.35-1.01.22-1.59.15-.15 2.71-2.48 2.76-2.69.01-.03.01-.14-.07-.2-.08-.06-.19-.04-.27-.02-.12.02-1.96 1.25-5.54 3.66-.52.36-1 .53-1.42.52-.47-.01-1.37-.26-2.03-.48-.82-.27-1.47-.42-1.41-.88.03-.24.37-.49 1.02-.74 3.98-1.73 6.63-2.87 7.96-3.42 3.79-1.58 4.58-1.85 5.09-1.86.11 0 .37.03.53.16.14.11.18.25.2.39-.01.06.01.23-.02.37z"/></svg>
+    </a>
+
+    <!-- ۳. آپارات -->
+    <a href="https://www.aparat.com/heydarzadehteacher" target="_blank" rel="noopener noreferrer"
+       class="menu-item aparat" title="آپارات" aria-label="صفحه‌ی آپارات" tabindex="-1">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 8.64v6.72L15.27 12 10 8.64zM12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z"/></svg>
+    </a>
+
+    <!-- ۴. وب‌سایت -->
+    <a href="https://sites.google.com/view/heydarzadehteacher" target="_blank" rel="noopener noreferrer"
+       class="menu-item website" title="وب‌سایت" aria-label="وب‌سایت" tabindex="-1">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/></svg>
+    </a>
+
+    <!-- ۵. وب‌اپ -->
+    <a href="https://heydarzadehteacher.github.io/Educational-Games-app/index.html" target="_blank" rel="noopener noreferrer"
+       class="menu-item webapp" title="وب‌اپ" aria-label="وب‌اپ آموزشی" tabindex="-1">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M17 1.01L7 1c-1.1 0-2 .9-2 2v18c0 1.1.9 2 2 2h10c1.1 0 2-.9 2-2V3c0-1.1-.9-1.99-2-1.99zM17 19H7V5h10v14z"/></svg>
+    </a>
+
+    <button class="menu-button" title="شبکه‌های اجتماعی" aria-label="باز کردن منوی شبکه‌های اجتماعی"
+            aria-haspopup="true" aria-expanded="false">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92 1.61 0 2.92-1.31 2.92-2.92s-1.31-2.92-2.92-2.92z"/></svg>
+    </button>
+</div>
+
+<script>
+// ==================== ابزارهای امنیتی ====================
+function sanitizeHTML(str) {
+    const temp = document.createElement('div');
+    temp.textContent = str;
+    return temp.innerHTML;
+}
+
+function safeSetText(el, text) {
+    if (typeof el === 'string') el = document.getElementById(el);
+    if (el) el.textContent = text;
+}
+
+function safeSetHTML(el, html) {
+    if (typeof el === 'string') el = document.getElementById(el);
+    if (el) el.innerHTML = html; // فقط برای محتوای تولیدی خودمان
+}
+
+// تبدیل اعداد انگلیسی به فارسی
+function toPersianNum(num) {
+    const persianDigits = ['۰','۱','۲','۳','۴','۵','۶','۷','۸','۹'];
+    return String(num).replace(/\d/g, d => persianDigits[d]);
+}
+
+// ==================== تنظیمات رنگ ====================
+const colors=["#ef4444","#3b82f6","#22c55e","#facc15","#a855f7","#f97316","#06b6d4","#ec4899"];
+let p1Color="#ef4444", p2Color="#3b82f6";
+
+function createPalette(id, player){
+const c=document.getElementById(id);
+colors.forEach(clr=>{
+const d=document.createElement("div");
+d.className="color-btn";
+d.style.background=clr;
+d.onclick=()=>{
+if(player===1&&clr===p2Color){alert("این رنگ توسط بازیکن دوم انتخاب شده.");return;}
+if(player===2&&clr===p1Color){alert("این رنگ توسط بازیکن اول انتخاب شده.");return;}
+if(player===1){p1Color=clr;document.querySelector("#hero1 rect").setAttribute("fill",clr);}
+else{p2Color=clr;document.querySelector("#hero2 rect").setAttribute("fill",clr);}
+refreshPalettes();
+};
+c.appendChild(d);
+});
+refreshPalettes();
+}
+function refreshPalettes(){
+document.querySelectorAll("#palette1 .color-btn").forEach(e=>{
+e.classList.remove("selected","disabled");
+if(e.style.background===p1Color)e.classList.add("selected");
+if(e.style.background===p2Color)e.classList.add("disabled");
+});
+document.querySelectorAll("#palette2 .color-btn").forEach(e=>{
+e.classList.remove("selected","disabled");
+if(e.style.background===p2Color)e.classList.add("selected");
+if(e.style.background===p1Color)e.classList.add("disabled");
+});
+}
+createPalette("palette1",1);
+createPalette("palette2",2);
+
+// ==================== ذخیره‌سازی امن ====================
+function safeLSGet(key) {
+    try { return localStorage.getItem(key); } catch(e) { return null; }
+}
+function safeLSSet(key, value) {
+    try { localStorage.setItem(key, value); } catch(e) {}
+}
+
+// ==================== منو ====================
+const p1Inp=document.getElementById("player1"), p2Inp=document.getElementById("player2");
+p1Inp.value=safeLSGet("player1")||"";
+p2Inp.value=safeLSGet("player2")||"";
+
+function safeGetInt(key, def=0) {
+    const v = parseInt(safeLSGet(key));
+    return isNaN(v) || v < 0 ? def : v;
+}
+
+const totalGames = safeGetInt('games');
+const wins1 = safeGetInt('wins1');
+const wins2 = safeGetInt('wins2');
+
+safeSetText('games', toPersianNum(totalGames));
+safeSetText('wins1', toPersianNum(wins1));
+safeSetText('wins2', toPersianNum(wins2));
+
+(function(){
+if(wins1>wins2) safeSetHTML('champion', '👑 قهرمان فعلی: بازیکن اول');
+else if(wins2>wins1) safeSetHTML('champion', '👑 قهرمان فعلی: بازیکن دوم');
+})();
+
+// ==================== توابع ریاضی ====================
+const gcd=(a,b)=>b===0?a:gcd(b,a%b);
+const simp=(n,d)=>{const g=gcd(n,d);return[n/g,d/g];};
+const mix2frac=(w,n,d)=>[w*d+n,d];
+const fracEq=(f1,f2)=>{const a=simp(f1[0],f1[1]),b=simp(f2[0],f2[1]);return a[0]===b[0]&&a[1]===b[1];};
+const matchMix=(frac,mix)=>fracEq(frac,mix2frac(mix[0],mix[1],mix[2]));
+
+// ==================== تولید اعداد مخلوط ساده‌شده ====================
+function randSimplifiedMixed(){
+const den=Math.floor(Math.random()*7)+2; // ۲ تا ۸
+const whole=Math.floor(Math.random()*5)+1; // ۱ تا ۵
+const candidates=[];
+for(let n=1;n<den;n++){if(gcd(n,den)===1)candidates.push(n);}
+const num=candidates[Math.floor(Math.random()*candidates.length)];
+return[whole, num, den];
+}
+
+function mixedToSimplifiedFrac(m){
+return simp(mix2frac(m[0],m[1],m[2])[0], mix2frac(m[0],m[1],m[2])[1]);
+}
+
+function mixesEquivalent(m1, m2){
+const s1=mixedToSimplifiedFrac(m1), s2=mixedToSimplifiedFrac(m2);
+return s1[0]===s2[0] && s1[1]===s2[1];
+}
+
+function gen6Mix(allExisting){
+const r=[];
+while(r.length<6){
+const m=randSimplifiedMixed();
+const dupApp=r.some(x=>x[0]===m[0]&&x[1]===m[1]&&x[2]===m[2]);
+const dupSimp=r.some(x=>mixesEquivalent(x,m));
+const dupExist=allExisting.some(x=>mixesEquivalent(x,m));
+if(!dupApp && !dupSimp && !dupExist){r.push(m);}
+}
+return r;
+}
+
+// ==================== تولید تخته ====================
+function genBoard(m1,m2){
+const all=[...m1,...m2];
+const board=[], used=[];
+for(const m of all){
+const f=mix2frac(m[0],m[1],m[2]);
+board.push(f); used.push(simp(f[0],f[1]));
+}
+while(board.length<50){
+const num=Math.floor(Math.random()*40)+2, den=Math.floor(Math.random()*7)+2;
+if(num<=den)continue;
+const s=simp(num,den);
+if(!used.some(u=>u[0]===s[0]&&u[1]===s[1])){board.push([num,den]);used.push(s);}
+}
+for(let i=board.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[board[i],board[j]]=[board[j],board[i]];}
+return board;
+}
+
+function mixHTML(m){
+    const persianWhole = toPersianNum(m[0]);
+    const persianNum = toPersianNum(m[1]);
+    const persianDen = toPersianNum(m[2]);
+    return '<span class="mixed-ltr">'+persianWhole+'<span class="mixed-frac"><span class="mf-num">'+persianNum+'</span><span class="mf-bar"></span><span class="mf-den">'+persianDen+'</span></span></span>';
+}
+function mixPlain(m){
+    return toPersianNum(m[0])+' '+toPersianNum(m[1])+'/'+toPersianNum(m[2]);
+}
+
+// ==================== صداها ====================
+let audioCtx = null;
+function getAudioCtx() {
+    if (!audioCtx) {
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    }
+    return audioCtx;
+}
+
+function playDiceSound() {
+    try {
+        const ctx = getAudioCtx();
+        const o = ctx.createOscillator();
+        const g = ctx.createGain();
+        o.connect(g);
+        g.connect(ctx.destination);
+        o.type = "triangle";
+        o.frequency.setValueAtTime(800, ctx.currentTime);
+        o.frequency.linearRampToValueAtTime(200, ctx.currentTime + 0.15);
+        g.gain.setValueAtTime(0.15, ctx.currentTime);
+        g.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.2);
+        o.start();
+        o.stop(ctx.currentTime + 0.2);
+    } catch(e) {}
+}
+
+function playMoveSound() {
+    try {
+        const ctx = getAudioCtx();
+        const o = ctx.createOscillator();
+        const g = ctx.createGain();
+        o.connect(g);
+        g.connect(ctx.destination);
+        o.type = "sine";
+        o.frequency.setValueAtTime(500, ctx.currentTime);
+        o.frequency.linearRampToValueAtTime(700, ctx.currentTime + 0.08);
+        g.gain.setValueAtTime(0.1, ctx.currentTime);
+        g.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.1);
+        o.start();
+        o.stop(ctx.currentTime + 0.1);
+    } catch(e) {}
+}
+
+function playUnlockSound(){
+    try{
+        const ctx = getAudioCtx();
+        const o=ctx.createOscillator(),g=ctx.createGain();
+        o.connect(g);g.connect(ctx.destination);
+        o.type="sine";
+        o.frequency.setValueAtTime(600,ctx.currentTime);
+        o.frequency.linearRampToValueAtTime(900,ctx.currentTime+0.2);
+        g.gain.setValueAtTime(0.25,ctx.currentTime);
+        g.gain.exponentialRampToValueAtTime(0.001,ctx.currentTime+0.4);
+        o.start();o.stop(ctx.currentTime+0.4);
+    }catch(e){}
+}
+function playLockSound(){
+    try{
+        const ctx = getAudioCtx();
+        const o=ctx.createOscillator(),g=ctx.createGain();
+        o.connect(g);g.connect(ctx.destination);
+        o.type="sawtooth";
+        o.frequency.setValueAtTime(400,ctx.currentTime);
+        o.frequency.linearRampToValueAtTime(150,ctx.currentTime+0.3);
+        g.gain.setValueAtTime(0.2,ctx.currentTime);
+        g.gain.exponentialRampToValueAtTime(0.001,ctx.currentTime+0.45);
+        o.start();o.stop(ctx.currentTime+0.45);
+    }catch(e){}
+}
+
+function playCorrectSound() {
+    try {
+        const ctx = getAudioCtx();
+        const notes = [523, 659, 784];
+        notes.forEach((freq, i) => {
+            const o = ctx.createOscillator();
+            const g = ctx.createGain();
+            o.connect(g);
+            g.connect(ctx.destination);
+            o.type = "sine";
+            o.frequency.setValueAtTime(freq, ctx.currentTime + i * 0.12);
+            g.gain.setValueAtTime(0.2, ctx.currentTime + i * 0.12);
+            g.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + i * 0.12 + 0.3);
+            o.start(ctx.currentTime + i * 0.12);
+            o.stop(ctx.currentTime + i * 0.12 + 0.3);
+        });
+    } catch(e) {}
+}
+
+function playWrongSound() {
+    try {
+        const ctx = getAudioCtx();
+        const o = ctx.createOscillator();
+        const g = ctx.createGain();
+        o.connect(g);
+        g.connect(ctx.destination);
+        o.type = "square";
+        o.frequency.setValueAtTime(200, ctx.currentTime);
+        o.frequency.linearRampToValueAtTime(100, ctx.currentTime + 0.3);
+        g.gain.setValueAtTime(0.15, ctx.currentTime);
+        g.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.4);
+        o.start();
+        o.stop(ctx.currentTime + 0.4);
+    } catch(e) {}
+}
+
+function playWinSound() {
+    try {
+        const ctx = getAudioCtx();
+        const melody = [523, 659, 784, 1047];
+        melody.forEach((freq, i) => {
+            const o = ctx.createOscillator();
+            const g = ctx.createGain();
+            o.connect(g);
+            g.connect(ctx.destination);
+            o.type = "sine";
+            o.frequency.setValueAtTime(freq, ctx.currentTime + i * 0.15);
+            g.gain.setValueAtTime(0.25, ctx.currentTime + i * 0.15);
+            g.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + i * 0.15 + 0.4);
+            o.start(ctx.currentTime + i * 0.15);
+            o.stop(ctx.currentTime + i * 0.15 + 0.4);
+        });
+    } catch(e) {}
+}
+
+// ==================== حالت بازی ====================
+const TOTAL_PRISONERS=6;
+const WIN_COUNT=5;
+
+let G={
+p1Name:"",p2Name:"",
+p1Mix:[],p2Mix:[],
+p1Free:[],p2Free:[],
+board:[],
+p1Pos:0,p2Pos:0,
+turn:1,
+dice:0,
+rolled:false,
+landedIdx:-1,
+moving:false,
+over:false,
+timerInterval: null,
+timerSeconds: 45,
+p1Color: "#ef4444",
+p2Color: "#3b82f6"
+};
+
+// ==================== شروع ====================
+function startGame(){
+const n1=p1Inp.value.trim(),n2=p2Inp.value.trim();
+if(!n1||!n2){alert("نام هر دو بازیکن را وارد کنید.");return;}
+safeLSSet("player1",n1);safeLSSet("player2",n2);
+safeLSSet("player1Color",p1Color);safeLSSet("player2Color",p2Color);
+
+const m1=gen6Mix([]);
+const m2=gen6Mix(m1);
+const b=genBoard(m1,m2);
+
+G={
+p1Name:n1,p2Name:n2,
+p1Mix:m1,p2Mix:m2,
+p1Free:new Array(TOTAL_PRISONERS).fill(false),
+p2Free:new Array(TOTAL_PRISONERS).fill(false),
+board:b,
+p1Pos:0,p2Pos:0,
+turn:1,
+dice:0,
+rolled:false,
+landedIdx:-1,
+moving:false,
+over:false,
+timerInterval: null,
+timerSeconds: 45,
+p1Color: p1Color,
+p2Color: p2Color
+};
+
+document.getElementById("main-menu").style.display="none";
+const gs=document.getElementById("game-screen");
+gs.style.display="flex";
+safeSetText("p1-title", "👤 "+n1+" (۰/۵)");
+safeSetText("p2-title", "👤 "+n2+" (۰/۵)");
+safeSetText("dice-face","🎲");
+document.getElementById("roll-btn").disabled=false;
+document.getElementById("pick-overlay").style.display="none";
+renderAll();
+setMsg("🎯 نوبت "+sanitizeHTML(n1)+" است. تاس بیندازید. هدف: آزاد کردن ۵ آدمک");
+}
+
+// ==================== رندر ====================
+function renderAll(){
+renderBoard();
+renderPrisoners();
+updateTurn();
+}
+
+function updateTurn(){
+const b=document.getElementById("turn-badge");
+if(G.turn===1){
+    safeSetHTML(b, "🎯 نوبت: "+sanitizeHTML(G.p1Name));
+    b.style.color = G.p1Color;
+} else {
+    safeSetHTML(b, "🎯 نوبت: "+sanitizeHTML(G.p2Name));
+    b.style.color = G.p2Color;
+}
+}
+
+function setMsg(t){safeSetHTML("game-msg", t);}
+function curName(){return G.turn===1?G.p1Name:G.p2Name;}
+
+// ==================== رندر تخته ====================
+function renderBoard(){
+const grid=document.getElementById("board-grid");
+grid.innerHTML="";
+for(let i=0;i<50;i++){
+const f=G.board[i];
+const s=simp(f[0],f[1]);
+const cell=document.createElement("div");
+cell.className="board-cell";
+cell.id="cell-"+i;
+if(i===49)cell.classList.add("last-cell");
+
+const p1h=G.p1Pos===i, p2h=G.p2Pos===i;
+
+// اعمال استایل خطی بر اساس رنگ‌های ذخیره‌شده
+if(p1h && p2h){
+    cell.style.boxShadow = `inset 0 0 0 2px ${G.p1Color}, inset 0 0 0 5px ${G.p2Color}, 0 0 12px rgba(255,255,255,0.5)`;
+    cell.style.borderColor = 'white';
+} else if(p1h){
+    cell.style.boxShadow = `inset 0 0 0 3px ${G.p1Color}, 0 0 12px ${G.p1Color}80`;
+    cell.style.borderColor = G.p1Color;
+} else if(p2h){
+    cell.style.boxShadow = `inset 0 0 0 3px ${G.p2Color}, 0 0 12px ${G.p2Color}80`;
+    cell.style.borderColor = G.p2Color;
+} else {
+    // حالت عادی
+    cell.style.boxShadow = 'none';
+    cell.style.borderColor = 'rgba(255,255,255,.18)';
+}
+
+cell.innerHTML='<span class="cell-index">'+toPersianNum(i+1)+'</span><div class="cell-frac"><span class="frac-num">'+toPersianNum(s[0])+'</span><span class="frac-bar"></span><span class="frac-den">'+toPersianNum(s[1])+'</span></div>';
+
+// نشانگرهای نقطه‌ای با رنگ‌های انتخابی
+if(p1h && p2h){
+    const dot1=document.createElement('span');
+    dot1.className='pos-dot';
+    dot1.style.left='2px';
+    dot1.style.color=G.p1Color;
+    dot1.textContent='●';
+    cell.appendChild(dot1);
+    const dot2=document.createElement('span');
+    dot2.className='pos-dot';
+    dot2.style.right='2px';
+    dot2.style.color=G.p2Color;
+    dot2.textContent='●';
+    cell.appendChild(dot2);
+} else if(p1h){
+    const dot=document.createElement('span');
+    dot.className='pos-dot';
+    dot.style.color=G.p1Color;
+    dot.textContent='●';
+    cell.appendChild(dot);
+} else if(p2h){
+    const dot=document.createElement('span');
+    dot.className='pos-dot';
+    dot.style.color=G.p2Color;
+    dot.textContent='●';
+    cell.appendChild(dot);
+}
+
+grid.appendChild(cell);
+}
+}
+
+// ==================== رندر آدمک‌ها ====================
+function renderPrisoners(){
+const c1=document.getElementById("p1-prisoners"),c2=document.getElementById("p2-prisoners");
+c1.innerHTML="";c2.innerHTML="";
+for(let i=0;i<TOTAL_PRISONERS;i++){
+const d1=document.createElement("div");
+d1.className="prisoner-cell "+(G.p1Free[i]?"free":"locked");
+d1.id="p1-pris-"+i;
+d1.innerHTML='<span class="prisoner-icon-wrap">🧑</span><span class="prisoner-badge">'+mixHTML(G.p1Mix[i])+'</span>';
+c1.appendChild(d1);
+const d2=document.createElement("div");
+d2.className="prisoner-cell "+(G.p2Free[i]?"free":"locked");
+d2.id="p2-pris-"+i;
+d2.innerHTML='<span class="prisoner-icon-wrap">🧑</span><span class="prisoner-badge">'+mixHTML(G.p2Mix[i])+'</span>';
+c2.appendChild(d2);
+}
+
+const p1FreeCount=G.p1Free.filter(f=>f===true).length;
+const p2FreeCount=G.p2Free.filter(f=>f===true).length;
+safeSetText("p1-title", "👤 "+G.p1Name+" ("+toPersianNum(p1FreeCount)+"/"+toPersianNum(WIN_COUNT)+")");
+safeSetText("p2-title", "👤 "+G.p2Name+" ("+toPersianNum(p2FreeCount)+"/"+toPersianNum(WIN_COUNT)+")");
+}
+
+// ==================== انیمیشن قفل ====================
+function animateLock(pl, idx, unlocking){
+const id=(pl===1?"p1-pris-":"p2-pris-")+idx;
+const el=document.getElementById(id);
+if(!el)return;
+if(unlocking){
+playUnlockSound();
+el.classList.add("unlock-anim","free");
+el.classList.remove("locked");
+setTimeout(()=>el.classList.remove("unlock-anim"),600);
+}else{
+playLockSound();
+el.classList.add("lock-anim","locked");
+el.classList.remove("free");
+setTimeout(()=>el.classList.remove("lock-anim"),600);
+}
+}
+
+// ==================== تایمر ====================
+function startTimer() {
+    clearTimer();
+    G.timerSeconds = 45;
+    const timerText = document.getElementById('timer-text');
+    const timerFill = document.getElementById('timer-fill');
+    const timerBox = document.getElementById('timer-box');
+    
+    safeSetText(timerText, toPersianNum(G.timerSeconds));
+    timerFill.style.width = '100%';
+    timerBox.style.display = 'block';
+    
+    G.timerInterval = setInterval(() => {
+        G.timerSeconds--;
+        safeSetText(timerText, toPersianNum(G.timerSeconds));
+        timerFill.style.width = (G.timerSeconds / 45 * 100) + '%';
+        
+        if (G.timerSeconds <= 0) {
+            clearTimer();
+            skipPick();
+        }
+    }, 1000);
+}
+
+function clearTimer() {
+    if (G.timerInterval) {
+        clearInterval(G.timerInterval);
+        G.timerInterval = null;
+    }
+    document.getElementById('timer-box').style.display = 'none';
+}
+
+// ==================== تاس و حرکت خودکار ====================
+function rollDice(){
+if(G.over||G.moving)return;
+if(G.rolled){setMsg("⚠️ قبلاً تاس انداخته‌اید. در حال حرکت...");return;}
+
+playDiceSound();
+
+const icon=document.getElementById("dice-face");
+icon.classList.add("rolling");
+document.getElementById("roll-btn").disabled=true;
+
+setTimeout(()=>{
+const v=Math.floor(Math.random()*6)+1;
+G.dice=v; G.rolled=true; G.moving=true;
+const faces=["","⚀","⚁","⚂","⚃","⚄","⚅"];
+safeSetText(icon, faces[v]);
+icon.classList.remove("rolling");
+
+const curPos=G.turn===1?G.p1Pos:G.p2Pos;
+const targetPos=(curPos+v)%50;
+G.landedIdx=targetPos;
+
+setMsg("🎲 تاس: "+toPersianNum(v)+" - "+sanitizeHTML(curName())+" در حال حرکت...");
+animateMove(curPos, targetPos, v, ()=>{
+if(G.turn===1)G.p1Pos=targetPos;
+else G.p2Pos=targetPos;
+G.moving=false;
+renderAll();
+
+const cellFrac=G.board[targetPos];
+let matchesAny=false;
+for(const m of [...G.p1Mix,...G.p2Mix]){if(matchMix(cellFrac,m)){matchesAny=true;break;}}
+
+if(!matchesAny){
+setMsg("📍 "+sanitizeHTML(curName())+" به خانه "+toPersianNum(targetPos+1)+" رفت. اتفاق خاصی نیفتاد.");
+endTurn();
+}else{
+setMsg("🎯 کارت عدد مخلوط معادل موجود است! آدمک مورد نظر را انتخاب کنید.");
+showPickOverlay();
+}
+});
+},400);
+}
+
+// ==================== انیمیشن حرکت ====================
+function animateMove(from, to, steps, callback){
+if(steps===0){callback();return;}
+let current=from, remaining=steps;
+const interval=130;
+function step(){
+if(remaining<=0){
+playMoveSound();
+const cell=document.getElementById("cell-"+current);
+if(cell){cell.classList.add("piece-landing");setTimeout(()=>cell.classList.remove("piece-landing"),400);}
+setTimeout(callback,200);return;
+}
+playMoveSound();
+current=(current+1)%50;remaining--;
+if(G.turn===1)G.p1Pos=current;else G.p2Pos=current;
+renderBoard();
+setTimeout(step, interval);
+}
+current=from;remaining=steps;
+setTimeout(step, interval);
+}
+
+// ==================== پاپ‌آپ انتخاب ====================
+function showPickOverlay(){
+const ov=document.getElementById("pick-overlay");
+const title=document.getElementById("pick-title");
+const sub=document.getElementById("pick-subtitle");
+const list=document.getElementById("pick-prisoners");
+const cellFrac=G.board[G.landedIdx];
+const s=simp(cellFrac[0],cellFrac[1]);
+
+safeSetHTML(title, "🎯 "+sanitizeHTML(curName())+" - یک آدمک انتخاب کن");
+safeSetHTML(sub, "کسر این خانه: "+toPersianNum(s[0])+"/"+toPersianNum(s[1])+" - کدام آدمک معادل این کسر است؟");
+list.innerHTML="";
+
+const all=[
+...G.p1Mix.map((m,i)=>({mix:m,player:1,idx:i,free:G.p1Free[i],owner:G.p1Name})),
+...G.p2Mix.map((m,i)=>({mix:m,player:2,idx:i,free:G.p2Free[i],owner:G.p2Name}))
+];
+for(const a of all){
+const d=document.createElement("div");
+d.className="prisoner-cell "+(a.free?"free":"locked");
+d.innerHTML='<span class="prisoner-icon-wrap">🧑</span><span class="prisoner-badge">'+mixHTML(a.mix)+'</span>';
+d.title=a.owner;
+d.onclick=()=>pickPrisoner(a.player,a.idx);
+list.appendChild(d);
+}
+ov.style.display="flex";
+startTimer();
+}
+
+function pickPrisoner(pl,idx){
+clearTimer();
+const cellFrac=G.board[G.landedIdx];
+const mix=pl===1?G.p1Mix[idx]:G.p2Mix[idx];
+const correct=matchMix(cellFrac,mix);
+document.getElementById("pick-overlay").style.display="none";
+
+if(!correct){
+playWrongSound();
+setMsg("❌ انتخاب نادرست! عدد مخلوط معادل این کسر نبود.");
+renderAll();
+endTurn();
+return;
+}
+
+playCorrectSound();
+
+const curPl=G.turn;
+if(pl===curPl){
+const freeArr=curPl===1?G.p1Free:G.p2Free;
+if(!freeArr[idx]){
+freeArr[idx]=true;
+renderPrisoners();
+animateLock(pl, idx, true);
+const freedCount=freeArr.filter(f=>f===true).length;
+setMsg("🎉 آفرین "+sanitizeHTML(curName())+"! آدمک "+mixPlain(mix)+" آزاد شد! ("+toPersianNum(freedCount)+"/"+toPersianNum(WIN_COUNT)+")");
+setTimeout(()=>{
+if(freedCount>=WIN_COUNT){
+G.over=true;
+renderAll();
+playWinSound();
+showWin(curPl);
+return;
+}
+renderAll();
+endTurn();
+},700);
+return;
+}else{
+setMsg("ℹ️ این آدمک قبلاً آزاد شده بود.");
+}
+}else{
+const oppPl=curPl===1?2:1;
+const oppFree=oppPl===1?G.p1Free:G.p2Free;
+if(oppFree[idx]){
+oppFree[idx]=false;
+renderPrisoners();
+animateLock(pl, idx, false);
+setMsg("🔒 "+sanitizeHTML(curName())+" آدمک حریف ("+mixPlain(mix)+") را دوباره زندانی کرد!");
+setTimeout(()=>{renderAll();endTurn();},700);
+return;
+}else{
+setMsg("ℹ️ این آدمک حریف قبلاً زندانی بود.");
+}
+}
+
+renderAll();
+endTurn();
+}
+
+function skipPick(){
+clearTimer();
+document.getElementById("pick-overlay").style.display="none";
+setMsg("⏭ انتخاب رد شد.");
+renderAll();
+endTurn();
+}
+
+function endTurn(){
+clearTimer();
+G.rolled=false;G.dice=0;G.landedIdx=-1;
+G.turn=G.turn===1?2:1;
+safeSetText("dice-face","🎲");
+document.getElementById("roll-btn").disabled=false;
+renderAll();
+const curFree=(G.turn===1?G.p1Free:G.p2Free).filter(f=>f===true).length;
+setMsg("🎯 نوبت "+sanitizeHTML(curName())+" است. تاس بیندازید. ("+toPersianNum(curFree)+"/"+toPersianNum(WIN_COUNT)+" آزاد)");
+}
+
+// ==================== برد ====================
+function showWin(winner){
+const name=winner===1?G.p1Name:G.p2Name;
+const g = safeGetInt('games') + 1;
+safeLSSet("games",g);
+if(winner===1) safeLSSet("wins1", safeGetInt('wins1') + 1);
+else safeLSSet("wins2", safeGetInt('wins2') + 1);
+
+const ov=document.createElement("div");
+ov.className="win-overlay";
+ov.innerHTML='<div class="win-card"><h2>🏆 '+sanitizeHTML(name)+' برنده شد!</h2><p>'+toPersianNum(WIN_COUNT)+' آدمک از '+toPersianNum(TOTAL_PRISONERS)+' آدمک آزاد شدند.</p><button class="btn start-btn" onclick="location.reload()">🔄 بازگشت به منو</button></div>';
+document.body.appendChild(ov);
+}
+
+// ==================== برگشت ====================
+function goToMenu(){
+if(G.over||confirm("بازی ذخیره نمی‌شود. برگردیم؟")){
+clearTimer();
+document.getElementById("main-menu").style.display="block";
+document.getElementById("game-screen").style.display="none";
+const g = safeGetInt('games');
+const w1 = safeGetInt('wins1');
+const w2 = safeGetInt('wins2');
+safeSetText('games', toPersianNum(g));
+safeSetText('wins1', toPersianNum(w1));
+safeSetText('wins2', toPersianNum(w2));
+const ch=document.getElementById("champion");
+if(w1>w2) safeSetHTML(ch, '👑 قهرمان فعلی: بازیکن اول');
+else if(w2>w1) safeSetHTML(ch, '👑 قهرمان فعلی: بازیکن دوم');
+else safeSetHTML(ch, '👑 هنوز قهرمانی ثبت نشده است');
+}
+}
+function resetScores(){
+if(confirm("پاک کردن امتیازات؟")){
+safeLSSet("games",0);safeLSSet("wins1",0);safeLSSet("wins2",0);
+location.reload();
+}
+}
+
+// ==================== اسکریپت منوی شبکه‌های اجتماعی ====================
+(function() {
+    const menu = document.getElementById('circularMenu');
+    const menuButton = document.querySelector('.menu-button');
+    const menuItems = Array.from(document.querySelectorAll('.menu-item'));
+    let isMenuOpen = false;
+    let isInitialized = false;
+    let isAnimating = false;
+    const ANIMATION_LOCK_MS = 730;
+
+    function setMenuState(open) {
+        isMenuOpen = open;
+        menu.classList.toggle('active', open);
+        menuButton.setAttribute('aria-expanded', String(open));
+        menuItems.forEach(item => item.setAttribute('tabindex', open ? '0' : '-1'));
+    }
+
+    function toggleMenu() {
+        if (isAnimating) return;
+        if (!isInitialized) {
+            menu.classList.add('ready');
+            isInitialized = true;
+        }
+        isAnimating = true;
+        setMenuState(!isMenuOpen);
+        setTimeout(() => { isAnimating = false; }, ANIMATION_LOCK_MS);
+    }
+
+    menuButton.addEventListener('click', function(e) {
+        e.stopPropagation();
+        toggleMenu();
+    });
+
+    document.addEventListener('click', function(e) {
+        if (isMenuOpen && !menu.contains(e.target)) {
+            setMenuState(false);
+        }
+    });
+
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape' && isMenuOpen) {
+            setMenuState(false);
+            menuButton.focus();
+        }
+    });
+
+    menu.addEventListener('click', function(e) {
+        e.stopPropagation();
+    });
+})();
+</script>
+</body>
+</html>
