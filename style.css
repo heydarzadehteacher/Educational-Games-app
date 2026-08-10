@@ -1982,3 +1982,273 @@ button:active{
     transform: scale(1.25);
 
 }
+
+/* ========================= */
+/* پاپ‌آپ اطلاع‌رسانی */
+/* ========================= */
+
+.notice-modal {
+
+    display: none;
+
+    position: fixed;
+
+    inset: 0;
+
+    width: 100%;
+    height: 100%;
+
+    background: rgba(0, 0, 0, 0.55);
+
+    backdrop-filter: blur(5px);
+
+    z-index: 9999;
+
+    align-items: center;
+    justify-content: center;
+
+    padding: 20px;
+
+}
+
+
+/* کادر اصلی پاپ‌آپ */
+
+.notice-modal-content {
+
+    position: relative;
+
+    width: 100%;
+    max-width: 500px;
+
+    max-height: 90vh;
+
+    overflow-y: auto;
+
+    background:
+        linear-gradient(
+            135deg,
+            rgba(255,255,255,0.97),
+            rgba(235,250,255,0.96)
+        );
+
+    border-radius: 28px;
+
+    padding: 25px 20px;
+
+    box-shadow:
+        0 15px 40px rgba(0,0,0,0.25);
+
+    text-align: center;
+
+    direction: rtl;
+
+    animation: noticePopup 0.3s ease;
+
+}
+
+
+/* عنوان پاپ‌آپ */
+
+.notice-modal-content h2 {
+
+    margin: 0 0 20px;
+
+    color: #00695c;
+
+    font-size: 22px;
+
+}
+
+
+/* عنوان‌های داخل اطلاعیه */
+
+.notice-modal-body h3 {
+
+    margin: 15px 0 10px;
+
+    color: #0277bd;
+
+    font-size: 18px;
+
+}
+
+
+/* متن اطلاعیه */
+
+.notice-modal-body p {
+
+    margin: 0;
+
+    color: #444;
+
+    font-size: 15px;
+
+    line-height: 2;
+
+}
+
+
+/* خط جداکننده */
+
+.notice-modal-body hr {
+
+    border: none;
+
+    border-top: 1px solid rgba(0,0,0,0.12);
+
+    margin: 20px 0;
+
+}
+
+
+/* دکمه راهنمای نصب */
+
+.install-guide-btn {
+
+    border: none;
+
+    padding: 10px 20px;
+
+    margin-top: 12px;
+
+    border-radius: 22px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #0277bd,
+            #009688
+        );
+
+    color: white;
+
+    font-size: 14px;
+
+    cursor: pointer;
+
+    box-shadow:
+        0 5px 12px rgba(0,0,0,0.15);
+
+}
+
+
+/* لینک کانال تلگرام */
+
+.notice-modal-body a {
+
+    display: inline-block;
+
+    margin-top: 12px;
+
+    padding: 10px 20px;
+
+    border-radius: 22px;
+
+    background: #229ed9;
+
+    color: white;
+
+    text-decoration: none;
+
+    font-size: 14px;
+
+}
+
+
+/* دکمه بستن */
+
+.notice-close {
+
+    position: absolute;
+
+    top: 10px;
+    left: 12px;
+
+    width: 36px;
+    height: 36px;
+
+    border: none;
+
+    border-radius: 50%;
+
+    background: rgba(0,0,0,0.08);
+
+    color: #555;
+
+    font-size: 20px;
+
+    cursor: pointer;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+}
+
+
+/* افکت باز شدن */
+
+@keyframes noticePopup {
+
+    from {
+
+        opacity: 0;
+
+        transform: scale(0.9) translateY(20px);
+
+    }
+
+    to {
+
+        opacity: 1;
+
+        transform: scale(1) translateY(0);
+
+    }
+
+}
+
+
+/* نسخه موبایل */
+
+@media(max-width:600px) {
+
+    .notice-modal {
+
+        padding: 15px;
+
+    }
+
+    .notice-modal-content {
+
+        max-height: 88vh;
+
+        padding: 25px 16px 20px;
+
+        border-radius: 24px;
+
+    }
+
+    .notice-modal-content h2 {
+
+        font-size: 20px;
+
+    }
+
+    .notice-modal-body h3 {
+
+        font-size: 17px;
+
+    }
+
+    .notice-modal-body p {
+
+        font-size: 14px;
+
+        line-height: 1.9;
+
+    }
+
+        }
