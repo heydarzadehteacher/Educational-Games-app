@@ -1,0 +1,1381 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>🔐 شکستن قفل</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        html,
+        body {
+            height: 100%;
+            overflow-x: hidden;
+            overflow-y: auto;
+            background: #0a0a1a;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        #game-container {
+            width: 100%;
+            min-height: 100dvh;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            color: #e94560;
+            position: relative;
+            padding: 20px 15px 40px;
+        }
+        #game-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at 20% 80%, rgba(233, 69, 96, 0.08) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(15, 52, 96, 0.25) 0%, transparent 50%);
+            pointer-events: none;
+        }
+        #sound-toggle {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            cursor: pointer;
+            z-index: 10;
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 50%;
+            width: 44px;
+            height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        #sound-toggle:hover {
+            background: rgba(255, 255, 255, 0.18);
+            transform: scale(1.1);
+        }
+        h1 {
+            margin-top: 20px;
+            font-size: 2.6rem;
+            text-shadow: 0 0 25px rgba(233, 69, 96, 0.4);
+            z-index: 1;
+            letter-spacing: 1px;
+        }
+        .subtitle {
+            color: #8892b0;
+            font-size: 1rem;
+            margin-top: 8px;
+            z-index: 1;
+            text-align: center;
+        }
+        #menu {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 18px;
+            margin-top: 40px;
+            z-index: 1;
+            width: 100%;
+            padding: 0 20px;
+        }
+        #menu>p {
+            color: #a0a0a0;
+            font-size: 1.05rem;
+            text-align: center;
+            max-width: 420px;
+            line-height: 1.9;
+            margin-bottom: 10px;
+        }
+        .stats-container {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            width: 100%;
+            max-width: 400px;
+            background: rgba(0, 0, 0, 0.25);
+            border-radius: 16px;
+            padding: 16px 20px;
+            border: 1px solid rgba(255, 255, 255, 0.06);
+        }
+        .stat-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: #dfe6e9;
+            font-size: 0.95rem;
+            padding: 4px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+        }
+        .stat-row:last-child {
+            border-bottom: none;
+        }
+        .stat-label {
+            color: #8892b0;
+        }
+        .stat-value {
+            color: #fdcb6e;
+            font-weight: bold;
+            direction: ltr;
+            font-size: 0.9rem;
+        }
+        .stat-value.best {
+            color: #74b9ff;
+        }
+        .btn-level {
+            padding: 16px 50px;
+            font-size: 1.15rem;
+            border: none;
+            border-radius: 16px;
+            color: white;
+            cursor: pointer;
+            box-shadow: 0 6px 25px rgba(0, 0, 0, 0.3);
+            transition: all 0.3s;
+            font-family: inherit;
+            min-width: 280px;
+            position: relative;
+            overflow: hidden;
+        }
+        .btn-level::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.15), transparent);
+            transition: left 0.5s;
+        }
+        .btn-level:hover::after {
+            left: 100%;
+        }
+        .btn-level:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(233, 69, 96, 0.4);
+        }
+        .btn-easy {
+            background: linear-gradient(135deg, #00b894, #00cec9);
+        }
+        .btn-hard {
+            background: linear-gradient(135deg, #e94560, #c0392b);
+        }
+        .btn-vhard {
+            background: linear-gradient(135deg, #ff4757, #2f3542);
+        }
+        #game-area {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            gap: 16px;
+            margin-top: 10px;
+            z-index: 1;
+            width: 100%;
+            max-width: 650px;
+        }
+        .badges {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        .badge {
+            background: rgba(233, 69, 96, 0.15);
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            color: #e94560;
+            border: 1px solid rgba(233, 69, 96, 0.25);
+            backdrop-filter: blur(5px);
+        }
+        .badge-attempts {
+            background: rgba(116, 185, 255, 0.12);
+            color: #74b9ff;
+            border: 1px solid rgba(116, 185, 255, 0.25);
+        }
+        .badge-hint {
+            background: rgba(253, 203, 110, 0.12);
+            color: #fdcb6e;
+            border: 1px solid rgba(253, 203, 110, 0.25);
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .badge-hint:hover {
+            background: rgba(253, 203, 110, 0.25);
+        }
+        .badge-hint.disabled {
+            opacity: 0.4;
+            pointer-events: none;
+        }
+        #current-display {
+            background: rgba(0, 0, 0, 0.35);
+            border-radius: 16px;
+            padding: 12px 24px;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            min-width: 200px;
+            text-align: center;
+            letter-spacing: 8px;
+            font-size: 2.8rem;
+            font-weight: bold;
+            color: #f0f0f0;
+            text-shadow: 0 0 20px rgba(233, 69, 96, 0.15);
+            direction: ltr;
+            font-family: 'Courier New', monospace;
+        }
+        #current-display span {
+            color: #e94560;
+        }
+        #wheels-container {
+            display: flex;
+            gap: 14px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin: 5px 0;
+            direction: ltr;
+        }
+        .wheel-col {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 6px;
+            touch-action: pan-y;
+            user-select: none;
+        }
+        .wheel-wrapper {
+            position: relative;
+            width: 70px;
+            height: 114px;
+            border-radius: 14px;
+            background: linear-gradient(180deg, #2d3436 0%, #1a1a2e 100%);
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5), inset 0 0 20px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(233, 69, 96, 0.2);
+            border: 2px solid rgba(233, 69, 96, 0.25);
+            transition: border-color 0.3s, box-shadow 0.3s;
+            touch-action: none;
+            cursor: grab;
+            outline: none;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+        .wheel-wrapper:hover {
+            border-color: rgba(233, 69, 96, 0.5);
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5), inset 0 0 20px rgba(0, 0, 0, 0.4), 0 0 15px rgba(233, 69, 96, 0.15);
+        }
+        .wheel-wrapper:focus {
+            border-color: #e94560;
+            box-shadow: 0 0 0 2px rgba(233, 69, 96, 0.4);
+        }
+        .wheel-wrapper .cell {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.6rem;
+            font-weight: bold;
+            color: #636e72;
+            transition: color 0.15s, font-size 0.15s, text-shadow 0.15s, background 0.15s;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        .wheel-wrapper .cell:last-child {
+            border-bottom: none;
+        }
+        .wheel-wrapper .cell.active {
+            color: #e94560;
+            text-shadow: 0 0 25px rgba(233, 69, 96, 0.9);
+            font-size: 2.2rem;
+            background: rgba(233, 69, 96, 0.08);
+        }
+        .wheel-wrapper .cell.dimmed {
+            color: #4a4a5a;
+            font-size: 1.3rem;
+        }
+        .wheel-wrapper .indicator {
+            position: absolute;
+            top: 50%;
+            left: -6px;
+            transform: translateY(-50%);
+            width: 6px;
+            height: 38px;
+            background: #e94560;
+            border-radius: 4px 0 0 4px;
+            z-index: 4;
+            box-shadow: 0 0 12px rgba(233, 69, 96, 0.6);
+            opacity: 0.8;
+            pointer-events: none;
+        }
+        .wheel-wrapper .indicator-right {
+            left: auto;
+            right: -6px;
+            border-radius: 0 4px 4px 0;
+        }
+        .wheel-arrow {
+            width: 34px;
+            height: 34px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.06);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: #a0a0a0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 1.1rem;
+            transition: all 0.2s;
+            touch-action: manipulation;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .wheel-arrow:hover {
+            background: rgba(233, 69, 96, 0.2);
+            color: #e94560;
+            border-color: rgba(233, 69, 96, 0.3);
+        }
+        .wheel-arrow:active {
+            transform: scale(0.9);
+        }
+        .action-row {
+            display: flex;
+            gap: 14px;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin: 5px 0;
+        }
+        #check-btn {
+            padding: 14px 45px;
+            font-size: 1.15rem;
+            border: none;
+            border-radius: 14px;
+            background: linear-gradient(135deg, #00b894, #00cec9);
+            color: white;
+            cursor: pointer;
+            box-shadow: 0 6px 25px rgba(0, 184, 148, 0.35);
+            transition: all 0.3s;
+            font-family: inherit;
+            font-weight: bold;
+            letter-spacing: 1px;
+            touch-action: manipulation;
+        }
+        #check-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(0, 184, 148, 0.5);
+        }
+        #check-btn:active {
+            transform: scale(0.97);
+        }
+        .btn-sm {
+            padding: 10px 22px;
+            font-size: 0.9rem;
+            border: none;
+            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.06);
+            color: #8892b0;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-family: inherit;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+        .btn-sm:hover {
+            background: rgba(255, 255, 255, 0.12);
+            color: #fff;
+        }
+        #feedback {
+            min-height: 55px;
+            text-align: center;
+            font-size: 1.05rem;
+            color: #dfe6e9;
+            padding: 14px 18px;
+            background: rgba(0, 0, 0, 0.25);
+            border-radius: 14px;
+            width: 100%;
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            line-height: 1.7;
+            transition: border-color 0.3s;
+        }
+        #history {
+            width: 100%;
+            max-height: 260px;
+            overflow-y: auto;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 14px;
+            padding: 15px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        #history h3 {
+            margin: 0 0 12px 0;
+            color: #74b9ff;
+            font-size: 0.95rem;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        #history-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        .history-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 12px;
+            background: rgba(255, 255, 255, 0.04);
+            border-radius: 10px;
+            border-right: 3px solid #e94560;
+            transition: background 0.2s;
+        }
+        .history-item:hover {
+            background: rgba(255, 255, 255, 0.08);
+        }
+        .history-num {
+            color: #74b9ff;
+            font-size: 0.8rem;
+            min-width: 28px;
+        }
+        .history-guess {
+            font-weight: bold;
+            color: #e94560;
+            font-size: 1.1rem;
+            min-width: 70px;
+            letter-spacing: 2px;
+        }
+        .history-hint {
+            color: #a0a0a0;
+            font-size: 0.88rem;
+            flex: 1;
+            line-height: 1.5;
+        }
+        .btn-back {
+            padding: 10px 28px;
+            font-size: 0.9rem;
+            border: none;
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.06);
+            color: #8892b0;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-family: inherit;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+        .btn-back:hover {
+            background: rgba(255, 255, 255, 0.12);
+            color: #fff;
+        }
+        /* پاپ‌آپ پایان بازی */
+        #end-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.88);
+            z-index: 100;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            gap: 20px;
+            backdrop-filter: blur(5px);
+            padding: 20px;
+        }
+        .end-box {
+            background: linear-gradient(135deg, #1a1a2e, #16213e);
+            padding: 45px 35px;
+            border-radius: 24px;
+            border: 2px solid #e94560;
+            box-shadow: 0 0 60px rgba(233, 69, 96, 0.25);
+            text-align: center;
+            max-width: 420px;
+            width: 100%;
+            position: relative;
+            overflow: hidden;
+        }
+        .end-box::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(233, 69, 96, 0.08), transparent 70%);
+            pointer-events: none;
+        }
+        .end-box .icon {
+            font-size: 4.5rem;
+            margin-bottom: 5px;
+            animation: float 2s ease-in-out infinite;
+        }
+        .end-box h2 {
+            margin: 10px 0;
+            font-size: 1.8rem;
+        }
+        .end-box h2.win {
+            color: #00b894;
+        }
+        .end-box h2.lose {
+            color: #ff4757;
+        }
+        .end-box p {
+            color: #dfe6e9;
+            font-size: 1.1rem;
+            line-height: 1.9;
+        }
+        .end-box .btn-group {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-top: 25px;
+        }
+        .end-box .btn-group .btn-end {
+            padding: 14px 30px;
+            font-size: 1.05rem;
+            border: none;
+            border-radius: 14px;
+            color: white;
+            cursor: pointer;
+            font-family: inherit;
+            transition: all 0.3s;
+            font-weight: bold;
+            width: 100%;
+        }
+        .btn-end-primary {
+            background: linear-gradient(135deg, #e94560, #0f3460);
+        }
+        .btn-end-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(233, 69, 96, 0.4);
+        }
+        .btn-end-secondary {
+            background: rgba(255, 255, 255, 0.06);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+        }
+        .btn-end-secondary:hover {
+            background: rgba(255, 255, 255, 0.12);
+        }
+        @keyframes shake {
+            0%,
+            100% {
+                transform: translateX(0);
+            }
+            15% {
+                transform: translateX(-12px);
+            }
+            30% {
+                transform: translateX(10px);
+            }
+            45% {
+                transform: translateX(-8px);
+            }
+            60% {
+                transform: translateX(6px);
+            }
+            75% {
+                transform: translateX(-3px);
+            }
+        }
+        .shake {
+            animation: shake 0.55s ease;
+        }
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.04);
+            }
+            100% {
+                transform: scale(1);
+            }
+        }
+        .pulse {
+            animation: pulse 0.35s ease;
+        }
+        @keyframes confetti {
+            0% {
+                transform: translateY(0) rotate(0deg);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-110vh) rotate(720deg);
+                opacity: 0;
+            }
+        }
+        .confetti {
+            position: fixed;
+            width: 10px;
+            height: 10px;
+            border-radius: 2px;
+            animation: confetti 3s ease-out forwards;
+            z-index: 101;
+        }
+        @keyframes float {
+            0%,
+            100% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-10px);
+            }
+        }
+        #history::-webkit-scrollbar {
+            width: 5px;
+        }
+        #history::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.15);
+            border-radius: 3px;
+        }
+        #history::-webkit-scrollbar-thumb {
+            background: rgba(233, 69, 96, 0.4);
+            border-radius: 3px;
+        }
+        @media(max-width:480px) {
+            h1 {
+                font-size: 2rem;
+            }
+            .btn-level {
+                min-width: 240px;
+                padding: 14px 30px;
+                font-size: 1.05rem;
+            }
+            .wheel-wrapper {
+                width: 56px;
+                height: 96px;
+            }
+            .wheel-wrapper .cell {
+                font-size: 1.3rem;
+            }
+            .wheel-wrapper .cell.active {
+                font-size: 1.7rem;
+            }
+            .wheel-wrapper .cell.dimmed {
+                font-size: 1.0rem;
+            }
+            #wheels-container {
+                gap: 8px;
+            }
+            .end-box {
+                padding: 30px 20px;
+            }
+            .end-box h2 {
+                font-size: 1.4rem;
+            }
+            .wheel-arrow {
+                width: 30px;
+                height: 30px;
+                font-size: 0.9rem;
+            }
+            .action-row {
+                gap: 10px;
+            }
+            #check-btn {
+                padding: 12px 30px;
+                font-size: 1rem;
+            }
+            #current-display {
+                font-size: 2.2rem;
+                padding: 10px 16px;
+                letter-spacing: 6px;
+            }
+            .wheel-wrapper .indicator {
+                display: none;
+            }
+            .stats-container {
+                padding: 12px 16px;
+            }
+            .stat-row {
+                font-size: 0.85rem;
+            }
+        }
+        @media(max-width:360px) {
+            .wheel-wrapper {
+                width: 48px;
+                height: 84px;
+            }
+            .wheel-wrapper .cell {
+                font-size: 1.1rem;
+            }
+            .wheel-wrapper .cell.active {
+                font-size: 1.4rem;
+            }
+            .wheel-wrapper .cell.dimmed {
+                font-size: 0.9rem;
+            }
+            #wheels-container {
+                gap: 5px;
+            }
+            #current-display {
+                font-size: 1.8rem;
+                letter-spacing: 4px;
+                padding: 8px 12px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="game-container">
+        <div id="sound-toggle"><span id="sound-icon" style="font-size:22px;">🔊</span></div>
+        <h1>🔐 شکستن قفل</h1>
+        <p class="subtitle">رمز مخفی رو پیدا کن!</p>
+
+        <div id="menu">
+            <p>با چرخوندن چرخ‌ها عدد مورد نظرت رو وارد کن.<br>با راهنمایی‌های بازی، رقم‌های درست رو پیدا کن.</p>
+
+            <!-- نمایش آمار بازی -->
+            <div class="stats-container" id="stats-container">
+                <div class="stat-row">
+                    <span class="stat-label">🟢 آسان (۳ رقم)</span>
+                    <span class="stat-value" id="stat-3">بازی: ۰ | بهترین: --</span>
+                </div>
+                <div class="stat-row">
+                    <span class="stat-label">🟠 سخت (۴ رقم)</span>
+                    <span class="stat-value" id="stat-4">بازی: ۰ | بهترین: --</span>
+                </div>
+                <div class="stat-row">
+                    <span class="stat-label">🔴 خیلی سخت (۵ رقم)</span>
+                    <span class="stat-value" id="stat-5">بازی: ۰ | بهترین: --</span>
+                </div>
+            </div>
+
+            <button class="btn-level btn-easy" onclick="startGame(3)">🟢 سطح آسان — ۳ رقم</button>
+            <button class="btn-level btn-hard" onclick="startGame(4)">🟠 سطح سخت — ۴ رقم</button>
+            <button class="btn-level btn-vhard" onclick="startGame(5)">🔴 خیلی سخت — ۵ رقم</button>
+        </div>
+
+        <div id="game-area">
+            <div class="badges">
+                <span id="level-badge" class="badge"></span>
+                <span id="attempts-badge" class="badge badge-attempts">تلاش: ۰</span>
+                <span id="hint-badge" class="badge badge-hint" onclick="useHint()">💡 راهنما (۲)</span>
+            </div>
+
+            <div id="current-display">— — —</div>
+
+            <div id="wheels-container"></div>
+            <div class="action-row">
+                <button id="check-btn" onclick="checkGuess()">🔍 بررسی رمز</button>
+                <button class="btn-sm" onclick="resetSameLevel()">🔄 دوباره</button>
+            </div>
+            <div id="feedback">چرخ‌ها رو بچرخون و رمز رو حدس بزن!</div>
+            <div id="history">
+                <h3>📜 تاریخچه تلاش‌ها</h3>
+                <div id="history-list"></div>
+            </div>
+            <button class="btn-back" onclick="backToMenu()">🔙 بازگشت به منو</button>
+        </div>
+
+        <!-- پاپ‌آپ پایان بازی -->
+        <div id="end-modal">
+            <div class="end-box">
+                <div class="icon" id="end-icon">🎉</div>
+                <h2 id="end-title">قفل شکسته شد!</h2>
+                <p id="end-message"></p>
+                <div class="btn-group">
+                    <button class="btn-end btn-end-primary" id="end-retry-btn">🔄 دوباره</button>
+                    <button class="btn-end btn-end-secondary" id="end-menu-btn">🔙 منو</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        (function() {
+            'use strict';
+
+            // ─── State ───
+            let secretCode = [],
+                digits = 3,
+                attempts = 0,
+                maxAttempts = 20,
+                hintRemaining = 2,
+                soundEnabled = true,
+                wheels = [],
+                audioCtx = null,
+                currentLevel = 3,
+                gameOver = false,
+                bestScores = { 3: Infinity, 4: Infinity, 5: Infinity },
+                gamesCount = { 3: 0, 4: 0, 5: 0 },
+                eliminatedDigits = [];
+
+            // ─── DOM refs ───
+            const menuEl = document.getElementById('menu');
+            const gameArea = document.getElementById('game-area');
+            const endModal = document.getElementById('end-modal');
+            const endIcon = document.getElementById('end-icon');
+            const endTitle = document.getElementById('end-title');
+            const endMessage = document.getElementById('end-message');
+            const endRetryBtn = document.getElementById('end-retry-btn');
+            const endMenuBtn = document.getElementById('end-menu-btn');
+            const feedbackEl = document.getElementById('feedback');
+            const historyList = document.getElementById('history-list');
+            const attemptsBadge = document.getElementById('attempts-badge');
+            const levelBadge = document.getElementById('level-badge');
+            const hintBadge = document.getElementById('hint-badge');
+            const wheelsContainer = document.getElementById('wheels-container');
+            const currentDisplay = document.getElementById('current-display');
+            const statEls = {
+                3: document.getElementById('stat-3'),
+                4: document.getElementById('stat-4'),
+                5: document.getElementById('stat-5')
+            };
+
+            // ─── Audio ───
+            function initAudio() {
+                if (!audioCtx) audioCtx = new(window.AudioContext || window.webkitAudioContext)();
+            }
+
+            function playTone(freq, type, duration, vol) {
+                if (!soundEnabled || !audioCtx) return;
+                try {
+                    const osc = audioCtx.createOscillator();
+                    const gain = audioCtx.createGain();
+                    osc.type = type;
+                    osc.frequency.value = freq;
+                    gain.gain.setValueAtTime(vol || 0.08, audioCtx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
+                    osc.connect(gain);
+                    gain.connect(audioCtx.destination);
+                    osc.start();
+                    osc.stop(audioCtx.currentTime + duration);
+                } catch (e) {}
+            }
+
+            function sndClick() { playTone(880, 'sine', 0.06, 0.06); }
+
+            function sndTick() { playTone(650, 'sine', 0.04, 0.04); }
+
+            function sndError() {
+                playTone(180, 'sawtooth', 0.25, 0.07);
+                setTimeout(() => playTone(140, 'sawtooth', 0.25, 0.07), 80);
+            }
+
+            function sndSuccess() {
+                [523, 659, 784, 1047].forEach((f, i) => setTimeout(() => playTone(f, 'sine', 0.18, 0.07), i * 90));
+            }
+
+            function sndWin() {
+                [523, 659, 784, 1047, 1319, 1568].forEach((f, i) => setTimeout(() => playTone(f, 'sine', 0.28, 0.09), i *
+                    110));
+            }
+
+            function sndLose() {
+                [300, 250, 200].forEach((f, i) => setTimeout(() => playTone(f, 'sawtooth', 0.3, 0.06), i * 150));
+            }
+
+            document.getElementById('sound-toggle').onclick = function() {
+                soundEnabled = !soundEnabled;
+                document.getElementById('sound-icon').textContent = soundEnabled ? '🔊' : '🔇';
+                if (soundEnabled) initAudio();
+            };
+
+            // ─── Stats (localStorage) ───
+            function loadStats() {
+                try {
+                    const data = localStorage.getItem('lockbreaker_stats');
+                    if (data) {
+                        const parsed = JSON.parse(data);
+                        if (parsed.games) gamesCount = parsed.games;
+                        if (parsed.best) bestScores = parsed.best;
+                    }
+                } catch (e) {}
+                updateStatsDisplay();
+            }
+
+            function saveStats() {
+                try {
+                    localStorage.setItem('lockbreaker_stats', JSON.stringify({
+                        games: gamesCount,
+                        best: bestScores
+                    }));
+                } catch (e) {}
+                updateStatsDisplay();
+            }
+
+            function updateStatsDisplay() {
+                for (let d of [3, 4, 5]) {
+                    const games = gamesCount[d] || 0;
+                    const best = bestScores[d];
+                    const bestStr = (best === Infinity || best === null) ? '--' : best;
+                    statEls[d].textContent = 'بازی: ' + games + ' | بهترین: ' + bestStr;
+                }
+            }
+
+            function recordGameStart(level) {
+                if (!gamesCount[level]) gamesCount[level] = 0;
+                gamesCount[level]++;
+                saveStats();
+            }
+
+            function updateBestScore(level, attempts) {
+                if (attempts < bestScores[level]) {
+                    bestScores[level] = attempts;
+                    saveStats();
+                    return true;
+                }
+                return false;
+            }
+
+            // ─── تبدیل عدد به حروف فارسی ───
+            function numberToPersianWord(num) {
+                const words = ['صفر', 'یک', 'دو', 'سه', 'چهار', 'پنج', 'شش', 'هفت', 'هشت', 'نه'];
+                if (num >= 0 && num <= 9) return words[num];
+                return num.toString();
+            }
+
+            // ─── Game Flow ───
+            window.startGame = function(n) {
+                initAudio();
+                document.querySelectorAll('.confetti').forEach(el => el.remove());
+
+                digits = n;
+                currentLevel = n;
+                attempts = 0;
+                gameOver = false;
+                hintRemaining = 2;
+                eliminatedDigits = [];
+                secretCode = [];
+                for (let i = 0; i < digits; i++) secretCode.push(Math.floor(Math.random() * 10));
+
+                maxAttempts = 20;
+
+                // ثبت شروع بازی
+                recordGameStart(n);
+
+                menuEl.style.display = 'none';
+                gameArea.style.display = 'flex';
+                endModal.style.display = 'none';
+
+                levelBadge.textContent = n === 3 ? '🟢 سطح آسان' : n === 4 ? '🟠 سطح سخت' : '🔴 سطح خیلی سخت';
+                updateAttempts();
+                updateHintBadge();
+                feedbackEl.innerHTML = 'چرخ‌ها رو بچرخون و رمز رو حدس بزن!';
+                feedbackEl.style.borderColor = 'rgba(255,255,255,0.06)';
+                historyList.innerHTML = '';
+                createWheels();
+                updateDisplay();
+                if (wheels.length) wheels[0].wrapper.focus();
+                sndSuccess();
+            };
+
+            window.resetSameLevel = function() {
+                endModal.style.display = 'none';
+                startGame(currentLevel);
+            };
+
+            window.backToMenu = function() {
+                document.querySelectorAll('.confetti').forEach(el => el.remove());
+                endModal.style.display = 'none';
+                menuEl.style.display = 'flex';
+                gameArea.style.display = 'none';
+                gameOver = false;
+            };
+
+            // دکمه‌های پاپ‌آپ
+            endRetryBtn.onclick = function() {
+                resetSameLevel();
+            };
+            endMenuBtn.onclick = function() {
+                backToMenu();
+            };
+
+            // ─── Create Wheels (3 cells each) ───
+            function createWheels() {
+                wheelsContainer.innerHTML = '';
+                wheels = [];
+                for (let i = 0; i < digits; i++) {
+                    const col = document.createElement('div');
+                    col.className = 'wheel-col';
+
+                    const upBtn = document.createElement('div');
+                    upBtn.className = 'wheel-arrow';
+                    upBtn.textContent = '▲';
+                    upBtn.onclick = (e) => { e.stopPropagation();
+                        changeWheel(i, -1); };
+                    col.appendChild(upBtn);
+
+                    const wrapper = document.createElement('div');
+                    wrapper.className = 'wheel-wrapper';
+                    wrapper.tabIndex = 0;
+                    wrapper.setAttribute('role', 'spinbutton');
+                    wrapper.setAttribute('aria-valuenow', 0);
+                    wrapper.setAttribute('aria-valuemin', 0);
+                    wrapper.setAttribute('aria-valuemax', 9);
+
+                    const indL = document.createElement('div');
+                    indL.className = 'indicator';
+                    const indR = document.createElement('div');
+                    indR.className = 'indicator indicator-right';
+                    wrapper.appendChild(indL);
+                    wrapper.appendChild(indR);
+
+                    const cells = [];
+                    for (let r = 0; r < 3; r++) {
+                        const cell = document.createElement('div');
+                        cell.className = 'cell';
+                        if (r === 1) cell.classList.add('active');
+                        else cell.classList.add('dimmed');
+                        cell.textContent = '0';
+                        wrapper.appendChild(cell);
+                        cells.push(cell);
+                    }
+
+                    col.appendChild(wrapper);
+
+                    const downBtn = document.createElement('div');
+                    downBtn.className = 'wheel-arrow';
+                    downBtn.textContent = '▼';
+                    downBtn.onclick = (e) => { e.stopPropagation();
+                        changeWheel(i, 1); };
+                    col.appendChild(downBtn);
+
+                    wheelsContainer.appendChild(col);
+
+                    const wObj = {
+                        wrapper: wrapper,
+                        cells: cells,
+                        value: 0,
+                    };
+                    setWheelValue(wObj, 0);
+                    wheels.push(wObj);
+                    setupWheelInteraction(wObj, i);
+                    setupKeyboard(wObj, i);
+                }
+                updateDisplay();
+            }
+
+            function setWheelValue(wObj, val) {
+                val = ((val % 10) + 10) % 10;
+                wObj.value = val;
+                const prev = ((val - 1) % 10 + 10) % 10;
+                const next = (val + 1) % 10;
+                wObj.cells[0].textContent = prev;
+                wObj.cells[1].textContent = val;
+                wObj.cells[2].textContent = next;
+                wObj.cells[0].className = 'cell dimmed';
+                wObj.cells[1].className = 'cell active';
+                wObj.cells[2].className = 'cell dimmed';
+                wObj.wrapper.setAttribute('aria-valuenow', val);
+            }
+
+            function changeWheel(idx, dir) {
+                if (gameOver) return;
+                const w = wheels[idx];
+                setWheelValue(w, w.value + dir);
+                sndTick();
+                updateDisplay();
+            }
+
+            // ─── Drag support ───
+            function setupWheelInteraction(wObj, idx) {
+                const wrapper = wObj.wrapper;
+                let isDragging = false,
+                    startY = 0,
+                    startVal = 0;
+
+                function onStart(y) {
+                    if (gameOver) return;
+                    isDragging = true;
+                    startY = y;
+                    startVal = wObj.value;
+                    wrapper.style.cursor = 'grabbing';
+                }
+
+                function onMove(y) {
+                    if (!isDragging || gameOver) return;
+                    const delta = y - startY;
+                    const threshold = 20;
+                    const steps = Math.round(delta / threshold);
+                    if (steps !== 0) {
+                        const newVal = startVal - steps;
+                        setWheelValue(wObj, newVal);
+                        updateDisplay();
+                        sndTick();
+                        startY = y;
+                        startVal = wObj.value;
+                    }
+                }
+
+                function onEnd() {
+                    if (isDragging) {
+                        isDragging = false;
+                        wrapper.style.cursor = 'grab';
+                        sndClick();
+                    }
+                }
+
+                wrapper.addEventListener('mousedown', e => { onStart(e.clientY);
+                    e.preventDefault(); });
+                wrapper.addEventListener('touchstart', e => { onStart(e.touches[0].clientY);
+                    e.preventDefault(); }, { passive: false });
+
+                document.addEventListener('mousemove', e => { onMove(e.clientY); });
+                document.addEventListener('touchmove', e => {
+                    if (isDragging) e.preventDefault();
+                    onMove(e.touches[0].clientY);
+                }, { passive: false });
+
+                document.addEventListener('mouseup', onEnd);
+                document.addEventListener('touchend', onEnd);
+
+                wrapper.addEventListener('wheel', e => {
+                    e.preventDefault();
+                    if (gameOver) return;
+                    const dir = e.deltaY > 0 ? 1 : -1;
+                    changeWheel(idx, dir);
+                }, { passive: false });
+            }
+
+            // ─── Keyboard ───
+            function setupKeyboard(wObj, idx) {
+                const wrapper = wObj.wrapper;
+                wrapper.addEventListener('keydown', e => {
+                    if (gameOver) return;
+                    if (e.key === 'ArrowUp') {
+                        e.preventDefault();
+                        changeWheel(idx, -1);
+                    } else if (e.key === 'ArrowDown') {
+                        e.preventDefault();
+                        changeWheel(idx, 1);
+                    } else if (e.key >= '0' && e.key <= '9') {
+                        e.preventDefault();
+                        const digit = parseInt(e.key);
+                        setWheelValue(wObj, digit);
+                        updateDisplay();
+                        sndTick();
+                    }
+                });
+                wrapper.addEventListener('focus', () => {
+                    wrapper.style.outline = '2px solid rgba(233,69,96,0.5)';
+                });
+                wrapper.addEventListener('blur', () => {
+                    wrapper.style.outline = 'none';
+                });
+            }
+
+            // ─── Display Update ───
+            function updateDisplay() {
+                if (!wheels.length) {
+                    currentDisplay.textContent = '—';
+                    return;
+                }
+                const values = wheels.map(w => w.value);
+                let html = '';
+                for (let v of values) {
+                    html += '<span>' + v + '</span>';
+                }
+                currentDisplay.innerHTML = html;
+            }
+
+            // ─── Check Guess ───
+            window.checkGuess = function() {
+                if (gameOver) return;
+                initAudio();
+
+                const guess = wheels.map(w => w.value);
+                const guessStr = guess.join('');
+
+                attempts++;
+                updateAttempts();
+
+                let correctPos = 0,
+                    correctDigitWrongPos = 0;
+                const secretLeft = [],
+                    guessLeft = [];
+                for (let i = 0; i < digits; i++) {
+                    if (guess[i] === secretCode[i]) {
+                        correctPos++;
+                    } else {
+                        secretLeft.push(secretCode[i]);
+                        guessLeft.push(guess[i]);
+                    }
+                }
+                for (let i = 0; i < guessLeft.length; i++) {
+                    const idx = secretLeft.indexOf(guessLeft[i]);
+                    if (idx !== -1) {
+                        correctDigitWrongPos++;
+                        secretLeft[idx] = -1;
+                    }
+                }
+
+                let hint = '',
+                    hintColor = '',
+                    borderColor = '';
+
+                const posWord = numberToPersianWord(correctPos);
+                const wrongPosWord = numberToPersianWord(correctDigitWrongPos);
+
+                if (correctPos === digits) {
+                    hint = '🎉 آفرین! همه ارقام درست و در جای درست هستند!';
+                    hintColor = '#00b894';
+                    borderColor = 'rgba(0,184,148,0.4)';
+                    sndWin();
+                    gameOver = true;
+                    const isBest = updateBestScore(digits, attempts);
+                    showEndModal(true, isBest);
+                    return;
+                } else if (attempts >= maxAttempts) {
+                    hint = '😞 متأسفانه تلاش‌ها تمام شد! رمز: ' + secretCode.join('');
+                    hintColor = '#ff4757';
+                    borderColor = 'rgba(255,71,87,0.4)';
+                    sndLose();
+                    gameOver = true;
+                    feedbackEl.innerHTML = '<span style="color:' + hintColor + '">' + hint + '</span>';
+                    feedbackEl.style.borderColor = borderColor;
+                    addHistoryItem(guessStr, hint, hintColor);
+                    showEndModal(false, false);
+                    return;
+                } else if (correctPos === 0 && correctDigitWrongPos === 0) {
+                    hint = '❌ هیچ رقمی درست نیست';
+                    hintColor = '#ff4757';
+                    borderColor = 'rgba(255,71,87,0.4)';
+                    sndError();
+                    feedbackEl.classList.add('shake');
+                    setTimeout(() => feedbackEl.classList.remove('shake'), 550);
+                } else {
+                    const parts = [];
+                    if (correctPos > 0) {
+                        parts.push(posWord + ' رقم درست در جایگاه درست');
+                    }
+                    if (correctDigitWrongPos > 0) {
+                        parts.push(wrongPosWord + ' رقم درست در جایگاه نادرست');
+                    }
+                    hint = parts.join(' — ');
+                    hintColor = '#74b9ff';
+                    borderColor = 'rgba(116,185,255,0.3)';
+                    sndSuccess();
+                    feedbackEl.classList.add('pulse');
+                    setTimeout(() => feedbackEl.classList.remove('pulse'), 350);
+                }
+
+                feedbackEl.innerHTML = '<span style="color:' + hintColor + '">' + hint + '</span>';
+                feedbackEl.style.borderColor = borderColor;
+                addHistoryItem(guessStr, hint, hintColor);
+            };
+
+            function addHistoryItem(guess, hint, color) {
+                const item = document.createElement('div');
+                item.className = 'history-item';
+                const num = document.createElement('span');
+                num.className = 'history-num';
+                num.textContent = '#' + attempts;
+                const g = document.createElement('span');
+                g.className = 'history-guess';
+                g.textContent = guess;
+                const h = document.createElement('span');
+                h.className = 'history-hint';
+                h.style.color = color;
+                h.textContent = hint;
+                item.appendChild(num);
+                item.appendChild(g);
+                item.appendChild(h);
+                historyList.prepend(item);
+            }
+
+            // ─── End Modal ───
+            function showEndModal(won, isBest) {
+                const secretStr = secretCode.join('');
+                let icon, title, msg;
+
+                if (won) {
+                    icon = '🎉';
+                    title = 'قفل شکسته شد!';
+                    let bestText = isBest ? ' 🎊 رکورد جدید!' : '';
+                    msg = 'رمز <b style="color:#e94560;font-size:1.4rem;letter-spacing:3px;">' + secretStr +
+                        '</b> بود!<br>در <b style="color:#74b9ff;">' + attempts + '</b> تلاش به رمز دست پیدا کردی.' + bestText;
+                    endIcon.textContent = icon;
+                    endTitle.className = 'win';
+                    endTitle.textContent = title;
+                    endMessage.innerHTML = msg;
+                    // کانفتی فقط برای برد
+                    for (let i = 0; i < 50; i++) {
+                        const c = document.createElement('div');
+                        c.className = 'confetti';
+                        c.style.left = Math.random() * 100 + 'vw';
+                        c.style.top = '100vh';
+                        const colors = ['#e94560', '#00b894', '#74b9ff', '#fdcb6e', '#a29bfe', '#ff6b6b'];
+                        c.style.background = colors[Math.floor(Math.random() * colors.length)];
+                        c.style.width = (6 + Math.random() * 8) + 'px';
+                        c.style.height = (6 + Math.random() * 8) + 'px';
+                        c.style.borderRadius = Math.random() > 0.5 ? '50%' : '2px';
+                        c.style.animationDelay = Math.random() * 2 + 's';
+                        c.style.animationDuration = (2.5 + Math.random() * 2) + 's';
+                        document.body.appendChild(c);
+                        setTimeout(() => c.remove(), 5500);
+                    }
+                } else {
+                    icon = '😞';
+                    title = 'تلاش‌ها تمام شد!';
+                    msg = 'رمز مخفی <b style="color:#e94560;font-size:1.4rem;letter-spacing:3px;">' + secretStr +
+                        '</b> بود.<br>دفعه بعد بهتر شانس بیار!';
+                    endIcon.textContent = icon;
+                    endTitle.className = 'lose';
+                    endTitle.textContent = title;
+                    endMessage.innerHTML = msg;
+                }
+
+                endModal.style.display = 'flex';
+                // دکمه‌ها قبلاً تنظیم شده‌اند
+            }
+
+            // ─── Hint ───
+            window.useHint = function() {
+                if (gameOver) return;
+                if (hintRemaining <= 0) {
+                    feedbackEl.innerHTML = '⚠️ راهنمایی بیشتری ندارید!';
+                    feedbackEl.style.borderColor = 'rgba(253,203,110,0.4)';
+                    return;
+                }
+
+                const secretSet = new Set(secretCode);
+                const candidates = [];
+                for (let d = 0; d <= 9; d++) {
+                    if (!secretSet.has(d) && !eliminatedDigits.includes(d)) {
+                        candidates.push(d);
+                    }
+                }
+
+                if (candidates.length === 0) {
+                    feedbackEl.innerHTML = '🎯 همه اعداد یا در رمز هستند یا قبلاً حذف شده‌اند!';
+                    feedbackEl.style.borderColor = 'rgba(0,184,148,0.4)';
+                    return;
+                }
+
+                const randomIndex = Math.floor(Math.random() * candidates.length);
+                const wrongDigit = candidates[randomIndex];
+                eliminatedDigits.push(wrongDigit);
+
+                hintRemaining--;
+                updateHintBadge();
+
+                feedbackEl.innerHTML = '💡 عدد <b style="color:#e94560;">' + wrongDigit +
+                    '</b> در رمز وجود ندارد! (می‌توانید آن را از حدس‌های خود حذف کنید)';
+                feedbackEl.style.borderColor = 'rgba(253,203,110,0.4)';
+                sndSuccess();
+
+                const hintItem = document.createElement('div');
+                hintItem.className = 'history-item';
+                hintItem.style.borderRightColor = '#fdcb6e';
+                hintItem.innerHTML = '<span class="history-num">💡</span><span class="history-guess">راهنما</span><span class="history-hint" style="color:#fdcb6e;">عدد ' +
+                    wrongDigit + ' در رمز نیست</span>';
+                historyList.prepend(hintItem);
+            };
+
+            function updateHintBadge() {
+                hintBadge.textContent = '💡 راهنما (' + hintRemaining + ')';
+                hintBadge.classList.toggle('disabled', hintRemaining <= 0);
+            }
+
+            function updateAttempts() {
+                attemptsBadge.textContent = 'تلاش: ' + attempts + '/' + maxAttempts;
+            }
+
+            // ─── Init ───
+            loadStats();
+            document.addEventListener('click', () => initAudio(), { once: true });
+
+        })();
+    </script>
+</body>
+</html>

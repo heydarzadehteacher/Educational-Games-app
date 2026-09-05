@@ -1,0 +1,2453 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>بازی حافظه‌ی املایی</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Vazirmatn', 'Segoe UI', Tahoma, sans-serif;
+        }
+
+        html,
+        body {
+            height: 100%;
+            overflow: hidden;
+        }
+
+        body {
+            background-color: #efe6dd;
+            padding: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* ===== صفحه اصلی ===== */
+        #homePage {
+            width: 100%;
+            max-width: 800px;
+            height: fit-content;
+            max-height: 98vh;
+            background: #efe6dd;
+            border-radius: 35px;
+            padding: 28px 30px 32px;
+            box-shadow: 12px 12px 24px rgba(0, 0, 0, 0.1), -12px -12px 24px rgba(255, 255, 255, 0.7);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .game-title {
+            text-align: center;
+            font-size: clamp(1.8rem, 5vw, 2.5rem);
+            font-weight: 900;
+            margin-bottom: 22px;
+            background: linear-gradient(45deg, #ff6b6b, #f6681b, #1433bd, #0a1334);
+            background-size: 300% 300%;
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            animation: gradientShift 4s ease-in-out infinite, float 3s ease-in-out infinite;
+            white-space: nowrap;
+            letter-spacing: 2px;
+        }
+
+        @keyframes gradientShift {
+            0% {
+                background-position: 0% 50%;
+            }
+            50% {
+                background-position: 100% 50%;
+            }
+            100% {
+                background-position: 0% 50%;
+            }
+        }
+
+        @keyframes float {
+            0%,
+            100% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-6px);
+            }
+        }
+
+        .name-box {
+            background-color: #efe6dd;
+            border-radius: 30px;
+            padding: 10px 20px;
+            margin-bottom: 28px;
+            box-shadow: inset 4px 4px 10px rgba(0, 0, 0, 0.06), inset -4px -4px 10px rgba(255, 255, 255, 0.8), 6px 6px 14px rgba(0, 0, 0, 0.08), -6px -6px 14px rgba(255, 255, 255, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+        }
+
+        .name-box .user-icon {
+            font-size: 1.9rem;
+            line-height: 1;
+            filter: drop-shadow(1px 2px 4px rgba(0, 0, 0, 0.1));
+        }
+
+        .name-box input {
+            background: transparent;
+            border: none;
+            outline: none;
+            padding: 14px 10px;
+            border-radius: 20px;
+            font-size: 1.1rem;
+            width: 75%;
+            max-width: 340px;
+            caret-color: #9a0002;
+            text-align: center;
+            color: #1e1e2a;
+            font-weight: 500;
+            box-shadow: inset 2px 2px 6px rgba(0, 0, 0, 0.06), inset -2px -2px 6px rgba(255, 255, 255, 0.7);
+            transition: box-shadow 0.2s;
+        }
+
+        .name-box input:focus {
+            box-shadow: inset 3px 3px 8px rgba(0, 0, 0, 0.08), inset -3px -3px 8px rgba(255, 255, 255, 0.9);
+        }
+
+        .name-box input::placeholder {
+            color: #7a6a5a;
+            opacity: 0.7;
+            font-weight: 300;
+        }
+
+        .games-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(155px, 1fr));
+            gap: 18px;
+        }
+
+        .game-btn {
+            border: none;
+            cursor: pointer;
+            border-radius: 25px;
+            padding: 26px 12px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            color: #fff;
+            transition: transform 0.15s ease, box-shadow 0.15s ease;
+            box-shadow: 8px 8px 16px rgba(0, 0, 0, 0.15), -8px -8px 16px rgba(255, 255, 255, 0.6), inset 2px 2px 6px rgba(255, 255, 255, 0.2), inset -2px -2px 6px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 6px;
+            line-height: 1.3;
+        }
+
+        .game-btn .emoji-big {
+            font-size: 2.2rem;
+            display: block;
+            filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.15));
+        }
+
+        .game-btn:hover {
+            transform: translateY(-4px);
+            box-shadow: 12px 12px 20px rgba(0, 0, 0, 0.2), -12px -12px 20px rgba(255, 255, 255, 0.7), inset 2px 2px 6px rgba(255, 255, 255, 0.2), inset -2px -2px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .game-btn:active {
+            transform: translateY(0);
+            box-shadow: inset 4px 4px 8px rgba(0, 0, 0, 0.2), inset -4px -4px 8px rgba(255, 255, 255, 0.3);
+        }
+
+        .btn-1 {
+            background-color: #0a1334;
+        }
+        .btn-2 {
+            background-color: #1433bd;
+        }
+        .btn-3 {
+            background-color: #cdfc8a;
+            color: #0a1334;
+        }
+        .btn-4 {
+            background-color: #f6681b;
+        }
+
+        /* ===== هدر مشترک بازی‌ها ===== */
+        .game-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #ffffff20;
+            padding: 12px 18px;
+            border-radius: 20px;
+            margin-bottom: 20px;
+            box-shadow: inset 2px 2px 6px rgba(0, 0, 0, 0.05), inset -2px -2px 6px rgba(255, 255, 255, 0.8);
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .game-header .stat {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            color: #1e1e2a;
+            background: #efe6dd;
+            padding: 6px 14px;
+            border-radius: 15px;
+            box-shadow: inset 2px 2px 5px rgba(0, 0, 0, 0.06), inset -2px -2px 5px rgba(255, 255, 255, 0.7);
+        }
+
+        .stat-icon {
+            font-size: 1.3rem;
+        }
+
+        .home-btn {
+            background: #9a0002;
+            color: white;
+            border: none;
+            padding: 8px 18px;
+            border-radius: 15px;
+            font-size: 1rem;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.2s;
+            box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.15), -4px -4px 10px rgba(255, 255, 255, 0.3);
+        }
+
+        .home-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 6px 6px 14px rgba(0, 0, 0, 0.2);
+        }
+
+        /* ===== صفحات بازی ===== */
+        #gamePage1,
+        #gamePage2,
+        #gamePage3,
+        #gamePage4 {
+            display: none;
+            width: 100%;
+            max-width: 800px;
+            height: fit-content;
+            max-height: 98vh;
+            background: #efe6dd;
+            border-radius: 35px;
+            padding: 20px 25px 25px;
+            box-shadow: 12px 12px 24px rgba(0, 0, 0, 0.1), -12px -12px 24px rgba(255, 255, 255, 0.7);
+        }
+
+        /* ===== استایل‌های بازی واژه‌ی غایب ===== */
+        .words-display {
+            background: #ffffff40;
+            padding: 30px 20px;
+            border-radius: 25px;
+            margin: 15px 0;
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 15px;
+            min-height: 120px;
+            align-items: center;
+            box-shadow: inset 4px 4px 12px rgba(0, 0, 0, 0.08), inset -4px -4px 12px rgba(255, 255, 255, 0.6);
+        }
+
+        .word-item {
+            background: #0a1334;
+            color: white;
+            padding: 12px 20px;
+            border-radius: 15px;
+            font-size: 1.3rem;
+            font-weight: bold;
+            box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.15);
+            animation: popIn 0.3s ease;
+        }
+
+        @keyframes popIn {
+            0% {
+                transform: scale(0.8);
+                opacity: 0;
+            }
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        .question-text {
+            text-align: center;
+            font-size: 1.4rem;
+            font-weight: bold;
+            color: #1e1e2a;
+            margin: 15px 0;
+            padding: 15px;
+            background: #ffffff30;
+            border-radius: 20px;
+            box-shadow: inset 2px 2px 6px rgba(0, 0, 0, 0.05);
+            display: none;
+        }
+
+        .options-container {
+            display: none;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 12px;
+            margin: 15px 0;
+        }
+
+        .option-btn {
+            background: white;
+            border: none;
+            padding: 15px 10px;
+            border-radius: 18px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            color: #1e1e2a;
+            transition: all 0.2s;
+            box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.08), -4px -4px 10px rgba(255, 255, 255, 0.7);
+        }
+
+        .option-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 6px 6px 14px rgba(0, 0, 0, 0.12);
+            background: #f0f0f0;
+        }
+
+        .option-btn:active {
+            transform: translateY(0);
+        }
+
+        .option-btn.correct {
+            background: #4CAF50;
+            color: white;
+        }
+
+        .option-btn.wrong {
+            background: #f44336;
+            color: white;
+        }
+
+        .option-btn:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+        }
+
+        .feedback {
+            text-align: center;
+            font-size: 1.5rem;
+            font-weight: bold;
+            padding: 10px;
+            margin: 10px 0;
+            display: none;
+        }
+
+        .hint-btn {
+            background: #ff9800;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 15px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.2s;
+            box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.1);
+            display: none;
+        }
+
+        .hint-btn:hover {
+            transform: scale(1.05);
+        }
+
+        .hint-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .game-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 15px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .question-timer-container {
+            display: none;
+            align-items: center;
+            gap: 8px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            color: #1e1e2a;
+            background: #efe6dd;
+            padding: 6px 14px;
+            border-radius: 15px;
+            box-shadow: inset 2px 2px 5px rgba(0, 0, 0, 0.06), inset -2px -2px 5px rgba(255, 255, 255, 0.7);
+        }
+
+        /* ===== استایل‌های بازی مکان‌یاب ===== */
+        .table-container {
+            display: flex;
+            justify-content: center;
+            margin: 15px 0;
+        }
+
+        .word-table {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            width: 100%;
+            max-width: 450px;
+            aspect-ratio: 3/2;
+        }
+
+        .table-cell {
+            background: #ffffff40;
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #1e1e2a;
+            box-shadow: inset 4px 4px 12px rgba(0, 0, 0, 0.08), inset -4px -4px 12px rgba(255, 255, 255, 0.6);
+            transition: all 0.3s ease;
+            padding: 10px;
+            text-align: center;
+            word-break: break-word;
+            cursor: default;
+            user-select: none;
+        }
+
+        .table-cell.selected-correct {
+            background: #4CAF50;
+            color: transparent;
+            box-shadow: 0 0 25px rgba(76, 175, 80, 0.5);
+            transform: scale(1.05);
+        }
+
+        .table-cell.selected-wrong {
+            background: #f44336;
+            color: transparent;
+            animation: shake 0.3s ease;
+            box-shadow: 0 0 25px rgba(244, 67, 54, 0.5);
+        }
+
+        .table-cell.show-correct {
+            background: #4CAF50;
+            color: transparent;
+            box-shadow: 0 0 25px rgba(76, 175, 80, 0.5);
+        }
+
+        .table-cell.showing {
+            animation: cellPop 0.3s ease;
+        }
+
+        .table-cell.hidden-cell {
+            background: #ffffff20;
+            color: transparent;
+            box-shadow: inset 2px 2px 8px rgba(0, 0, 0, 0.05);
+        }
+
+        @keyframes cellPop {
+            0% {
+                transform: scale(0.8);
+                opacity: 0;
+            }
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        @keyframes shake {
+            0%,
+            100% {
+                transform: translateX(0);
+            }
+            25% {
+                transform: translateX(-10px);
+            }
+            75% {
+                transform: translateX(10px);
+            }
+        }
+
+        .question-word {
+            text-align: center;
+            font-size: 2rem;
+            font-weight: 900;
+            color: #0a1334;
+            padding: 15px;
+            margin: 10px 0;
+            background: #ffffff40;
+            border-radius: 20px;
+            box-shadow: inset 2px 2px 6px rgba(0, 0, 0, 0.05);
+            display: none;
+        }
+
+        .question-word .word-highlight {
+            color: #f6681b;
+            font-size: 2.2rem;
+        }
+
+        .question-progress {
+            text-align: center;
+            font-size: 1rem;
+            color: #666;
+            margin: 5px 0;
+            display: none;
+        }
+
+        .status-message {
+            text-align: center;
+            font-size: 1.2rem;
+            color: #666;
+            padding: 10px;
+            display: none;
+        }
+
+        .round-info {
+            text-align: center;
+            font-size: 1rem;
+            color: #888;
+            margin: 5px 0;
+            display: none;
+        }
+
+        /* ===== استایل‌های بازی واژه‌های آینه‌ای ===== */
+        .mirror-container {
+            background: #ffffff40;
+            border-radius: 25px;
+            padding: 40px 20px;
+            margin: 15px 0;
+            text-align: center;
+            box-shadow: inset 4px 4px 12px rgba(0, 0, 0, 0.08), inset -4px -4px 12px rgba(255, 255, 255, 0.6);
+            min-height: 150px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .mirror-word {
+            font-size: 4.5rem;
+            font-weight: 900;
+            color: #0a1334;
+            letter-spacing: 8px;
+            user-select: none;
+            animation: pulse 1.5s ease-in-out infinite;
+            font-family: 'Vazirmatn', 'Segoe UI', Tahoma, sans-serif;
+            line-height: 1.4;
+            transform: scaleX(-1);
+        }
+
+        @keyframes pulse {
+            0%,
+            100% {
+                transform: scaleX(-1) scale(1);
+            }
+            50% {
+                transform: scaleX(-1) scale(1.03);
+            }
+        }
+
+        .mirror-hint {
+            font-size: 0.9rem;
+            color: #888;
+            margin-top: 10px;
+        }
+
+        /* ===== استایل‌های بازی واژه‌ساز ===== */
+        .letter-display {
+            background: #ffffff40;
+            border-radius: 25px;
+            padding: 40px 20px;
+            margin: 15px 0;
+            text-align: center;
+            box-shadow: inset 4px 4px 12px rgba(0, 0, 0, 0.08), inset -4px -4px 12px rgba(255, 255, 255, 0.6);
+            min-height: 150px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        .letter-box {
+            font-size: 4.5rem;
+            font-weight: 900;
+            color: #0a1334;
+            min-width: 80px;
+            min-height: 90px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            animation: letterPop 0.3s ease;
+            text-shadow: 0 0 30px rgba(10, 19, 52, 0.1);
+        }
+
+        @keyframes letterPop {
+            0% {
+                transform: scale(0.5);
+                opacity: 0;
+            }
+            50% {
+                transform: scale(1.2);
+            }
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        .letter-box.fade-out {
+            animation: letterFade 0.3s ease forwards;
+        }
+
+        @keyframes letterFade {
+            0% {
+                transform: scale(1);
+                opacity: 1;
+            }
+            100% {
+                transform: scale(0.5);
+                opacity: 0;
+            }
+        }
+
+        .letter-status {
+            font-size: 1rem;
+            color: #888;
+            margin-top: 10px;
+            position: absolute;
+            bottom: 15px;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        /* ===== ورودی مشترک ===== */
+        .input-container {
+            display: flex;
+            gap: 15px;
+            margin: 15px 0;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .input-container input {
+            flex: 1;
+            min-width: 200px;
+            padding: 15px 20px;
+            border: none;
+            border-radius: 20px;
+            font-size: 1.3rem;
+            text-align: center;
+            background: #ffffff60;
+            box-shadow: inset 4px 4px 12px rgba(0, 0, 0, 0.06), inset -4px -4px 12px rgba(255, 255, 255, 0.7);
+            outline: none;
+            transition: all 0.3s;
+            color: #1e1e2a;
+            font-weight: 500;
+        }
+
+        .input-container input:focus {
+            box-shadow: inset 4px 4px 12px rgba(0, 0, 0, 0.1), inset -4px -4px 12px rgba(255, 255, 255, 0.9);
+            background: #ffffff80;
+        }
+
+        .input-container input:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .input-container button {
+            padding: 15px 35px;
+            border: none;
+            border-radius: 20px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            cursor: pointer;
+            background: #0a1334;
+            color: white;
+            transition: all 0.2s;
+            box-shadow: 4px 4px 12px rgba(10, 19, 52, 0.3);
+            min-width: 120px;
+        }
+
+        .input-container button:hover {
+            transform: scale(1.05);
+            box-shadow: 6px 6px 16px rgba(10, 19, 52, 0.4);
+        }
+
+        .input-container button:active {
+            transform: scale(0.95);
+        }
+
+        .input-container button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* ===== پاپ‌آپ سفارشی ===== */
+        .custom-alert-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(5px);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            0% {
+                opacity: 0;
+                transform: scale(0.9);
+            }
+            100% {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        .custom-alert {
+            background: #efe6dd;
+            border-radius: 30px;
+            padding: 35px 40px;
+            max-width: 500px;
+            width: 90%;
+            max-height: 80vh;
+            box-shadow: 20px 20px 40px rgba(0, 0, 0, 0.3), -20px -20px 40px rgba(255, 255, 255, 0.1);
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .custom-alert .alert-content {
+            overflow-y: auto;
+            flex: 1;
+            padding-right: 5px;
+        }
+
+        .custom-alert .alert-content::-webkit-scrollbar {
+            width: 5px;
+        }
+
+        .custom-alert .alert-content::-webkit-scrollbar-track {
+            background: #ddd;
+            border-radius: 10px;
+        }
+
+        .custom-alert .alert-content::-webkit-scrollbar-thumb {
+            background: #0a1334;
+            border-radius: 10px;
+        }
+
+        .custom-alert .alert-icon {
+            font-size: 4rem;
+            margin-bottom: 10px;
+        }
+
+        .custom-alert .alert-title {
+            font-size: 1.8rem;
+            font-weight: 900;
+            color: #1e1e2a;
+            margin-bottom: 15px;
+        }
+
+        .custom-alert .alert-message {
+            font-size: 1.1rem;
+            color: #333;
+            line-height: 2;
+            margin-bottom: 25px;
+            text-align: right;
+        }
+
+        .custom-alert .alert-message .highlight {
+            color: #9a0002;
+            font-weight: bold;
+        }
+
+        .custom-alert .alert-message .success-text {
+            color: #4CAF50;
+            font-weight: bold;
+        }
+
+        .custom-alert .alert-message .user-name {
+            color: #1433bd;
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+
+        .custom-alert .alert-buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+            padding-top: 10px;
+            border-top: 2px solid rgba(0, 0, 0, 0.05);
+        }
+
+        .custom-alert .alert-btn {
+            padding: 12px 30px;
+            border: none;
+            border-radius: 20px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.2s;
+            min-width: 120px;
+        }
+
+        .custom-alert .alert-btn.primary {
+            background: #0a1334;
+            color: white;
+            box-shadow: 4px 4px 12px rgba(10, 19, 52, 0.3);
+        }
+
+        .custom-alert .alert-btn.primary:hover {
+            transform: scale(1.05);
+            box-shadow: 6px 6px 16px rgba(10, 19, 52, 0.4);
+        }
+
+        .custom-alert .alert-btn.danger {
+            background: #9a0002;
+            color: white;
+            box-shadow: 4px 4px 12px rgba(154, 0, 2, 0.3);
+        }
+
+        .custom-alert .alert-btn.danger:hover {
+            transform: scale(1.05);
+            box-shadow: 6px 6px 16px rgba(154, 0, 2, 0.4);
+        }
+
+        .custom-alert .alert-btn.secondary {
+            background: #ddd;
+            color: #333;
+            box-shadow: 4px 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .custom-alert .alert-btn.secondary:hover {
+            transform: scale(1.05);
+            background: #ccc;
+        }
+
+        .custom-alert .alert-btn.success {
+            background: #4CAF50;
+            color: white;
+            box-shadow: 4px 4px 12px rgba(76, 175, 80, 0.3);
+        }
+
+        .custom-alert .alert-btn.success:hover {
+            transform: scale(1.05);
+            box-shadow: 6px 6px 16px rgba(76, 175, 80, 0.4);
+        }
+
+        /* ===== ریسپانسیو ===== */
+        @media (max-width: 600px) {
+            #homePage,
+            #gamePage1,
+            #gamePage2,
+            #gamePage3,
+            #gamePage4 {
+                padding: 20px 16px 24px;
+            }
+            .game-title {
+                font-size: 1.7rem;
+                white-space: normal;
+            }
+            .games-grid {
+                grid-template-columns: 1fr 1fr;
+                gap: 14px;
+            }
+            .game-btn {
+                padding: 20px 8px;
+                font-size: 1rem;
+            }
+            .game-btn .emoji-big {
+                font-size: 1.9rem;
+            }
+            .name-box {
+                padding: 8px 14px;
+                flex-wrap: wrap;
+            }
+            .name-box input {
+                width: 100%;
+                font-size: 1rem;
+                padding: 12px 8px;
+            }
+            .game-header {
+                padding: 10px 12px;
+            }
+            .game-header .stat {
+                font-size: 0.9rem;
+                padding: 4px 10px;
+            }
+            .options-container {
+                grid-template-columns: 1fr 1fr;
+                gap: 10px;
+            }
+            .option-btn {
+                padding: 12px 8px;
+                font-size: 1rem;
+            }
+            .word-item {
+                padding: 10px 15px;
+                font-size: 1.1rem;
+            }
+            .word-table {
+                gap: 8px;
+                max-width: 350px;
+            }
+            .table-cell {
+                font-size: 1.1rem;
+                padding: 8px;
+            }
+            .question-word {
+                font-size: 1.5rem;
+                padding: 10px;
+            }
+            .question-word .word-highlight {
+                font-size: 1.7rem;
+            }
+            .mirror-word {
+                font-size: 3rem;
+                letter-spacing: 5px;
+            }
+            .letter-box {
+                font-size: 3rem;
+                min-width: 60px;
+                min-height: 70px;
+            }
+            .letter-display {
+                padding: 30px 15px;
+                min-height: 120px;
+            }
+            .input-container input {
+                font-size: 1.1rem;
+                padding: 12px 15px;
+                min-width: 150px;
+            }
+            .input-container button {
+                padding: 12px 25px;
+                font-size: 1rem;
+                min-width: 90px;
+            }
+            .custom-alert {
+                padding: 25px 20px;
+                max-height: 85vh;
+            }
+            .custom-alert .alert-title {
+                font-size: 1.4rem;
+            }
+            .custom-alert .alert-message {
+                font-size: 1rem;
+            }
+            .custom-alert .alert-btn {
+                padding: 10px 20px;
+                font-size: 1rem;
+                min-width: 90px;
+            }
+        }
+
+        @media (max-width: 430px) {
+            .games-grid {
+                grid-template-columns: 1fr 1fr;
+                gap: 12px;
+            }
+            .game-btn {
+                padding: 16px 6px;
+                font-size: 0.9rem;
+            }
+            .game-btn .emoji-big {
+                font-size: 1.6rem;
+            }
+            .options-container {
+                grid-template-columns: 1fr 1fr;
+                gap: 8px;
+            }
+            .option-btn {
+                padding: 10px 6px;
+                font-size: 0.9rem;
+            }
+            .word-table {
+                gap: 6px;
+                max-width: 280px;
+            }
+            .table-cell {
+                font-size: 0.9rem;
+                padding: 6px;
+                border-radius: 12px;
+            }
+            .question-word {
+                font-size: 1.2rem;
+            }
+            .question-word .word-highlight {
+                font-size: 1.4rem;
+            }
+            .mirror-word {
+                font-size: 2.2rem;
+                letter-spacing: 3px;
+            }
+            .letter-box {
+                font-size: 2.5rem;
+                min-width: 50px;
+                min-height: 60px;
+            }
+            .input-container {
+                flex-direction: column;
+                align-items: center;
+            }
+            .input-container input {
+                width: 100%;
+                min-width: unset;
+            }
+            .input-container button {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- ===== صفحه اصلی ===== -->
+    <div id="homePage">
+        <h1 class="game-title">🧠 بازی حافظه‌ی املایی ✨</h1>
+
+        <div class="name-box">
+            <span class="user-icon">👤</span>
+            <input type="text" id="fullName" placeholder="نام و نام خانوادگی" autofocus />
+        </div>
+
+        <div class="games-grid">
+            <button class="game-btn btn-1" onclick="startGame('واژه‌ی غایب')">
+                <span class="emoji-big">🔍</span>
+                واژه‌ی غایب
+            </button>
+            <button class="game-btn btn-2" onclick="startGame('مکان‌یاب واژه‌ها')">
+                <span class="emoji-big">📍</span>
+                مکان‌یاب واژه‌ها
+            </button>
+            <button class="game-btn btn-3" onclick="startGame('واژه‌های آینه‌ای')">
+                <span class="emoji-big">🔄</span>
+                واژه‌های آینه‌ای
+            </button>
+            <button class="game-btn btn-4" onclick="startGame('واژه‌ساز')">
+                <span class="emoji-big">✏️</span>
+                واژه‌ساز
+            </button>
+        </div>
+    </div>
+
+    <!-- ===== صفحه بازی ۱: واژه‌ی غایب ===== -->
+    <div id="gamePage1">
+        <div class="game-header">
+            <button class="home-btn" onclick="confirmGoHome('gamePage1')">🏠 خانه</button>
+            <div class="stat">
+                <span class="stat-icon">⏱️</span>
+                <span id="mainTimer1">۵:۰۰</span>
+            </div>
+            <div class="stat">
+                <span class="stat-icon">🏆</span>
+                <span id="scoreDisplay1">۰</span>
+            </div>
+            <div class="stat">
+                <span id="livesDisplay1">❤️❤️❤️</span>
+            </div>
+            <div class="stat">
+                <span id="hintsDisplay1">💡💡💡</span>
+            </div>
+        </div>
+
+        <div class="words-display" id="wordsDisplay1"></div>
+        <div class="question-text" id="questionText1">❓ کدام کلمه جدید است؟</div>
+        <div class="options-container" id="optionsContainer1"></div>
+        <div class="feedback" id="feedback1"></div>
+
+        <div class="game-footer">
+            <button class="hint-btn" id="hintBtn1" onclick="useHint1()">💡 راهنمایی</button>
+            <div class="question-timer-container" id="questionTimerContainer1">
+                <span class="stat-icon">⏱️</span>
+                <span id="questionTimer1">۱۵</span>
+                <span>ثانیه</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== صفحه بازی ۲: مکان‌یاب واژه‌ها ===== -->
+    <div id="gamePage2">
+        <div class="game-header">
+            <button class="home-btn" onclick="confirmGoHome('gamePage2')">🏠 خانه</button>
+            <div class="stat">
+                <span class="stat-icon">⏱️</span>
+                <span id="mainTimer2">5:00</span>
+            </div>
+            <div class="stat">
+                <span class="stat-icon">🏆</span>
+                <span id="scoreDisplay2">0</span>
+            </div>
+            <div class="stat">
+                <span id="livesDisplay2">❤️❤️❤️❤️❤️</span>
+            </div>
+            <div class="stat">
+                <span class="stat-icon">📌</span>
+                <span id="progressDisplay2">0/3</span>
+            </div>
+        </div>
+
+        <div class="table-container">
+            <div class="word-table" id="wordTable2">
+                <div class="table-cell" data-index="0"></div>
+                <div class="table-cell" data-index="1"></div>
+                <div class="table-cell" data-index="2"></div>
+                <div class="table-cell" data-index="3"></div>
+                <div class="table-cell" data-index="4"></div>
+                <div class="table-cell" data-index="5"></div>
+            </div>
+        </div>
+
+        <div class="status-message" id="statusMessage2">⏳ در حال نمایش کلمات...</div>
+        <div class="round-info" id="roundInfo2">مرحله 1</div>
+        <div class="question-word" id="questionWord2">
+            کلمه <span class="word-highlight" id="targetWord2">???</span> را پیدا کنید
+        </div>
+        <div class="question-progress" id="questionProgress2">سوال <span id="currentQuestion2">1</span> از 3</div>
+        <div class="feedback" id="feedback2"></div>
+    </div>
+
+    <!-- ===== صفحه بازی ۳: واژه‌های آینه‌ای ===== -->
+    <div id="gamePage3">
+        <div class="game-header">
+            <button class="home-btn" onclick="confirmGoHome('gamePage3')">🏠 خانه</button>
+            <div class="stat">
+                <span class="stat-icon">⏱️</span>
+                <span id="mainTimer3">3:00</span>
+            </div>
+            <div class="stat">
+                <span class="stat-icon">🏆</span>
+                <span id="scoreDisplay3">0</span>
+            </div>
+            <div class="stat">
+                <span id="livesDisplay3">❤️❤️❤️</span>
+            </div>
+        </div>
+
+        <div class="mirror-container">
+            <div class="mirror-word" id="mirrorWord3">????</div>
+            <div class="mirror-hint">🔍 این کلمه را در آینه ببینید!</div>
+        </div>
+
+        <div class="input-container">
+            <input type="text" id="userInput3" placeholder="کلمه را اینجا بنویسید..." autofocus />
+            <button id="submitBtn3" onclick="checkAnswer3()">✓ تایید</button>
+        </div>
+
+        <div class="feedback" id="feedback3"></div>
+        <div class="status-message" id="statusMessage3"></div>
+    </div>
+
+    <!-- ===== صفحه بازی ۴: واژه‌ساز ===== -->
+    <div id="gamePage4">
+        <div class="game-header">
+            <button class="home-btn" onclick="confirmGoHome('gamePage4')">🏠 خانه</button>
+            <div class="stat">
+                <span class="stat-icon">⏱️</span>
+                <span id="mainTimer4">3:00</span>
+            </div>
+            <div class="stat">
+                <span class="stat-icon">🏆</span>
+                <span id="scoreDisplay4">0</span>
+            </div>
+            <div class="stat">
+                <span id="livesDisplay4">❤️❤️❤️</span>
+            </div>
+        </div>
+
+        <div class="letter-display">
+            <div class="letter-box" id="letterBox4">?</div>
+            <div class="letter-status" id="letterStatus4">در حال نمایش...</div>
+        </div>
+
+        <div class="input-container">
+            <input type="text" id="userInput4" placeholder="کلمه را اینجا بنویسید..." disabled autofocus />
+            <button id="submitBtn4" onclick="checkAnswer4()" disabled>✓ تایید</button>
+        </div>
+
+        <div class="feedback" id="feedback4"></div>
+        <div class="status-message" id="statusMessage4"></div>
+    </div>
+
+    <!-- ===== پاپ‌آپ سفارشی ===== -->
+    <div class="custom-alert-overlay" id="customAlert">
+        <div class="custom-alert">
+            <div class="alert-content">
+                <div class="alert-icon" id="alertIcon">🎯</div>
+                <div class="alert-title" id="alertTitle">عنوان</div>
+                <div class="alert-message" id="alertMessage">متن پیام</div>
+            </div>
+            <div class="alert-buttons" id="alertButtons"></div>
+        </div>
+    </div>
+
+    <script>
+        // ===== لیست کلمات (جایگزین شده با کلمات جدید) =====
+        const allWords = [
+            "تابستان", "گوشه", "محله", "هنوز", "همراه", "اطراف", "بعضی", "قنادی", "صف", "گلدسته",
+            "فضا", "انتها", "عظمت", "معرفی", "قبلا", "خاطرات", "لحظه", "نگاه", "بخواهید",
+            "هوا", "گذشته", "فعالیت", "بعضی", "موضوع", "مهم", "علاقه", "بحث", "بهتر", "نظم",
+            "تعطیل", "طرف", "صورت", "چطور", "گفت", "گذاشت", "مخصوص", "استخر", "راهنمایی", "طول",
+            "هفته", "گذشته", "آموزگار", "همراه", "نگاه", "گزارش", "صدا", "بعد", "محیط", "علاوه",
+            "گویا", "صبح", "پاکیزگی", "اهمیت",
+            "منتظر", "لحظه", "بهترین", "کنجکاو", "خواست", "تعجب", "توضیح", "عادت", "صوت", "ضبط",
+            "بوق", "ترقه", "فشفشه", "گنجشک", "قشنگ", "نگاه",
+            "غذا", "صحرا", "صاحب", "نخواهد", "بخواهد", "خواهش", "خویش", "دهقان", "خطر", "تصمیم",
+            "ذهن", "حتی", "شهید", "موفقیت", "علت", "تحمیلی", "گلوله", "هنگام", "طفل", "قطار",
+            "شعله", "خطر", "احترام", "گذاشت",
+            "معمولی", "عجب", "باصفا", "گودال", "عمر", "معلوم", "طول", "تعجب", "گفت", "همین",
+            "حضرت", "لطیف", "ضعیف", "فقیر", "تن", "دعا", "اتاق", "وقتی", "عطر", "بهشت",
+            "سفال", "نغمه", "رنگارنگ", "انتها", "چقدر", "فروغ", "حس", "عزیز", "غایب",
+            "لذت", "ضربان", "بعضی", "لحظه", "شعر", "فقط", "حقیقت", "همراه", "خلاصه", "حالت",
+            "حاتم", "قربانی", "عرب", "گوشه", "عمل", "حکایت", "تحصیلات", "اهل", "احادیث", "گلستان",
+            "آثار", "حتما", "شاعر",
+            "نعمت", "مقدس", "جهان", "عاشق", "رونق", "حریص", "دهان", "حافظ", "طمع", "زر",
+            "گروه", "دقیقه", "میهن", "مناطق", "نگهبان", "اصلی", "اهمیت", "علم", "صنعت", "معروف",
+            "همبستگی", "اعضا", "دفاع", "آموزگار", "وظیفه", "همدلی",
+            "افق", "تن", "ساحل", "خواب", "غوطه", "زلال", "زندگی", "مهربان", "ماهی", "مثل",
+            "پهناور", "بگذر", "گاه", "مشغول", "حاشیه", "تفریح", "بگو", "قایق", "تند", "هیچ",
+            "روزگار",
+            "رخت", "خواب", "نقطه", "وصل", "هیجان", "نهایت", "مثل", "هدیه", "احوال", "عجیب",
+            "فضا", "ناگهان"
+        ];
+
+        let playerName = '';
+
+        // ===== توابع صدا =====
+        function playSound(type) {
+            try {
+                const audioContext = new(window.AudioContext || window.webkitAudioContext)();
+
+                if (type === 'correct') {
+                    const osc = audioContext.createOscillator();
+                    const gain = audioContext.createGain();
+                    osc.connect(gain);
+                    gain.connect(audioContext.destination);
+                    osc.frequency.value = 523.25;
+                    osc.type = 'sine';
+                    gain.gain.value = 0.3;
+                    osc.start();
+                    setTimeout(() => { osc.frequency.value = 659.25; }, 100);
+                    setTimeout(() => { osc.frequency.value = 783.99; }, 200);
+                    setTimeout(() => { osc.stop(); }, 400);
+                } else if (type === 'wrong') {
+                    const osc = audioContext.createOscillator();
+                    const gain = audioContext.createGain();
+                    osc.connect(gain);
+                    gain.connect(audioContext.destination);
+                    osc.frequency.value = 300;
+                    osc.type = 'sawtooth';
+                    gain.gain.value = 0.2;
+                    osc.start();
+                    setTimeout(() => { osc.stop(); }, 300);
+                } else if (type === 'click') {
+                    const osc = audioContext.createOscillator();
+                    const gain = audioContext.createGain();
+                    osc.connect(gain);
+                    gain.connect(audioContext.destination);
+                    osc.frequency.value = 800;
+                    osc.type = 'sine';
+                    gain.gain.value = 0.15;
+                    osc.start();
+                    setTimeout(() => { osc.stop(); }, 80);
+                } else if (type === 'hint') {
+                    const osc = audioContext.createOscillator();
+                    const gain = audioContext.createGain();
+                    osc.connect(gain);
+                    gain.connect(audioContext.destination);
+                    osc.frequency.value = 440;
+                    osc.type = 'sine';
+                    gain.gain.value = 0.2;
+                    osc.start();
+                    setTimeout(() => { osc.frequency.value = 554.37; }, 150);
+                    setTimeout(() => { osc.stop(); }, 300);
+                } else if (type === 'gameover') {
+                    const osc = audioContext.createOscillator();
+                    const gain = audioContext.createGain();
+                    osc.connect(gain);
+                    gain.connect(audioContext.destination);
+                    osc.frequency.value = 400;
+                    osc.type = 'square';
+                    gain.gain.value = 0.15;
+                    osc.start();
+                    setTimeout(() => { osc.frequency.value = 300; }, 200);
+                    setTimeout(() => { osc.frequency.value = 200; }, 400);
+                    setTimeout(() => { osc.stop(); }, 600);
+                } else if (type === 'success') {
+                    const osc = audioContext.createOscillator();
+                    const gain = audioContext.createGain();
+                    osc.connect(gain);
+                    gain.connect(audioContext.destination);
+                    osc.frequency.value = 523.25;
+                    osc.type = 'sine';
+                    gain.gain.value = 0.2;
+                    osc.start();
+                    setTimeout(() => { osc.frequency.value = 659.25; }, 150);
+                    setTimeout(() => { osc.frequency.value = 783.99; }, 300);
+                    setTimeout(() => { osc.frequency.value = 1046.50; }, 450);
+                    setTimeout(() => { osc.stop(); }, 600);
+                } else if (type === 'tick') {
+                    const osc = audioContext.createOscillator();
+                    const gain = audioContext.createGain();
+                    osc.connect(gain);
+                    gain.connect(audioContext.destination);
+                    osc.frequency.value = 600;
+                    osc.type = 'sine';
+                    gain.gain.value = 0.08;
+                    osc.start();
+                    setTimeout(() => { osc.stop(); }, 50);
+                }
+            } catch (e) {}
+        }
+
+        // ===== پاپ‌آپ سفارشی =====
+        function showCustomAlert(icon, title, message, buttons) {
+            return new Promise((resolve) => {
+                const overlay = document.getElementById('customAlert');
+                document.getElementById('alertIcon').textContent = icon;
+                document.getElementById('alertTitle').textContent = title;
+                document.getElementById('alertMessage').innerHTML = message;
+                const buttonsContainer = document.getElementById('alertButtons');
+                buttonsContainer.innerHTML = '';
+
+                buttons.forEach((btn, index) => {
+                    const button = document.createElement('button');
+                    button.className = `alert-btn ${btn.class}`;
+                    button.textContent = btn.text;
+                    button.onclick = () => {
+                        overlay.style.display = 'none';
+                        resolve(index);
+                    };
+                    buttonsContainer.appendChild(button);
+                });
+
+                overlay.style.display = 'flex';
+            });
+        }
+
+        // ============================================================
+        // بازی ۱: واژه‌ی غایب (کامل)
+        // ============================================================
+        let gameState1 = {
+            score: 0,
+            lives: 3,
+            hints: 3,
+            timeLeft: 300,
+            isPlaying: false,
+            timerInterval: null,
+            questionInterval: null,
+            usedWords: [],
+            currentNewWord: '',
+            isAnswering: false,
+            hintUsedInRound: false
+        };
+
+        function showInstructions1() {
+            const message =
+                '🎯 <span class="highlight">بازی واژه‌ی غایب</span><br><br>' +
+                '📝 <b>قوانین بازی:</b><br>' +
+                '• <span class="highlight">۶</span> کلمه به مدت <span class="highlight">۵</span> ثانیه نمایش داده می‌شود<br>' +
+                '• سپس <span class="highlight">۶</span> گزینه نمایش داده می‌شود<br>' +
+                '• <span class="highlight">۵</span> گزینه همان کلمات اولیه هستند<br>' +
+                '• <span class="highlight">۱</span> گزینه جدید است<br>' +
+                '• شما باید تشخیص دهید <span class="highlight">کدام کلمه جدید است</span><br><br>' +
+                '⏱️ <b>زمان:</b><br>' +
+                '• هر سوال: <span class="highlight">۱۵</span> ثانیه<br>' +
+                '• کل بازی: <span class="highlight">۵</span> دقیقه<br><br>' +
+                '❤️ <b>جان‌ها:</b> <span class="highlight">۳</span> جان (هر اشتباه ۱ جان کم می‌شود)<br>' +
+                '💡 <b>راهنمایی:</b> <span class="highlight">۳</span> بار می‌توانید استفاده کنید (۲ گزینه حذف می‌شوند)<br>' +
+                '🏆 <b>امتیاز:</b> هر پاسخ صحیح = <span class="highlight">۱</span> امتیاز';
+
+            return showCustomAlert('🎯', 'آماده‌اید؟', message, [
+                { text: '🚀 شروع کن!', class: 'primary' }
+            ]);
+        }
+
+        function initializeGame1() {
+            gameState1.score = 0;
+            gameState1.lives = 3;
+            gameState1.hints = 3;
+            gameState1.timeLeft = 300;
+            gameState1.isPlaying = true;
+            gameState1.usedWords = [];
+            gameState1.isAnswering = false;
+            gameState1.hintUsedInRound = false;
+
+            document.getElementById('homePage').style.display = 'none';
+            document.getElementById('gamePage1').style.display = 'block';
+
+            updateScoreDisplay1();
+            updateLivesDisplay1();
+            updateHintsDisplay1();
+            updateTimerDisplay1();
+
+            document.getElementById('hintBtn1').style.display = 'none';
+            document.getElementById('questionTimerContainer1').style.display = 'none';
+            document.getElementById('questionText1').style.display = 'none';
+
+            startMainTimer1();
+            generateNewQuestion1();
+        }
+
+        function generateNewQuestion1() {
+            if (!gameState1.isPlaying) return;
+
+            gameState1.isAnswering = false;
+            gameState1.hintUsedInRound = false;
+            document.getElementById('hintBtn1').style.display = 'none';
+            document.getElementById('questionTimerContainer1').style.display = 'none';
+            document.getElementById('questionText1').style.display = 'none';
+            document.getElementById('optionsContainer1').style.display = 'none';
+
+            let availableWords = allWords.filter(w => !gameState1.usedWords.includes(w));
+            if (availableWords.length < 7) {
+                gameState1.usedWords = [];
+                availableWords = allWords;
+            }
+
+            const shuffled = [...availableWords].sort(() => Math.random() - 0.5);
+            const selectedWords = shuffled.slice(0, 6);
+
+            const replaceIndex = Math.floor(Math.random() * 6);
+            const replacedWord = selectedWords[replaceIndex];
+
+            let newWords = allWords.filter(w => !selectedWords.includes(w));
+            if (newWords.length === 0) {
+                newWords = allWords.filter(w => w !== replacedWord);
+            }
+            const newWord = newWords[Math.floor(Math.random() * newWords.length)];
+            gameState1.currentNewWord = newWord;
+
+            const options = [];
+            for (let i = 0; i < selectedWords.length; i++) {
+                options.push(i === replaceIndex ? newWord : selectedWords[i]);
+            }
+            const shuffledOptions = options.sort(() => Math.random() - 0.5);
+
+            const wordsDisplay = document.getElementById('wordsDisplay1');
+            wordsDisplay.innerHTML = selectedWords.map(w =>
+                `<span class="word-item">${w}</span>`
+            ).join('');
+            wordsDisplay.style.display = 'flex';
+
+            document.getElementById('optionsContainer1').style.display = 'none';
+            document.getElementById('feedback1').style.display = 'none';
+            document.getElementById('questionTimer1').textContent = '۱۵';
+
+            if (gameState1.questionInterval) clearInterval(gameState1.questionInterval);
+
+            setTimeout(() => {
+                if (!gameState1.isPlaying) return;
+                wordsDisplay.style.display = 'none';
+                const optionsContainer = document.getElementById('optionsContainer1');
+                optionsContainer.style.display = 'grid';
+                optionsContainer.innerHTML = shuffledOptions.map((word) =>
+                    `<button class="option-btn" onclick="checkAnswer1('${word}')">${word}</button>`
+                ).join('');
+
+                document.getElementById('questionText1').style.display = 'block';
+                document.getElementById('questionTimerContainer1').style.display = 'flex';
+                if (gameState1.hints > 0 && !gameState1.hintUsedInRound) {
+                    document.getElementById('hintBtn1').style.display = 'block';
+                    document.getElementById('hintBtn1').disabled = false;
+                }
+                document.getElementById('questionText1').textContent = '❓ کدام کلمه جدید است؟';
+
+                startQuestionTimer1();
+            }, 5000);
+        }
+
+        function checkAnswer1(selected) {
+            if (gameState1.isAnswering || !gameState1.isPlaying) return;
+            gameState1.isAnswering = true;
+
+            const correct = gameState1.currentNewWord;
+            const buttons = document.querySelectorAll('#optionsContainer1 .option-btn');
+
+            document.getElementById('hintBtn1').style.display = 'none';
+            document.getElementById('hintBtn1').disabled = true;
+            buttons.forEach(btn => btn.disabled = true);
+
+            buttons.forEach(btn => {
+                if (btn.textContent === correct) btn.classList.add('correct');
+                if (btn.textContent === selected && selected !== correct) btn.classList.add('wrong');
+            });
+
+            if (selected === correct) {
+                playSound('correct');
+                gameState1.score++;
+                updateScoreDisplay1();
+                showFeedback1(true);
+                setTimeout(() => { if (gameState1.isPlaying) generateNewQuestion1(); }, 1000);
+            } else {
+                playSound('wrong');
+                gameState1.lives--;
+                updateLivesDisplay1();
+                showFeedback1(false);
+                if (gameState1.lives <= 0) {
+                    setTimeout(() => endGame1(false), 800);
+                } else {
+                    setTimeout(() => { if (gameState1.isPlaying) generateNewQuestion1(); }, 1000);
+                }
+            }
+        }
+
+        function startMainTimer1() {
+            if (gameState1.timerInterval) clearInterval(gameState1.timerInterval);
+            gameState1.timerInterval = setInterval(() => {
+                gameState1.timeLeft--;
+                updateTimerDisplay1();
+                if (gameState1.timeLeft <= 0) endGame1(true);
+            }, 1000);
+        }
+
+        function startQuestionTimer1() {
+            if (gameState1.questionInterval) clearInterval(gameState1.questionInterval);
+            let timeLeft = 15;
+            document.getElementById('questionTimer1').textContent = timeLeft;
+            gameState1.questionInterval = setInterval(() => {
+                timeLeft--;
+                document.getElementById('questionTimer1').textContent = timeLeft;
+                if (timeLeft <= 0) {
+                    clearInterval(gameState1.questionInterval);
+                    if (!gameState1.isAnswering && gameState1.isPlaying) {
+                        gameState1.isAnswering = true;
+                        playSound('wrong');
+                        gameState1.lives--;
+                        updateLivesDisplay1();
+                        showFeedback1(false);
+                        document.getElementById('hintBtn1').style.display = 'none';
+                        document.getElementById('hintBtn1').disabled = true;
+                        const buttons = document.querySelectorAll('#optionsContainer1 .option-btn');
+                        buttons.forEach(btn => {
+                            btn.disabled = true;
+                            if (btn.textContent === gameState1.currentNewWord) btn.classList.add('correct');
+                        });
+                        if (gameState1.lives <= 0) {
+                            setTimeout(() => endGame1(false), 800);
+                        } else {
+                            setTimeout(() => { if (gameState1.isPlaying) generateNewQuestion1(); }, 1000);
+                        }
+                    }
+                }
+            }, 1000);
+        }
+
+        function useHint1() {
+            if (gameState1.hints <= 0 || gameState1.isAnswering || !gameState1.isPlaying || gameState1.hintUsedInRound)
+            return;
+            playSound('hint');
+            gameState1.hints--;
+            gameState1.hintUsedInRound = true;
+            updateHintsDisplay1();
+            document.getElementById('hintBtn1').style.display = 'none';
+            document.getElementById('hintBtn1').disabled = true;
+
+            const buttons = document.querySelectorAll('#optionsContainer1 .option-btn');
+            const correctWord = gameState1.currentNewWord;
+            const wrongButtons = [];
+            buttons.forEach(btn => {
+                if (btn.textContent !== correctWord && !btn.disabled && btn.style.display !== 'none') {
+                    wrongButtons.push(btn);
+                }
+            });
+            const shuffledWrong = wrongButtons.sort(() => Math.random() - 0.5);
+            for (let i = 0; i < 2 && i < shuffledWrong.length; i++) {
+                shuffledWrong[i].style.display = 'none';
+            }
+        }
+
+        function showFeedback1(isCorrect) {
+            const feedback = document.getElementById('feedback1');
+            feedback.textContent = isCorrect ? '✅ درست! 🎉' : '❌ اشتباه!';
+            feedback.style.color = isCorrect ? '#4CAF50' : '#f44336';
+            feedback.style.display = 'block';
+        }
+
+        function updateTimerDisplay1() {
+            const m = Math.floor(gameState1.timeLeft / 60);
+            const s = gameState1.timeLeft % 60;
+            document.getElementById('mainTimer1').textContent = `${m}:${s.toString().padStart(2, '0')}`;
+        }
+
+        function updateScoreDisplay1() {
+            document.getElementById('scoreDisplay1').textContent = gameState1.score;
+        }
+
+        function updateLivesDisplay1() {
+            document.getElementById('livesDisplay1').textContent = '❤️'.repeat(Math.max(0, gameState1.lives));
+        }
+
+        function updateHintsDisplay1() {
+            document.getElementById('hintsDisplay1').textContent = '💡'.repeat(Math.max(0, gameState1.hints));
+        }
+
+        async function endGame1(byTime) {
+            gameState1.isPlaying = false;
+            if (gameState1.timerInterval) { clearInterval(gameState1.timerInterval);
+                gameState1.timerInterval = null; }
+            if (gameState1.questionInterval) { clearInterval(gameState1.questionInterval);
+                gameState1.questionInterval = null; }
+
+            const finalScore = gameState1.score;
+            const totalQuestions = gameState1.score + (3 - gameState1.lives);
+            const accuracy = totalQuestions > 0 ? Math.round((gameState1.score / totalQuestions) * 100) : 0;
+
+            let icon, title, message;
+            if (byTime && gameState1.lives > 0 && finalScore >= 3) {
+                playSound('success');
+                icon = '🎉';
+                title = 'تبریک!';
+                message =
+                    `🌟 <span class="user-name">${playerName}</span> عزیز، خسته نباشید! این بازی کمک می‌کند کلمات بهتر در ذهن شما ثبت شوند.<br><br>` +
+                    `🏆 <b>امتیاز نهایی:</b> <span class="highlight">${finalScore}</span><br>` +
+                    `📊 <b>دقت:</b> <span class="success-text">${accuracy}%</span><br>` +
+                    `❤️ <b>جان‌های باقی‌مانده:</b> <span class="highlight">${gameState1.lives}</span>`;
+            } else {
+                playSound('gameover');
+                icon = gameState1.lives <= 0 ? '💔' : '⏰';
+                title = gameState1.lives <= 0 ? 'بازی تمام شد!' : 'زمان تمام شد!';
+                message =
+                    `🌟 <span class="user-name">${playerName}</span> عزیز، خسته نباشید! این بازی کمک می‌کند کلمات بهتر در ذهن شما ثبت شوند.<br><br>` +
+                    `🏆 <b>امتیاز نهایی:</b> <span class="highlight">${finalScore}</span><br>` +
+                    `📊 <b>دقت:</b> <span class="highlight">${accuracy}%</span>`;
+            }
+            await showCustomAlert(icon, title, message, [{ text: '🏠 بازگشت به خانه', class: 'primary' }]);
+            goHome();
+        }
+
+        // ============================================================
+        // بازی ۲: مکان‌یاب واژه‌ها (کامل)
+        // ============================================================
+        let gameState2 = {
+            score: 0,
+            lives: 5,
+            timeLeft: 300,
+            isPlaying: false,
+            timerInterval: null,
+            displayInterval: null,
+            currentWords: [],
+            wordPositions: {},
+            currentQuestionIndex: 0,
+            questions: [],
+            isAnswering: false,
+            isDisplayPhase: true,
+            totalQuestions: 3,
+            usedWords: []
+        };
+        let roundNumber2 = 1;
+
+        function showInstructions2() {
+            const message =
+                '📍 <span class="highlight">بازی مکان‌یاب واژه‌ها</span><br><br>' +
+                '📝 <b>قوانین بازی:</b><br>' +
+                '• یک جدول <span class="highlight">۳×۲</span> شامل ۶ کلمه به شما نمایش داده می‌شود<br>' +
+                '• کلمات هر <span class="highlight">۱</span> ثانیه یکی یکی در خانه‌ها ظاهر می‌شوند<br>' +
+                '• بعد از نمایش کلمه ششم، کل کلمات به مدت <span class="highlight">۳</span> ثانیه به شکل کامل نمایش داده می‌شوند<br>' +
+                '• سپس کلمات از جدول محو می‌شوند<br>' +
+                '• از شما <span class="highlight">۳</span> کلمه پرسیده می‌شود<br>' +
+                '• باید <span class="highlight">مکان دقیق</span> هر کلمه را در جدول پیدا کنید<br><br>' +
+                '⏱️ <b>زمان:</b> کل بازی <span class="highlight">۵</span> دقیقه<br>' +
+                '❤️ <b>جان‌ها:</b> <span class="highlight">۵</span> جان (هر اشتباه ۱ جان کم می‌شود)<br>' +
+                '🏆 <b>امتیاز:</b> هر پاسخ صحیح = <span class="highlight">۱</span> امتیاز';
+
+            return showCustomAlert('📍', 'آماده‌اید؟', message, [
+                { text: '🚀 شروع کن!', class: 'primary' }
+            ]);
+        }
+
+        function initializeGame2() {
+            gameState2.score = 0;
+            gameState2.lives = 5;
+            gameState2.timeLeft = 300;
+            gameState2.isPlaying = true;
+            gameState2.isAnswering = false;
+            gameState2.isDisplayPhase = true;
+            gameState2.currentQuestionIndex = 0;
+            gameState2.questions = [];
+            gameState2.usedWords = [];
+            roundNumber2 = 1;
+
+            document.getElementById('homePage').style.display = 'none';
+            document.getElementById('gamePage2').style.display = 'block';
+
+            updateScoreDisplay2();
+            updateLivesDisplay2();
+            updateTimerDisplay2();
+            updateProgressDisplay2();
+
+            document.getElementById('questionWord2').style.display = 'none';
+            document.getElementById('questionProgress2').style.display = 'none';
+            document.getElementById('feedback2').style.display = 'none';
+            document.getElementById('statusMessage2').style.display = 'block';
+            document.getElementById('roundInfo2').style.display = 'block';
+            document.getElementById('roundInfo2').textContent = `مرحله ${roundNumber2}`;
+            document.getElementById('statusMessage2').textContent = '⏳ در حال آماده‌سازی کلمات...';
+
+            const cells = document.querySelectorAll('#wordTable2 .table-cell');
+            cells.forEach(cell => { cell.textContent = '';
+                cell.className = 'table-cell'; });
+
+            startMainTimer2();
+            generateWords2();
+        }
+
+        function generateWords2() {
+            let availableWords = allWords.filter(w => !gameState2.usedWords.includes(w));
+            if (availableWords.length < 6) {
+                gameState2.usedWords = [];
+                availableWords = allWords;
+            }
+            const shuffled = [...availableWords].sort(() => Math.random() - 0.5);
+            const selectedWords = shuffled.slice(0, 6);
+            gameState2.currentWords = selectedWords;
+            gameState2.wordPositions = {};
+            selectedWords.forEach((word, index) => { gameState2.wordPositions[word] = index; });
+            const shuffledWords = [...selectedWords].sort(() => Math.random() - 0.5);
+            gameState2.questions = shuffledWords.slice(0, 3);
+            gameState2.currentQuestionIndex = 0;
+            startDisplayPhase2();
+        }
+
+        function startDisplayPhase2() {
+            gameState2.isDisplayPhase = true;
+            const cells = document.querySelectorAll('#wordTable2 .table-cell');
+            cells.forEach(cell => { cell.textContent = '';
+                cell.className = 'table-cell'; });
+            document.getElementById('feedback2').style.display = 'none';
+            document.getElementById('feedback2').textContent = '';
+            document.getElementById('statusMessage2').textContent = '⏳ در حال نمایش کلمات...';
+            document.getElementById('statusMessage2').style.display = 'block';
+            document.getElementById('questionWord2').style.display = 'none';
+            document.getElementById('questionProgress2').style.display = 'none';
+
+            let index = 0;
+            gameState2.displayInterval = setInterval(() => {
+                if (index >= 6) {
+                    clearInterval(gameState2.displayInterval);
+                    document.getElementById('statusMessage2').textContent = '✅ زمان نمایش کامل!';
+                    playSound('tick');
+                    setTimeout(() => {
+                        cells.forEach(cell => { cell.className = 'table-cell hidden-cell';
+                            cell.textContent = ''; });
+                        document.getElementById('statusMessage2').textContent = '🔍 کلمات محو شدند!';
+                        setTimeout(() => { startQuestionPhase2(); }, 500);
+                    }, 3000);
+                    return;
+                }
+                playSound('tick');
+                const cell = cells[index];
+                cell.textContent = gameState2.currentWords[index];
+                cell.className = 'table-cell showing';
+                document.getElementById('statusMessage2').textContent = `📝 نمایش کلمه ${index + 1} از 6`;
+                setTimeout(() => { cell.className = 'table-cell'; }, 900);
+                index++;
+            }, 1000);
+        }
+
+        function startQuestionPhase2() {
+            gameState2.isDisplayPhase = false;
+            gameState2.isAnswering = false;
+            document.getElementById('statusMessage2').style.display = 'none';
+            const cells = document.querySelectorAll('#wordTable2 .table-cell');
+            gameState2.currentWords.forEach((word, index) => {
+                cells[index].textContent = word;
+                cells[index].className = 'table-cell hidden-cell';
+            });
+            showNextQuestion2();
+        }
+
+        function showNextQuestion2() {
+            if (gameState2.currentQuestionIndex >= gameState2.totalQuestions) {
+                roundNumber2++;
+                document.getElementById('roundInfo2').textContent = `مرحله ${roundNumber2}`;
+                const cells = document.querySelectorAll('#wordTable2 .table-cell');
+                cells.forEach(cell => { cell.className = 'table-cell hidden-cell';
+                    cell.textContent = ''; });
+                gameState2.currentWords.forEach(word => {
+                    if (!gameState2.usedWords.includes(word)) gameState2.usedWords.push(word);
+                });
+                document.getElementById('feedback2').style.display = 'none';
+                document.getElementById('feedback2').textContent = '';
+                document.getElementById('questionWord2').style.display = 'none';
+                document.getElementById('questionProgress2').style.display = 'none';
+                setTimeout(() => { if (gameState2.isPlaying) generateWords2(); }, 1000);
+                return;
+            }
+
+            gameState2.isAnswering = false;
+            const targetWord = gameState2.questions[gameState2.currentQuestionIndex];
+            document.getElementById('targetWord2').textContent = targetWord;
+            document.getElementById('questionWord2').style.display = 'block';
+            document.getElementById('questionProgress2').style.display = 'block';
+            document.getElementById('currentQuestion2').textContent = gameState2.currentQuestionIndex + 1;
+            document.getElementById('feedback2').style.display = 'none';
+
+            const cells = document.querySelectorAll('#wordTable2 .table-cell');
+            gameState2.currentWords.forEach((word, index) => {
+                if (cells[index].textContent !== word) cells[index].textContent = word;
+                cells[index].className = 'table-cell hidden-cell';
+                cells[index].style.cursor = 'pointer';
+                cells[index].onclick = function() { handleCellClick2(this, targetWord); };
+            });
+        }
+
+        function handleCellClick2(cell, targetWord) {
+            if (gameState2.isAnswering || !gameState2.isPlaying || gameState2.isDisplayPhase) return;
+            const word = cell.textContent;
+            if (!word || word.trim() === '') return;
+            gameState2.isAnswering = true;
+
+            const cells = document.querySelectorAll('#wordTable2 .table-cell');
+            cells.forEach(c => { c.style.cursor = 'default';
+                c.onclick = null; });
+
+            const correctIndex = gameState2.wordPositions[targetWord];
+            const correctCell = document.querySelector(`#wordTable2 .table-cell[data-index="${correctIndex}"]`);
+
+            if (word === targetWord) {
+                playSound('correct');
+                gameState2.score++;
+                updateScoreDisplay2();
+                cell.className = 'table-cell selected-correct';
+                cell.textContent = '';
+                const feedback = document.getElementById('feedback2');
+                feedback.textContent = '✅ درست! 🎉';
+                feedback.style.color = '#4CAF50';
+                feedback.style.display = 'block';
+                gameState2.currentQuestionIndex++;
+                updateProgressDisplay2();
+                setTimeout(() => { if (gameState2.isPlaying) showNextQuestion2(); }, 800);
+            } else {
+                playSound('wrong');
+                gameState2.lives--;
+                updateLivesDisplay2();
+                cell.className = 'table-cell selected-wrong';
+                cell.textContent = '';
+                if (correctCell) { correctCell.className = 'table-cell show-correct';
+                    correctCell.textContent = ''; }
+                const feedback = document.getElementById('feedback2');
+                feedback.textContent = '❌ اشتباه!';
+                feedback.style.color = '#f44336';
+                feedback.style.display = 'block';
+                if (gameState2.lives <= 0) { setTimeout(() => endGame2(false), 1500); return; }
+                gameState2.currentQuestionIndex++;
+                updateProgressDisplay2();
+                setTimeout(() => { if (gameState2.isPlaying) showNextQuestion2(); }, 1500);
+            }
+        }
+
+        function startMainTimer2() {
+            if (gameState2.timerInterval) clearInterval(gameState2.timerInterval);
+            gameState2.timerInterval = setInterval(() => {
+                gameState2.timeLeft--;
+                updateTimerDisplay2();
+                if (gameState2.timeLeft <= 0) endGame2(false);
+            }, 1000);
+        }
+
+        function updateTimerDisplay2() {
+            const m = Math.floor(gameState2.timeLeft / 60);
+            const s = gameState2.timeLeft % 60;
+            document.getElementById('mainTimer2').textContent = `${m}:${s.toString().padStart(2, '0')}`;
+        }
+
+        function updateScoreDisplay2() {
+            document.getElementById('scoreDisplay2').textContent = gameState2.score;
+        }
+
+        function updateLivesDisplay2() {
+            document.getElementById('livesDisplay2').textContent = '❤️'.repeat(Math.max(0, gameState2.lives));
+        }
+
+        function updateProgressDisplay2() {
+            document.getElementById('progressDisplay2').textContent =
+                `${Math.min(gameState2.currentQuestionIndex, gameState2.totalQuestions)}/${gameState2.totalQuestions}`;
+        }
+
+        async function endGame2(completed) {
+            gameState2.isPlaying = false;
+            if (gameState2.timerInterval) { clearInterval(gameState2.timerInterval);
+                gameState2.timerInterval = null; }
+            if (gameState2.displayInterval) { clearInterval(gameState2.displayInterval);
+                gameState2.displayInterval = null; }
+
+            const finalScore = gameState2.score;
+            const totalQuestions = gameState2.score + (5 - gameState2.lives);
+            const accuracy = totalQuestions > 0 ? Math.round((gameState2.score / totalQuestions) * 100) : 0;
+
+            let icon, title, message;
+            if (gameState2.lives > 0 && finalScore >= 3) {
+                playSound('success');
+                icon = '🎉';
+                title = 'تبریک!';
+                message =
+                    `🌟 <span class="user-name">${playerName}</span> عزیز، خسته نباشید! این بازی کمک می‌کند کلمات بهتر در ذهن شما ثبت شوند.<br><br>` +
+                    `🏆 <b>امتیاز نهایی:</b> <span class="highlight">${finalScore}</span><br>` +
+                    `📊 <b>دقت:</b> <span class="success-text">${accuracy}%</span><br>` +
+                    `❤️ <b>جان‌های باقی‌مانده:</b> <span class="highlight">${gameState2.lives}</span>`;
+            } else {
+                playSound('gameover');
+                icon = gameState2.lives <= 0 ? '💔' : '⏰';
+                title = gameState2.lives <= 0 ? 'بازی تمام شد!' : 'زمان تمام شد!';
+                message =
+                    `🌟 <span class="user-name">${playerName}</span> عزیز، خسته نباشید! این بازی کمک می‌کند کلمات بهتر در ذهن شما ثبت شوند.<br><br>` +
+                    `🏆 <b>امتیاز نهایی:</b> <span class="highlight">${finalScore}</span><br>` +
+                    `📊 <b>دقت:</b> <span class="highlight">${accuracy}%</span>`;
+            }
+            await showCustomAlert(icon, title, message, [{ text: '🏠 بازگشت به خانه', class: 'primary' }]);
+            goHome();
+        }
+
+        // ============================================================
+        // بازی ۳: واژه‌های آینه‌ای (کامل)
+        // ============================================================
+        let gameState3 = {
+            score: 0,
+            lives: 3,
+            timeLeft: 180,
+            isPlaying: false,
+            timerInterval: null
+        };
+        let usedWords3 = [];
+        let currentWord3 = '';
+        let isAnswering3 = false;
+        let totalAttempts3 = 0;
+
+        function showInstructions3() {
+            const message =
+                '🔄 <span class="highlight">بازی واژه‌های آینه‌ای</span><br><br>' +
+                '📝 <b>قوانین بازی:</b><br>' +
+                '• یک کلمه به صورت <span class="highlight">آینه‌ای</span> به شما نمایش داده می‌شود<br>' +
+                '• در صورت نیاز می‌توانید از یک <span class="highlight">آینه</span> کمک بگیرید در کنار گوشی موبایل<br>' +
+                '• شما باید کلمه را به شکل <span class="highlight">صحیح</span> تشخیص داده و تایپ کنید<br><br>' +
+                '⏱️ <b>زمان:</b> کل بازی <span class="highlight">۳</span> دقیقه<br>' +
+                '❤️ <b>جان‌ها:</b> <span class="highlight">۳</span> جان (هر اشتباه ۱ جان کم می‌شود)<br>' +
+                '🏆 <b>امتیاز:</b> هر پاسخ صحیح = <span class="highlight">۱</span> امتیاز<br><br>' +
+                '💡 <b>نکته:</b> کلمات از لیست واژگان فارسی انتخاب می‌شوند';
+
+            return showCustomAlert('🔄', 'آماده‌اید؟', message, [
+                { text: '🚀 شروع کن!', class: 'primary' }
+            ]);
+        }
+
+        function initializeGame3() {
+            gameState3.score = 0;
+            gameState3.lives = 3;
+            gameState3.timeLeft = 180;
+            gameState3.isPlaying = true;
+            usedWords3 = [];
+            isAnswering3 = false;
+            totalAttempts3 = 0;
+
+            document.getElementById('homePage').style.display = 'none';
+            document.getElementById('gamePage3').style.display = 'block';
+
+            updateScoreDisplay3();
+            updateLivesDisplay3();
+            updateTimerDisplay3();
+
+            document.getElementById('feedback3').style.display = 'none';
+            document.getElementById('userInput3').value = '';
+            document.getElementById('userInput3').disabled = false;
+            document.getElementById('submitBtn3').disabled = false;
+            document.getElementById('statusMessage3').textContent = '';
+            document.getElementById('userInput3').focus();
+
+            startMainTimer3();
+            generateNewWord3();
+        }
+
+        function generateNewWord3() {
+            if (!gameState3.isPlaying) return;
+            let availableWords = allWords.filter(w => !usedWords3.includes(w));
+            if (availableWords.length === 0) { usedWords3 = [];
+                availableWords = allWords; }
+            const randomIndex = Math.floor(Math.random() * availableWords.length);
+            currentWord3 = availableWords[randomIndex];
+            usedWords3.push(currentWord3);
+
+            document.getElementById('mirrorWord3').textContent = currentWord3;
+            document.getElementById('mirrorWord3').style.transform = 'scaleX(-1)';
+
+            document.getElementById('userInput3').value = '';
+            document.getElementById('userInput3').disabled = false;
+            document.getElementById('submitBtn3').disabled = false;
+            document.getElementById('userInput3').focus();
+            document.getElementById('feedback3').style.display = 'none';
+            document.getElementById('statusMessage3').textContent = '';
+            isAnswering3 = false;
+        }
+
+        function checkAnswer3() {
+            if (isAnswering3 || !gameState3.isPlaying) return;
+            const userInput = document.getElementById('userInput3').value.trim();
+            if (userInput === '') {
+                document.getElementById('statusMessage3').textContent = '⚠️ لطفاً کلمه را وارد کنید!';
+                document.getElementById('statusMessage3').style.color = '#f44336';
+                return;
+            }
+
+            isAnswering3 = true;
+            totalAttempts3++;
+            document.getElementById('userInput3').disabled = true;
+            document.getElementById('submitBtn3').disabled = true;
+
+            if (userInput === currentWord3) {
+                playSound('correct');
+                gameState3.score++;
+                updateScoreDisplay3();
+                const feedback = document.getElementById('feedback3');
+                feedback.textContent = '✅ درست! 🎉';
+                feedback.style.color = '#4CAF50';
+                feedback.style.display = 'block';
+                document.getElementById('statusMessage3').textContent = '';
+                setTimeout(() => { if (gameState3.isPlaying) generateNewWord3(); }, 800);
+            } else {
+                playSound('wrong');
+                gameState3.lives--;
+                updateLivesDisplay3();
+                const feedback = document.getElementById('feedback3');
+                feedback.textContent = `❌ اشتباه! کلمه صحیح: ${currentWord3}`;
+                feedback.style.color = '#f44336';
+                feedback.style.display = 'block';
+                if (gameState3.lives <= 0) { setTimeout(() => endGame3(false), 1500); return; }
+                setTimeout(() => { if (gameState3.isPlaying) generateNewWord3(); }, 1500);
+            }
+        }
+
+        function startMainTimer3() {
+            if (gameState3.timerInterval) clearInterval(gameState3.timerInterval);
+            gameState3.timerInterval = setInterval(() => {
+                gameState3.timeLeft--;
+                updateTimerDisplay3();
+                if (gameState3.timeLeft <= 0) endGame3(true);
+            }, 1000);
+        }
+
+        function updateTimerDisplay3() {
+            const m = Math.floor(gameState3.timeLeft / 60);
+            const s = gameState3.timeLeft % 60;
+            document.getElementById('mainTimer3').textContent = `${m}:${s.toString().padStart(2, '0')}`;
+        }
+
+        function updateScoreDisplay3() {
+            document.getElementById('scoreDisplay3').textContent = gameState3.score;
+        }
+
+        function updateLivesDisplay3() {
+            document.getElementById('livesDisplay3').textContent = '❤️'.repeat(Math.max(0, gameState3.lives));
+        }
+
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter' && document.getElementById('gamePage3').style.display === 'block') {
+                if (!document.getElementById('submitBtn3').disabled) {
+                    checkAnswer3();
+                }
+            }
+        });
+
+        async function endGame3(byTime) {
+            gameState3.isPlaying = false;
+            if (gameState3.timerInterval) { clearInterval(gameState3.timerInterval);
+                gameState3.timerInterval = null; }
+
+            const finalScore = gameState3.score;
+            const accuracy = totalAttempts3 > 0 ? Math.round((finalScore / totalAttempts3) * 100) : 0;
+
+            let icon, title, message, buttons;
+            if (gameState3.lives > 0 && finalScore >= 5) {
+                playSound('success');
+                icon = '🎉';
+                title = 'تبریک!';
+                message =
+                    `🌟 <span class="user-name">${playerName}</span> عزیز، خسته نباشید! این بازی کمک می‌کند کلمات بهتر در ذهن شما ثبت شوند.<br><br>` +
+                    `🏆 <b>امتیاز نهایی:</b> <span class="highlight">${finalScore}</span><br>` +
+                    `📊 <b>دقت:</b> <span class="success-text">${accuracy}%</span><br>` +
+                    `❤️ <b>جان‌های باقی‌مانده:</b> <span class="highlight">${gameState3.lives}</span>`;
+                buttons = [{ text: '🏠 بازگشت به خانه', class: 'success' }];
+            } else {
+                playSound('gameover');
+                icon = gameState3.lives <= 0 ? '💔' : '⏰';
+                title = gameState3.lives <= 0 ? 'بازی تمام شد!' : 'زمان تمام شد!';
+                message =
+                    `🌟 <span class="user-name">${playerName}</span> عزیز، خسته نباشید! این بازی کمک می‌کند کلمات بهتر در ذهن شما ثبت شوند.<br><br>` +
+                    `🏆 <b>امتیاز نهایی:</b> <span class="highlight">${finalScore}</span><br>` +
+                    `📊 <b>دقت:</b> <span class="highlight">${accuracy}%</span>`;
+                buttons = [{ text: '🏠 بازگشت به خانه', class: 'primary' }];
+            }
+            await showCustomAlert(icon, title, message, buttons);
+            goHome();
+        }
+
+        // ============================================================
+        // بازی ۴: واژه‌ساز (کامل)
+        // ============================================================
+        let gameState4 = {
+            score: 0,
+            lives: 3,
+            timeLeft: 180,
+            isPlaying: false,
+            timerInterval: null
+        };
+        let usedWords4 = [];
+        let currentWord4 = '';
+        let isAnswering4 = false;
+        let letterInterval4 = null;
+        let totalAttempts4 = 0;
+
+        function showInstructions4() {
+            const message =
+                '✏️ <span class="highlight">بازی واژه‌ساز</span><br><br>' +
+                '📝 <b>قوانین بازی:</b><br>' +
+                '• حروف هر کلمه <span class="highlight">یکی یکی</span> و هر <span class="highlight">۱</span> ثانیه نمایش داده می‌شوند<br>' +
+                '• هر حرف بعد از نمایش، <span class="highlight">محو</span> می‌شود<br>' +
+                '• بعد از پایان نمایش، باید کلمه را به طور <span class="highlight">کامل</span> تایپ کنید<br><br>' +
+                '⏱️ <b>زمان:</b> کل بازی <span class="highlight">۳</span> دقیقه<br>' +
+                '❤️ <b>جان‌ها:</b> <span class="highlight">۳</span> جان (هر اشتباه ۱ جان کم می‌شود)<br>' +
+                '🏆 <b>امتیاز:</b> هر پاسخ صحیح = <span class="highlight">۱</span> امتیاز<br><br>' +
+                '💡 <b>نکته:</b> کلمات از لیست واژگان فارسی انتخاب می‌شوند';
+
+            return showCustomAlert('✏️', 'آماده‌اید؟', message, [
+                { text: '🚀 شروع کن!', class: 'primary' }
+            ]);
+        }
+
+        function initializeGame4() {
+            gameState4.score = 0;
+            gameState4.lives = 3;
+            gameState4.timeLeft = 180;
+            gameState4.isPlaying = true;
+            usedWords4 = [];
+            isAnswering4 = false;
+            totalAttempts4 = 0;
+
+            document.getElementById('homePage').style.display = 'none';
+            document.getElementById('gamePage4').style.display = 'block';
+
+            updateScoreDisplay4();
+            updateLivesDisplay4();
+            updateTimerDisplay4();
+
+            document.getElementById('feedback4').style.display = 'none';
+            document.getElementById('userInput4').value = '';
+            document.getElementById('userInput4').disabled = true;
+            document.getElementById('submitBtn4').disabled = true;
+            document.getElementById('statusMessage4').textContent = '';
+            document.getElementById('letterBox4').textContent = '?';
+            document.getElementById('letterStatus4').textContent = 'در حال آماده‌سازی...';
+
+            startMainTimer4();
+            generateNewWord4();
+        }
+
+        function generateNewWord4() {
+            if (!gameState4.isPlaying) return;
+
+            let availableWords = allWords.filter(w => !usedWords4.includes(w));
+            if (availableWords.length === 0) {
+                usedWords4 = [];
+                availableWords = allWords;
+            }
+
+            const randomIndex = Math.floor(Math.random() * availableWords.length);
+            currentWord4 = availableWords[randomIndex];
+            usedWords4.push(currentWord4);
+
+            document.getElementById('userInput4').disabled = true;
+            document.getElementById('submitBtn4').disabled = true;
+            document.getElementById('userInput4').value = '';
+            document.getElementById('feedback4').style.display = 'none';
+            document.getElementById('statusMessage4').textContent = '';
+            isAnswering4 = false;
+
+            showLetters4(currentWord4);
+        }
+
+        function showLetters4(word) {
+            const letterBox = document.getElementById('letterBox4');
+            const letterStatus = document.getElementById('letterStatus4');
+            let index = 0;
+
+            letterStatus.textContent = `🔤 نمایش حروف (${index + 1}/${word.length})`;
+
+            if (letterInterval4) {
+                clearInterval(letterInterval4);
+            }
+
+            letterInterval4 = setInterval(() => {
+                if (index >= word.length) {
+                    clearInterval(letterInterval4);
+                    letterInterval4 = null;
+                    letterStatus.textContent = '✅ نمایش کامل شد! کلمه را تایپ کنید';
+                    letterBox.textContent = '✨';
+
+                    document.getElementById('userInput4').disabled = false;
+                    document.getElementById('submitBtn4').disabled = false;
+                    document.getElementById('userInput4').focus();
+                    return;
+                }
+
+                playSound('tick');
+                letterBox.className = 'letter-box';
+                letterBox.textContent = word[index];
+                letterStatus.textContent = `🔤 نمایش حروف (${index + 1}/${word.length})`;
+
+                setTimeout(() => {
+                    letterBox.className = 'letter-box fade-out';
+                }, 700);
+
+                index++;
+            }, 1000);
+        }
+
+        function checkAnswer4() {
+            if (isAnswering4 || !gameState4.isPlaying) return;
+
+            const userInput = document.getElementById('userInput4').value.trim();
+
+            if (userInput === '') {
+                document.getElementById('statusMessage4').textContent = '⚠️ لطفاً کلمه را وارد کنید!';
+                document.getElementById('statusMessage4').style.color = '#f44336';
+                return;
+            }
+
+            isAnswering4 = true;
+            totalAttempts4++;
+            document.getElementById('userInput4').disabled = true;
+            document.getElementById('submitBtn4').disabled = true;
+
+            if (userInput === currentWord4) {
+                playSound('correct');
+                gameState4.score++;
+                updateScoreDisplay4();
+
+                const feedback = document.getElementById('feedback4');
+                feedback.textContent = '✅ درست! 🎉';
+                feedback.style.color = '#4CAF50';
+                feedback.style.display = 'block';
+                document.getElementById('statusMessage4').textContent = '';
+
+                setTimeout(() => {
+                    if (gameState4.isPlaying) {
+                        generateNewWord4();
+                    }
+                }, 800);
+            } else {
+                playSound('wrong');
+                gameState4.lives--;
+                updateLivesDisplay4();
+
+                const feedback = document.getElementById('feedback4');
+                feedback.textContent = `❌ اشتباه! کلمه صحیح: ${currentWord4}`;
+                feedback.style.color = '#f44336';
+                feedback.style.display = 'block';
+
+                if (gameState4.lives <= 0) {
+                    setTimeout(() => endGame4(false), 1500);
+                    return;
+                }
+
+                setTimeout(() => {
+                    if (gameState4.isPlaying) {
+                        generateNewWord4();
+                    }
+                }, 1500);
+            }
+        }
+
+        function startMainTimer4() {
+            if (gameState4.timerInterval) {
+                clearInterval(gameState4.timerInterval);
+            }
+
+            gameState4.timerInterval = setInterval(() => {
+                gameState4.timeLeft--;
+                updateTimerDisplay4();
+
+                if (gameState4.timeLeft <= 0) {
+                    endGame4(true);
+                }
+            }, 1000);
+        }
+
+        function updateTimerDisplay4() {
+            const minutes = Math.floor(gameState4.timeLeft / 60);
+            const seconds = gameState4.timeLeft % 60;
+            document.getElementById('mainTimer4').textContent =
+                `${minutes}:${seconds.toString().padStart(2, '0')}`;
+        }
+
+        function updateScoreDisplay4() {
+            document.getElementById('scoreDisplay4').textContent = gameState4.score;
+        }
+
+        function updateLivesDisplay4() {
+            document.getElementById('livesDisplay4').textContent = '❤️'.repeat(Math.max(0, gameState4.lives));
+        }
+
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter' && document.getElementById('gamePage4').style.display === 'block') {
+                if (!document.getElementById('submitBtn4').disabled) {
+                    checkAnswer4();
+                }
+            }
+        });
+
+        async function endGame4(byTime) {
+            gameState4.isPlaying = false;
+
+            if (letterInterval4) {
+                clearInterval(letterInterval4);
+                letterInterval4 = null;
+            }
+
+            if (gameState4.timerInterval) {
+                clearInterval(gameState4.timerInterval);
+                gameState4.timerInterval = null;
+            }
+
+            const finalScore = gameState4.score;
+            const accuracy = totalAttempts4 > 0 ? Math.round((finalScore / totalAttempts4) * 100) : 0;
+
+            let icon, title, message, buttons;
+
+            if (gameState4.lives > 0 && finalScore >= 5) {
+                playSound('success');
+                icon = '🎉';
+                title = 'تبریک!';
+                message =
+                    `🌟 <span class="user-name">${playerName}</span> عزیز، خسته نباشید! این بازی کمک می‌کند کلمات بهتر در ذهن شما ثبت شوند.<br><br>` +
+                    `🏆 <b>امتیاز نهایی:</b> <span class="highlight">${finalScore}</span><br>` +
+                    `📊 <b>دقت:</b> <span class="success-text">${accuracy}%</span><br>` +
+                    `❤️ <b>جان‌های باقی‌مانده:</b> <span class="highlight">${gameState4.lives}</span>`;
+                buttons = [
+                    { text: '🏠 بازگشت به خانه', class: 'success' }
+                ];
+            } else {
+                playSound('gameover');
+                icon = gameState4.lives <= 0 ? '💔' : '⏰';
+                title = gameState4.lives <= 0 ? 'بازی تمام شد!' : 'زمان تمام شد!';
+                message =
+                    `🌟 <span class="user-name">${playerName}</span> عزیز، خسته نباشید! این بازی کمک می‌کند کلمات بهتر در ذهن شما ثبت شوند.<br><br>` +
+                    `🏆 <b>امتیاز نهایی:</b> <span class="highlight">${finalScore}</span><br>` +
+                    `📊 <b>دقت:</b> <span class="highlight">${accuracy}%</span>`;
+                buttons = [
+                    { text: '🏠 بازگشت به خانه', class: 'primary' }
+                ];
+            }
+
+            await showCustomAlert(icon, title, message, buttons);
+            goHome();
+        }
+
+        // ============================================================
+        // توابع عمومی
+        // ============================================================
+        function startGame(gameName) {
+            const fullName = document.getElementById('fullName').value.trim();
+            if (fullName === '') {
+                playSound('click');
+                alert('لطفاً ابتدا نام و نام خانوادگی خود را وارد کنید.');
+                document.getElementById('fullName').focus();
+                return;
+            }
+            playerName = fullName;
+
+            if (gameName === 'واژه‌ی غایب') {
+                playSound('click');
+                showInstructions1().then(result => {
+                    if (result === 0) initializeGame1();
+                });
+            } else if (gameName === 'مکان‌یاب واژه‌ها') {
+                playSound('click');
+                showInstructions2().then(result => {
+                    if (result === 0) initializeGame2();
+                });
+            } else if (gameName === 'واژه‌های آینه‌ای') {
+                playSound('click');
+                showInstructions3().then(result => {
+                    if (result === 0) initializeGame3();
+                });
+            } else if (gameName === 'واژه‌ساز') {
+                playSound('click');
+                showInstructions4().then(result => {
+                    if (result === 0) initializeGame4();
+                });
+            } else {
+                playSound('click');
+                alert('بازی "' + gameName + '" در حال توسعه است.\nنام کاربر: ' + fullName);
+            }
+        }
+
+        async function confirmGoHome(pageId) {
+            let isPlaying = false;
+            if (pageId === 'gamePage1') isPlaying = gameState1.isPlaying;
+            else if (pageId === 'gamePage2') isPlaying = gameState2.isPlaying;
+            else if (pageId === 'gamePage3') isPlaying = gameState3.isPlaying;
+            else if (pageId === 'gamePage4') isPlaying = gameState4.isPlaying;
+
+            if (!isPlaying) { goHome(); return; }
+
+            playSound('click');
+            const result = await showCustomAlert(
+                '🏠',
+                'بازگشت به خانه',
+                '⚠️ <b>توجه:</b> با بازگشت به صفحه اصلی، <span class="highlight">پیشرفت بازی ذخیره نمی‌شود</span>.<br><br>آیا مطمئن هستید که می‌خواهید بازی را ترک کنید؟', [
+                    { text: '✅ بله، برگرد', class: 'danger' },
+                    { text: '❌ ادامه‌ی بازی', class: 'secondary' }
+                ]
+            );
+            if (result === 0) goHome();
+        }
+
+        function goHome() {
+            gameState1.isPlaying = false;
+            gameState2.isPlaying = false;
+            gameState3.isPlaying = false;
+            gameState4.isPlaying = false;
+
+            if (gameState1.timerInterval) { clearInterval(gameState1.timerInterval);
+                gameState1.timerInterval = null; }
+            if (gameState1.questionInterval) { clearInterval(gameState1.questionInterval);
+                gameState1.questionInterval = null; }
+            if (gameState2.timerInterval) { clearInterval(gameState2.timerInterval);
+                gameState2.timerInterval = null; }
+            if (gameState2.displayInterval) { clearInterval(gameState2.displayInterval);
+                gameState2.displayInterval = null; }
+            if (gameState3.timerInterval) { clearInterval(gameState3.timerInterval);
+                gameState3.timerInterval = null; }
+            if (gameState4.timerInterval) { clearInterval(gameState4.timerInterval);
+                gameState4.timerInterval = null; }
+            if (letterInterval4) { clearInterval(letterInterval4);
+                letterInterval4 = null; }
+
+            document.getElementById('gamePage1').style.display = 'none';
+            document.getElementById('gamePage2').style.display = 'none';
+            document.getElementById('gamePage3').style.display = 'none';
+            document.getElementById('gamePage4').style.display = 'none';
+            document.getElementById('homePage').style.display = 'flex';
+        }
+    </script>
+</body>
+</html>

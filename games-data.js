@@ -290,6 +290,94 @@ const games = [
     isNew: true
 },
 
-  
+ {
+    id: 30,
+    title: "حافظه‌ی املایی فارسی پنجم",
+    grades: ["پنجم"],
+    gradeIds: [5],
+    icon: "🧠",
+    link: "Hafezeyemlayi5e4.html",
+    isNew: true
+}, 
+
+{
+    id: 31,
+    title: "بازی دو نفره کسر بزرگتر از واحد",
+    grades: ["پنجم"],
+    gradeIds: [5],
+    icon: "🔢",
+    link: "B2nafarekasrebozorgtarazvahed3.html",
+    isNew: true
+},
+
+{
+    id: 32,
+    title: "بازی دو نفره حافظه",
+    grades: ["سایر"],
+    gradeIds: ["other"],
+    icon: "🧠",
+    link: "B2nafarehafeze1.html",
+    isNew: true
+},
+
+{
+    id: 33,
+    title: "رمز قفل را پیدا کن",
+    grades: ["سایر"],
+    gradeIds: ["other"],
+    icon: "🔐",
+    link: "Ramzeqofl1.html",
+    isNew: true
+},
+
+{
+    id: 34,
+    title: "حافظه‌ی املایی فارسی سوم",
+    grades: ["سوم"],
+    gradeIds: [3],
+    icon: "🧠",
+    link: "Hafezeyeemlae3e1.html",
+    isNew: true
+},
+
+{
+    id: 35,
+    title: "واژه‌یاب فارسی سوم",
+    grades: ["سوم"],
+    gradeIds: [3],
+    icon: "🔍",
+    link: "Vazheyabefarsi3.html",
+    isNew: true
+},
+
+{
+    id: 36,
+    title: "ساخت کلمه با حروف به هم ریخته فارسی سوم",
+    grades: ["سوم"],
+    gradeIds: [3],
+    icon: "🔤",
+    link: "Sakhtekalamefarsi3.html",
+    isNew: true
+},
+
+{
+    id: 37,
+    title: "حدس کلمات فارسی سوم",
+    grades: ["سوم"],
+    gradeIds: [3],
+    icon: "🔤",
+    link: "Hadsekalamatefarsi3.html",
+    isNew: true
+},
+
+{
+    id: 38,
+    title: "حافظه با کلمات فارسی سوم",
+    grades: ["سوم"],
+    gradeIds: [3],
+    icon: "🧠",
+    link: "Hafezebakalamatefarsi3.html",
+    isNew: true
+},
   
 ];

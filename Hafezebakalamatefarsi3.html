@@ -1,0 +1,987 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>حافظه‌ی کلمات</title>
+<style>
+body{
+    margin:0;
+    font-family:tahoma;
+    background:linear-gradient(135deg,#4dd0e1,#26c6da);
+    min-height:100vh;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    transition: background .5s;
+    overflow:hidden;
+    position:relative;
+}
+
+.particles {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
+    pointer-events: none;
+}
+
+.particle {
+    position: absolute;
+    background: rgba(255, 255, 255, 0.3);
+    border-radius: 50%;
+    animation: float 15s infinite linear;
+}
+
+@keyframes float {
+    0% {
+        transform: translateY(0) translateX(0);
+        opacity: 0;
+    }
+    10% {
+        opacity: 0.3;
+    }
+    90% {
+        opacity: 0.3;
+    }
+    100% {
+        transform: translateY(-100vh) translateX(50px);
+        opacity: 0;
+    }
+}
+
+.container{
+    width:95%;
+    max-width:420px;
+    text-align:center;
+    z-index:1;
+    position:relative;
+}
+
+h1{
+    font-size:32px;
+    margin-bottom:10px;
+    color:#fff;
+    text-shadow:0 0 10px rgba(255,255,255,0.5);
+    animation:fadeInTitle 1s;
+}
+
+h3{
+    font-size:16px;
+    color:#f0f0f0;
+    margin-bottom:25px;
+    text-shadow:0 1px 2px rgba(0,0,0,0.2);
+}
+
+button.levelBtn{
+    width:90%;
+    padding:15px;
+    font-size:18px;
+    border:none;
+    border-radius:15px;
+    margin:10px 0;
+    color:#fff;
+    cursor:pointer;
+    box-shadow:0 8px 20px rgba(0,0,0,0.25);
+    transition: all 0.3s;
+    border:2px solid rgba(255,255,255,0.1);
+    font-weight:bold;
+    position:relative;
+    overflow:hidden;
+}
+
+button.levelBtn:hover{
+    transform:translateY(-3px);
+    box-shadow:0 12px 25px rgba(0,0,0,0.35);
+}
+
+button.levelBtn:active{
+    transform:translateY(-1px);
+}
+
+button.levelBtn::after {
+    content:'';
+    position:absolute;
+    top:0;
+    left:0;
+    width:100%;
+    height:100%;
+    background:linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+    transform:translateX(-100%);
+}
+
+button.levelBtn:hover::after {
+    transform:translateX(100%);
+    transition:transform 0.6s;
+}
+
+#gameArea{ display:none; }
+
+.top{
+    display:flex;
+    justify-content:space-between;
+    margin-bottom:20px;
+}
+
+.box{
+    width:32%;
+    background:linear-gradient(135deg, #e0f7fa, #b2ebf2);
+    border-radius:15px;
+    padding:12px 5px;
+    font-size:14px;
+    box-shadow:0 8px 20px rgba(0,0,0,0.15);
+    border:2px solid rgba(255,255,255,0.3);
+    transition:transform 0.3s;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+}
+
+.box:hover {
+    transform:translateY(-2px);
+}
+
+.box b {
+    display:block;
+    font-size:22px;
+    margin-top:5px;
+    color:#333;
+    text-align:center;
+    width:100%;
+}
+
+.cards{
+    display:flex;
+    justify-content:space-between;
+    margin:25px 0;
+    gap:10px;
+}
+
+.card{
+    width:22%;
+    background:linear-gradient(145deg, #80deea, #4dd0e1);
+    border-radius:20px;
+    padding:15px 8px;
+    font-size:16px;
+    font-weight:bold;
+    animation:fadeIn .5s;
+    box-shadow:0 10px 25px rgba(0,0,0,0.2);
+    border:3px solid rgba(255,255,255,0.4);
+    transition:all 0.5s;
+    transform-style:preserve-3d;
+    position:relative;
+    cursor:pointer;
+    min-height:80px;
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    align-items:center;
+}
+
+.card.flipped {
+    transform:rotateY(180deg);
+    background:linear-gradient(145deg, #26c6da, #00acc1);
+}
+
+.card-content {
+    backface-visibility:hidden;
+    width:100%;
+    text-align:center;
+}
+
+.card span{
+    display:block;
+    font-size:11px;
+    color:#fff;
+    margin-bottom:8px;
+    text-shadow:0 1px 2px rgba(0,0,0,0.3);
+    letter-spacing:1px;
+}
+
+.card .card-word {
+    font-size:18px;
+    color:#000;
+    text-shadow:0 1px 2px rgba(255,255,255,0.5);
+    word-break:break-word;
+    font-weight:bold;
+}
+
+.hidden{
+    background:linear-gradient(145deg, #26c6da, #00acc1);
+    color:transparent;
+}
+
+.hidden .card-word {
+    color:transparent;
+    text-shadow:none;
+}
+
+input{
+    width:100%;
+    padding:15px;
+    font-size:16px;
+    border-radius:15px;
+    border:2px solid #4dd0e1;
+    text-align:center;
+    box-sizing:border-box;
+    background:rgba(255,255,255,0.95);
+    box-shadow:0 5px 15px rgba(0,0,0,0.1);
+    transition:all 0.3s;
+}
+
+input:focus{
+    outline:none;
+    border-color:#26c6da;
+    box-shadow:0 0 0 3px rgba(38,198,218,0.2);
+    transform:translateY(-2px);
+}
+
+button.submitBtn{
+    margin-top:15px;
+    width:100%;
+    padding:15px;
+    font-size:16px;
+    border:none;
+    border-radius:15px;
+    background:linear-gradient(135deg, #00bcd4, #0097a7);
+    color:#fff;
+    box-sizing:border-box;
+    cursor:pointer;
+    box-shadow:0 8px 20px rgba(0,188,212,0.3);
+    transition:all 0.3s;
+    border:2px solid rgba(255,255,255,0.3);
+    font-weight:bold;
+}
+
+button.submitBtn:hover:not(:disabled){
+    transform:translateY(-3px);
+    box-shadow:0 12px 25px rgba(0,188,212,0.4);
+    background:linear-gradient(135deg, #00acc1, #00838f);
+}
+
+button.submitBtn:disabled{
+    opacity:0.6;
+    cursor:not-allowed;
+}
+
+.mark{
+    font-size:48px;
+    margin-top:15px;
+    animation:pop .4s;
+    text-shadow:0 2px 10px rgba(0,0,0,0.2);
+}
+
+.correct{ 
+    color:#4CAF50;
+    filter:drop-shadow(0 0 8px rgba(76,175,80,0.4));
+}
+.wrong{ 
+    color:#F44336;
+    filter:drop-shadow(0 0 8px rgba(244,67,54,0.4));
+}
+
+.result{
+    margin-top:15px;
+    font-weight:bold;
+    font-size:17px;
+    color:#fff;
+    text-shadow:0 1px 3px rgba(0,0,0,0.3);
+    background:rgba(0,0,0,0.2);
+    padding:10px;
+    border-radius:10px;
+}
+
+.end{
+    margin-top:20px;
+}
+
+.end-buttons {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 25px;
+    gap: 15px;
+}
+
+.endBtn {
+    flex: 1;
+    padding: 18px;
+    font-size: 16px;
+    border: none;
+    border-radius: 15px;
+    color: white;
+    cursor: pointer;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.25);
+    transition: all 0.3s;
+    box-sizing:border-box;
+    font-weight:bold;
+    border:2px solid rgba(255,255,255,0.3);
+}
+
+.endBtn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 12px 25px rgba(0,0,0,0.35);
+}
+
+#restartBtn {
+    background: linear-gradient(135deg, #4CAF50, #2E7D32);
+}
+
+#mainMenuBtn {
+    background: linear-gradient(135deg, #2196F3, #0D47A1);
+}
+
+.end-content {
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 25px;
+    padding: 35px;
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
+    animation: fadeIn 0.5s;
+    backdrop-filter: blur(10px);
+    border:2px solid rgba(255,255,255,0.3);
+}
+
+.end-content p {
+    background: linear-gradient(135deg, #f5f5f5, #e0e0e0);
+    padding: 25px;
+    border-radius: 20px;
+    box-shadow: 0 8px 20px rgba(0,0,0,.1);
+    margin-bottom: 25px;
+    font-size: 18px;
+    color: #333;
+    line-height: 1.6;
+    border:2px solid rgba(255,255,255,0.5);
+}
+
+.hidden-element {
+    display: none !important;
+}
+
+@keyframes fadeIn{
+    from{opacity:0; transform:translateY(20px) scale(.9)}
+    to{opacity:1; transform:translateY(0) scale(1)}
+}
+@keyframes fadeInTitle{
+    from{opacity:0; transform:translateY(-20px)}
+    to{opacity:1; transform:translateY(0)}
+}
+@keyframes pop{
+    from{transform:scale(.6) rotate(-10deg)}
+    to{transform:scale(1) rotate(0)}
+}
+@keyframes flip {
+    0% { transform: rotateY(0); }
+    100% { transform: rotateY(180deg); }
+}
+
+/* ===== استایل‌های منوی شبکه‌های اجتماعی ===== */
+:root {
+    --neon-primary: #0ff;
+    --neon-secondary: #f0f;
+    --bg-dark: #121212;
+}
+
+.circular-menu {
+    position: fixed;
+    bottom: 25px;
+    left: 25px;
+    width: 60px;
+    height: 60px;
+    z-index: 9999;
+}
+
+.circular-menu .menu-button {
+    position: absolute;
+    top: 0; left: 0;
+    width: 58px; height: 58px;
+    border-radius: 50%;
+    background-color: var(--bg-dark);
+    color: var(--neon-primary);
+    border: 2px solid var(--neon-primary);
+    cursor: pointer;
+    z-index: 2;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    box-shadow: 0 0 8px var(--neon-primary),
+                0 0 15px var(--neon-primary),
+                0 0 30px var(--neon-primary),
+                inset 0 0 15px rgba(0, 255, 255, 0.2);
+    transition: all 0.4s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+    -webkit-tap-highlight-color: transparent;
+}
+
+.circular-menu .menu-button:focus-visible {
+    outline: 3px solid #fff;
+    outline-offset: 3px;
+}
+
+.circular-menu.active .menu-button {
+    background-color: #1a0a1a;
+    color: var(--neon-secondary);
+    border-color: var(--neon-secondary);
+    transform: rotate(135deg);
+    box-shadow: 0 0 10px var(--neon-secondary),
+                0 0 20px var(--neon-secondary),
+                0 0 40px var(--neon-secondary),
+                inset 0 0 20px rgba(255, 0, 255, 0.3);
+}
+
+.circular-menu .menu-item {
+    position: absolute;
+    top: 0; left: 0;
+    width: 52px; height: 52px;
+    border-radius: 50%;
+    background-color: #ffffff;
+    color: #2c3e50;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    opacity: 0;
+    transform: scale(0);
+    z-index: -1;
+    text-decoration: none;
+    -webkit-tap-highlight-color: transparent;
+    pointer-events: none;
+    visibility: hidden;
+}
+
+.circular-menu.active .menu-item {
+    pointer-events: auto;
+    visibility: visible;
+}
+
+.menu-item:focus-visible {
+    outline: 3px solid #fff;
+    outline-offset: 2px;
+}
+
+.menu-item.instagram:hover, .menu-item.instagram:focus-visible { background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888); color: white; }
+.menu-item.telegram:hover, .menu-item.telegram:focus-visible { background: #0088cc; color: white; }
+.menu-item.aparat:hover, .menu-item.aparat:focus-visible { background: #ed1c24; color: white; }
+.menu-item.website:hover, .menu-item.website:focus-visible { background: #4facfe; color: white; }
+.menu-item.webapp:hover, .menu-item.webapp:focus-visible { background: #6c5ce7; color: white; }
+
+.circular-menu.ready.active .menu-item {
+    animation-duration: 0.45s;
+    animation-timing-function: cubic-bezier(0.68, -0.55, 0.27, 1.55);
+    animation-fill-mode: forwards;
+}
+.circular-menu.ready.active .menu-item:nth-child(1) { animation-name: expand1; animation-delay: 0.00s; }
+.circular-menu.ready.active .menu-item:nth-child(2) { animation-name: expand2; animation-delay: 0.07s; }
+.circular-menu.ready.active .menu-item:nth-child(3) { animation-name: expand3; animation-delay: 0.14s; }
+.circular-menu.ready.active .menu-item:nth-child(4) { animation-name: expand4; animation-delay: 0.21s; }
+.circular-menu.ready.active .menu-item:nth-child(5) { animation-name: expand5; animation-delay: 0.28s; }
+
+.circular-menu.ready:not(.active) .menu-item {
+    animation-duration: 0.35s;
+    animation-timing-function: ease-in;
+    animation-fill-mode: forwards;
+}
+.circular-menu.ready:not(.active) .menu-item:nth-child(1) { animation-name: collapse1; animation-delay: 0.28s; }
+.circular-menu.ready:not(.active) .menu-item:nth-child(2) { animation-name: collapse2; animation-delay: 0.21s; }
+.circular-menu.ready:not(.active) .menu-item:nth-child(3) { animation-name: collapse3; animation-delay: 0.14s; }
+.circular-menu.ready:not(.active) .menu-item:nth-child(4) { animation-name: collapse4; animation-delay: 0.07s; }
+.circular-menu.ready:not(.active) .menu-item:nth-child(5) { animation-name: collapse5; animation-delay: 0.00s; }
+
+@keyframes expand1 { 0% { opacity:0; transform:scale(0); z-index:1; } 100% { opacity:1; transform:translate(0,-150px) scale(1); z-index:1; } }
+@keyframes expand2 { 0% { opacity:0; transform:scale(0); z-index:1; } 100% { opacity:1; transform:translate(57px,-139px) scale(1); z-index:1; } }
+@keyframes expand3 { 0% { opacity:0; transform:scale(0); z-index:1; } 100% { opacity:1; transform:translate(106px,-106px) scale(1); z-index:1; } }
+@keyframes expand4 { 0% { opacity:0; transform:scale(0); z-index:1; } 100% { opacity:1; transform:translate(139px,-57px) scale(1); z-index:1; } }
+@keyframes expand5 { 0% { opacity:0; transform:scale(0); z-index:1; } 100% { opacity:1; transform:translate(150px,0) scale(1); z-index:1; } }
+
+@keyframes collapse1 { 0% { opacity:1; transform:translate(0,-150px) scale(1); z-index:1; } 100% { opacity:0; transform:translate(0,-150px) scale(0); z-index:-1; } }
+@keyframes collapse2 { 0% { opacity:1; transform:translate(57px,-139px) scale(1); z-index:1; } 100% { opacity:0; transform:translate(57px,-139px) scale(0); z-index:-1; } }
+@keyframes collapse3 { 0% { opacity:1; transform:translate(106px,-106px) scale(1); z-index:1; } 100% { opacity:0; transform:translate(106px,-106px) scale(0); z-index:-1; } }
+@keyframes collapse4 { 0% { opacity:1; transform:translate(139px,-57px) scale(1); z-index:1; } 100% { opacity:0; transform:translate(139px,-57px) scale(0); z-index:-1; } }
+@keyframes collapse5 { 0% { opacity:1; transform:translate(150px,0) scale(1); z-index:1; } 100% { opacity:0; transform:translate(150px,0) scale(0); z-index:-1; } }
+
+.circular-menu svg { width: 24px; height: 24px; fill: currentColor; }
+</style>
+</head>
+<body>
+
+<div class="container" id="mainMenu">
+    <h1>حافظه‌ی کلمات</h1>
+    <h3>کارت کلمات برای چند ثانیه نمایش داده می‌شود و سپس باید کلمه‌ی خواسته شده را به یاد بیاورید</h3>
+    <input id="playerName" placeholder="نام شما">
+    <button class="levelBtn" style="background:linear-gradient(135deg, #ff8a65, #ff7043);" onclick="startGame(1)">سطح ۱ : ۳ کارت - ۷ ثانیه</button>
+    <button class="levelBtn" style="background:linear-gradient(135deg, #4db6ac, #26a69a);" onclick="startGame(2)">سطح ۲ : ۴ کارت - ۵ ثانیه</button>
+    <button class="levelBtn" style="background:linear-gradient(135deg, #ffb74d, #ffa726);" onclick="startGame(3)">سطح ۳ : ۴ کارت - ۳ ثانیه</button>
+</div>
+
+<div id="gameArea" class="game">
+    <div class="top">
+        <div class="box">⭐ امتیاز<br><b id="score">0</b></div>
+        <div class="box">⏱ زمان کل<br><b id="totalTime">120</b></div>
+        <div class="box">⏳ مرحله<br><b id="roundTime">7</b></div>
+    </div>
+
+    <div class="cards" id="cards"></div>
+    <input id="answer" placeholder="کلمه را بنویسید" disabled>
+    <button class="submitBtn" id="submitBtn" onclick="checkAnswer()" disabled>ثبت پاسخ</button>
+    <div id="mark"></div>
+    <div class="result" id="result"></div>
+    <div class="end" id="end"></div>
+</div>
+
+<!-- ===== منوی شبکه‌های اجتماعی ===== -->
+<div class="circular-menu" id="circularMenu">
+    <!-- ۱. اینستاگرام -->
+    <a href="https://instagram.com/heydarzadehteacher" target="_blank" rel="noopener noreferrer"
+       class="menu-item instagram" title="اینستاگرام" aria-label="صفحه‌ی اینستاگرام" tabindex="-1">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.204-.012 3.583-.069 4.849-.148 3.227-1.664 4.771-4.919 4.919-1.266.058-1.645.069-4.849.069-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.791-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.209-1.791 4-4 4zm6.406-11.845c-.796 0-1.44.645-1.44 1.44s.644 1.44 1.44 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
+    </a>
+
+    <!-- ۲. تلگرام -->
+    <a href="https://t.me/bazieamouzeshi" target="_blank" rel="noopener noreferrer"
+       class="menu-item telegram" title="تلگرام" aria-label="کانال تلگرام" tabindex="-1">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.38-.94-2.23-1.5-.99-.65-.35-1.01.22-1.59.15-.15 2.71-2.48 2.76-2.69.01-.03.01-.14-.07-.2-.08-.06-.19-.04-.27-.02-.12.02-1.96 1.25-5.54 3.66-.52.36-1 .53-1.42.52-.47-.01-1.37-.26-2.03-.48-.82-.27-1.47-.42-1.41-.88.03-.24.37-.49 1.02-.74 3.98-1.73 6.63-2.87 7.96-3.42 3.79-1.58 4.58-1.85 5.09-1.86.11 0 .37.03.53.16.14.11.18.25.2.39-.01.06.01.23-.02.37z"/></svg>
+    </a>
+
+    <!-- ۳. آپارات -->
+    <a href="https://www.aparat.com/heydarzadehteacher" target="_blank" rel="noopener noreferrer"
+       class="menu-item aparat" title="آپارات" aria-label="صفحه‌ی آپارات" tabindex="-1">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 8.64v6.72L15.27 12 10 8.64zM12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z"/></svg>
+    </a>
+
+    <!-- ۴. وب‌سایت -->
+    <a href="https://sites.google.com/view/heydarzadehteacher" target="_blank" rel="noopener noreferrer"
+       class="menu-item website" title="وب‌سایت" aria-label="وب‌سایت" tabindex="-1">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/></svg>
+    </a>
+
+    <!-- ۵. وب‌اپ -->
+    <a href="https://heydarzadehteacher.github.io/Educational-Games-app/index.html" target="_blank" rel="noopener noreferrer"
+       class="menu-item webapp" title="وب‌اپ" aria-label="وب‌اپ آموزشی" tabindex="-1">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M17 1.01L7 1c-1.1 0-2 .9-2 2v18c0 1.1.9 2 2 2h10c1.1 0 2-.9 2-2V3c0-1.1-.9-1.99-2-1.99zM17 19H7V5h10v14z"/></svg>
+    </a>
+
+    <button class="menu-button" title="شبکه‌های اجتماعی" aria-label="باز کردن منوی شبکه‌های اجتماعی"
+            aria-haspopup="true" aria-expanded="false">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92 1.61 0 2.92-1.31 2.92-2.92s-1.31-2.92-2.92-2.92z"/></svg>
+    </button>
+</div>
+
+<script>
+// ===== لیست جدید کلمات بر اساس درس‌های ارائه شده =====
+const words = [
+    // درس اول
+    "تابستان", "گوشه", "محله", "هنوز", "همراه", "اطراف", "بعضی", "قنادی", "صف", "گلدسته",
+    "فضا", "انتها", "عظمت", "معرفی", "قبلا", "خاطرات", "لحظه", "نگاه", "بخواهید",
+    // درس دوم
+    "هوا", "گذشته", "فعالیت", "بعضی", "موضوع", "مهم", "علاقه", "بحث", "بهتر", "نظم",
+    "تعطیل", "طرف", "صورت", "چطور", "گفت", "گذاشت", "مخصوص", "استخر", "راهنمایی", "طول",
+    // درس سوم
+    "هفته", "گذشته", "آموزگار", "همراه", "نگاه", "گزارش", "صدا", "بعد", "محیط", "علاوه",
+    "گویا", "صبح", "پاکیزگی", "اهمیت",
+    // درس چهارم
+    "منتظر", "لحظه", "بهترین", "کنجکاو", "خواست", "تعجب", "توضیح", "عادت", "صوت", "ضبط",
+    "بوق", "ترقه", "فشفشه", "گنجشک", "قشنگ", "نگاه",
+    // درس پنجم
+    "غذا", "صحرا", "صاحب", "نخواهد", "بخواهد", "خواهش", "خویش", "دهقان", "خطر", "تصمیم",
+    // درس ششم
+    "ذهن", "حتی", "شهید", "موفقیت", "علت", "تحمیلی", "گلوله", "هنگام", "طفل", "قطار",
+    "شعله", "خطر", "احترام", "گذاشت",
+    // درس هفتم
+    "معمولی", "عجب", "باصفا", "گودال", "عمر", "معلوم", "طول", "تعجب", "گفت", "همین",
+    // درس هشتم
+    "حضرت", "لطیف", "ضعیف", "فقیر", "تن", "دعا", "اتاق", "وقتی", "عطر", "بهشت",
+    // درس نهم
+    "سفال", "نغمه", "رنگارنگ", "انتها", "چقدر", "فروغ", "حس", "عزیز", "غایب",
+    // درس دهم
+    "لذت", "ضربان", "بعضی", "لحظه", "شعر", "فقط", "حقیقت", "همراه", "خلاصه", "حالت",
+    // درس یازدهم
+    "حاتم", "قربانی", "عرب", "گوشه", "عمل", "حکایت", "تحصیلات", "اهل", "احادیث", "گلستان",
+    "آثار", "حتما", "شاعر",
+    // درس دوازدهم
+    "نعمت", "مقدس", "جهان", "عاشق", "رونق", "حریص", "دهان", "حافظ", "طمع", "زر",
+    // درس چهاردهم
+    "گروه", "دقیقه", "میهن", "مناطق", "نگهبان", "اصلی", "اهمیت", "علم", "صنعت", "معروف",
+    "همبستگی", "اعضا", "دفاع", "آموزگار", "وظیفه", "همدلی",
+    // درس پانزدهم
+    "افق", "تن", "ساحل", "خواب", "غوطه", "زلال", "زندگی", "مهربان", "ماهی", "مثل",
+    // درس شانزدهم
+    "پهناور", "بگذر", "گاه", "مشغول", "حاشیه", "تفریح", "بگو", "قایق", "تند", "هیچ", "روزگار",
+    // درس هفدهم
+    "رخت", "خواب", "نقطه", "وصل", "هیجان", "نهایت", "مثل", "هدیه", "احوال", "عجیب", "فضا", "ناگهان"
+];
+
+let playerName = '';
+let score = 0;
+let totalTime = 120;
+let roundTime = 7;
+let level = 1;
+let selected = [];
+let askIndex = 0;
+let totalTimer;
+
+// ===== توابع افکت صوتی با Web Audio API =====
+let audioCtx = null;
+
+function getAudioContext() {
+    if (!audioCtx) {
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    }
+    return audioCtx;
+}
+
+function playSound(type) {
+    try {
+        const ctx = getAudioContext();
+        // Resume context if suspended (autoplay policy)
+        if (ctx.state === 'suspended') {
+            ctx.resume();
+        }
+
+        const now = ctx.currentTime;
+
+        if (type === 'correct') {
+            // صدای زنگ خوشایند – دو نت متوالی
+            const osc1 = ctx.createOscillator();
+            const gain1 = ctx.createGain();
+            osc1.type = 'sine';
+            osc1.frequency.value = 880; // A5
+            gain1.gain.setValueAtTime(0.25, now);
+            gain1.gain.exponentialRampToValueAtTime(0.01, now + 0.3);
+            osc1.connect(gain1);
+            gain1.connect(ctx.destination);
+            osc1.start(now);
+            osc1.stop(now + 0.3);
+
+            const osc2 = ctx.createOscillator();
+            const gain2 = ctx.createGain();
+            osc2.type = 'sine';
+            osc2.frequency.value = 1108.73; // C#6
+            gain2.gain.setValueAtTime(0.2, now + 0.1);
+            gain2.gain.exponentialRampToValueAtTime(0.01, now + 0.4);
+            osc2.connect(gain2);
+            gain2.connect(ctx.destination);
+            osc2.start(now + 0.1);
+            osc2.stop(now + 0.4);
+
+        } else if (type === 'wrong') {
+            // صدای بوق کوتاه و بم
+            const osc = ctx.createOscillator();
+            const gain = ctx.createGain();
+            osc.type = 'square';
+            osc.frequency.value = 200;
+            gain.gain.setValueAtTime(0.2, now);
+            gain.gain.exponentialRampToValueAtTime(0.01, now + 0.4);
+            osc.connect(gain);
+            gain.connect(ctx.destination);
+            osc.start(now);
+            osc.stop(now + 0.4);
+
+        } else if (type === 'gameover') {
+            // ملودی کوتاه برای پایان بازی (سه نت نزولی)
+            const notes = [523.25, 493.88, 440.00]; // C5, B4, A4
+            notes.forEach((freq, i) => {
+                const osc = ctx.createOscillator();
+                const gain = ctx.createGain();
+                osc.type = 'sine';
+                osc.frequency.value = freq;
+                const startTime = now + i * 0.2;
+                gain.gain.setValueAtTime(0.15, startTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, startTime + 0.3);
+                osc.connect(gain);
+                gain.connect(ctx.destination);
+                osc.start(startTime);
+                osc.stop(startTime + 0.3);
+            });
+        }
+    } catch (e) {
+        // در صورت بروز خطا (مثلاً در مرورگرهای قدیمی) صدا پخش نمی‌شود ولی بازی ادامه می‌یابد
+        console.log('Audio error:', e);
+    }
+}
+
+function createParticles() {
+    const particlesContainer = document.createElement('div');
+    particlesContainer.className = 'particles';
+    document.body.appendChild(particlesContainer);
+    
+    for(let i = 0; i < 20; i++) {
+        const particle = document.createElement('div');
+        particle.className = 'particle';
+        
+        const size = Math.random() * 15 + 5;
+        particle.style.width = `${size}px`;
+        particle.style.height = `${size}px`;
+        particle.style.left = `${Math.random() * 100}%`;
+        particle.style.top = `${Math.random() * 100}%`;
+        particle.style.animationDelay = `${Math.random() * 15}s`;
+        particle.style.opacity = Math.random() * 0.5;
+        
+        particlesContainer.appendChild(particle);
+    }
+}
+
+createParticles();
+
+function startGame(lvl){
+    const nameInput = document.getElementById('playerName').value.trim();
+    if(!nameInput){
+        alert('لطفاً نام خود را وارد کنید!');
+        return;
+    }
+    playerName = nameInput;
+    level = lvl;
+    document.getElementById('mainMenu').style.display='none';
+    document.getElementById('gameArea').style.display='block';
+
+    if(level===1) roundTime=7;
+    else if(level===2) roundTime=5;
+    else roundTime=3;
+
+    document.body.style.background = lvl===1?'linear-gradient(135deg,#ff8a65,#ff7043)':
+                                   lvl===2?'linear-gradient(135deg,#4db6ac,#26a69a)':
+                                   'linear-gradient(135deg,#ffb74d,#ffa726)';
+
+    score = 0;
+    totalTime = 120;
+    document.getElementById('score').innerText=score;
+    document.getElementById('totalTime').innerText=totalTime;
+    document.getElementById('roundTime').innerText=roundTime;
+
+    totalTimer = setInterval(()=>{
+        totalTime--;
+        document.getElementById('totalTime').innerText = totalTime;
+        if(totalTime <= 0){
+            clearInterval(totalTimer);
+            endGame();
+        }
+    },1000);
+
+    startRound();
+}
+
+function startRound(){
+    if(totalTime <= 0) return;
+
+    document.getElementById('mark').innerHTML='';
+    document.getElementById('answer').value='';
+    document.getElementById('answer').disabled = true;
+    document.getElementById('submitBtn').disabled = true;
+    document.getElementById('result').innerText='';
+
+    let numCards = level===1?3:4;
+
+    selected=[];
+    while(selected.length<numCards){
+        const w = words[Math.floor(Math.random()*words.length)];
+        if(!selected.includes(w)) selected.push(w);
+    }
+
+    const cardsDiv=document.getElementById('cards');
+    cardsDiv.innerHTML='';
+    selected.forEach((w,i)=>{
+        const d=document.createElement('div');
+        d.className='card';
+        d.innerHTML=`
+            <div class="card-content">
+                <span>کارت ${i+1}</span>
+                <div class="card-word">${w}</div>
+            </div>
+        `;
+        d.style.animationDelay = `${i * 0.1}s`;
+        cardsDiv.appendChild(d);
+    });
+
+    askIndex=Math.floor(Math.random()*numCards);
+
+    let tTime = level===1?7:level===2?5:3;
+    roundTime = tTime;
+    document.getElementById('roundTime').innerText=roundTime;
+
+    const rTimer = setInterval(()=>{
+        roundTime--;
+        document.getElementById('roundTime').innerText=roundTime;
+        if(roundTime<=0){
+            clearInterval(rTimer);
+            hideCards();
+        }
+    },1000);
+}
+
+function hideCards(){
+    document.querySelectorAll('.card').forEach((card, index) => {
+        setTimeout(() => {
+            card.classList.add('flipped');
+            setTimeout(() => {
+                const wordDiv = card.querySelector('.card-word');
+                if(wordDiv) {
+                    wordDiv.style.color = 'transparent';
+                    wordDiv.style.textShadow = 'none';
+                }
+            }, 250);
+        }, index * 100);
+    });
+    
+    setTimeout(() => {
+        document.getElementById('answer').disabled=false;
+        document.getElementById('submitBtn').disabled=false;
+        document.getElementById('result').innerText=`کلمه کارت ${askIndex+1} را بنویسید:`;
+    }, selected.length * 100 + 300);
+}
+
+function checkAnswer(){
+    const user = document.getElementById('answer').value.trim();
+    const mark = document.getElementById('mark');
+    mark.innerHTML='';
+
+    if(user===selected[askIndex]){
+        score++;
+        document.getElementById('score').innerText=score;
+        mark.innerHTML='✔️';
+        mark.className='mark correct';
+        playSound('correct');
+    }else{
+        mark.innerHTML='✖️';
+        mark.className='mark wrong';
+        playSound('wrong');
+    }
+
+    setTimeout(()=>{ 
+        mark.innerHTML=''; 
+        startRound(); 
+    },800);
+}
+
+function endGame(){
+    clearInterval(totalTimer);
+    document.getElementById('cards').innerHTML='';
+    document.getElementById('mark').innerHTML='';
+    document.getElementById('result').innerText='';
+    document.getElementById('roundTime').innerText='0';
+
+    document.getElementById('answer').classList.add('hidden-element');
+    document.getElementById('submitBtn').classList.add('hidden-element');
+
+    // پخش صدای پایان بازی
+    playSound('gameover');
+
+    const endDiv = document.getElementById('end');
+    endDiv.innerHTML = `
+        <div class="end-content">
+            <p id="endMessage"></p>
+            <div class="end-buttons">
+                <button id="restartBtn" class="endBtn">🔄 بازی جدید</button>
+                <button id="mainMenuBtn" class="endBtn">🏠 صفحه اصلی</button>
+            </div>
+        </div>
+    `;
+    const msg = document.getElementById('endMessage');
+    msg.innerHTML = `🌟 <span id="safeName"></span> خسته نباشی!<br>امتیاز شما: <b>${score}</b>`;
+    document.getElementById('safeName').textContent = playerName;
+
+    document.getElementById('restartBtn').addEventListener('click', restartGame);
+    document.getElementById('mainMenuBtn').addEventListener('click', goToMainMenu);
+}
+
+function restartGame() {
+    document.getElementById('end').innerHTML = '';
+    document.getElementById('answer').classList.remove('hidden-element');
+    document.getElementById('submitBtn').classList.remove('hidden-element');
+    document.getElementById('cards').innerHTML = '';
+    document.getElementById('mark').innerHTML = '';
+    document.getElementById('mark').className = '';
+    document.getElementById('result').innerText = '';
+    
+    totalTime = 120;
+    score = 0;
+    document.getElementById('score').innerText = score;
+    document.getElementById('totalTime').innerText = totalTime;
+    document.getElementById('roundTime').innerText = roundTime;
+    
+    document.getElementById('answer').disabled = true;
+    document.getElementById('submitBtn').disabled = true;
+    document.getElementById('answer').value = '';
+    
+    clearInterval(totalTimer);
+    
+    totalTimer = setInterval(() => {
+        totalTime--;
+        document.getElementById('totalTime').innerText = totalTime;
+        if (totalTime <= 0) {
+            clearInterval(totalTimer);
+            endGame();
+        }
+    }, 1000);
+    
+    startRound();
+}
+
+function goToMainMenu() {
+    clearInterval(totalTimer);
+    score = 0;
+    totalTime = 120;
+    document.getElementById('gameArea').style.display = 'none';
+    document.getElementById('mainMenu').style.display = 'block';
+    document.getElementById('end').innerHTML = '';
+    document.getElementById('answer').classList.remove('hidden-element');
+    document.getElementById('submitBtn').classList.remove('hidden-element');
+    document.getElementById('answer').value = '';
+    document.getElementById('result').innerText = '';
+    document.getElementById('mark').innerHTML = '';
+    document.getElementById('cards').innerHTML = '';
+    document.body.style.background = 'linear-gradient(135deg, #4dd0e1, #26c6da)';
+}
+
+// ===== اسکریپت منوی شبکه‌های اجتماعی =====
+(function() {
+    const menu = document.getElementById('circularMenu');
+    const menuButton = document.querySelector('.menu-button');
+    const menuItems = Array.from(document.querySelectorAll('.menu-item'));
+    let isMenuOpen = false;
+    let isInitialized = false;
+    let isAnimating = false;
+    const ANIMATION_LOCK_MS = 730;
+
+    function setMenuState(open) {
+        isMenuOpen = open;
+        menu.classList.toggle('active', open);
+        menuButton.setAttribute('aria-expanded', String(open));
+        menuItems.forEach(item => item.setAttribute('tabindex', open ? '0' : '-1'));
+    }
+
+    function toggleMenu() {
+        if (isAnimating) return;
+        if (!isInitialized) {
+            menu.classList.add('ready');
+            isInitialized = true;
+        }
+        isAnimating = true;
+        setMenuState(!isMenuOpen);
+        setTimeout(() => { isAnimating = false; }, ANIMATION_LOCK_MS);
+    }
+
+    menuButton.addEventListener('click', function(e) {
+        e.stopPropagation();
+        toggleMenu();
+    });
+
+    document.addEventListener('click', function(e) {
+        if (isMenuOpen && !menu.contains(e.target)) {
+            setMenuState(false);
+        }
+    });
+
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape' && isMenuOpen) {
+            setMenuState(false);
+            menuButton.focus();
+        }
+    });
+
+    menu.addEventListener('click', function(e) {
+        e.stopPropagation();
+    });
+})();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,1511 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover" />
+  <title>واژه‌یاب فارسی پنجم 🎮 + شبکه‌های اجتماعی</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    html,
+    body {
+      height: 100dvh;
+      overflow: hidden;
+      font-family: 'Vazirmatn', 'Tahoma', sans-serif;
+    }
+    body {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: #0d0d1f;
+      padding: 8px;
+    }
+    #particlesCanvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 0;
+      pointer-events: none;
+    }
+    .game-container {
+      position: relative;
+      z-index: 2;
+      width: 100%;
+      max-width: 500px;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+    }
+    .card {
+      background: linear-gradient(160deg, rgba(255, 255, 255, 0.09), rgba(255, 255, 255, 0.04));
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+      border-radius: 32px;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      box-shadow: 0 25px 50px rgba(0, 0, 0, 0.6), 0 0 40px rgba(120, 115, 245, 0.15) inset;
+      padding: 20px 16px;
+      color: #fff;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      max-height: 100%;
+      flex: 1;
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity 0.4s ease, transform 0.4s ease;
+    }
+    .card.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    .title {
+      font-size: 2.8rem;
+      font-weight: 900;
+      background: linear-gradient(135deg, #ff6ec4, #7873f5, #3bd1d3, #ffd966);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      filter: drop-shadow(0 0 12px rgba(120, 115, 245, 0.8));
+      margin-bottom: 8px;
+    }
+    .owl {
+      font-size: 2.4rem;
+      margin-bottom: 4px;
+    }
+    .form-group {
+      margin-bottom: 10px;
+      text-align: right;
+    }
+    label {
+      display: block;
+      font-size: 0.85rem;
+      margin-bottom: 4px;
+      color: #ddd;
+    }
+    input,
+    select {
+      width: 100%;
+      padding: 10px 14px;
+      border-radius: 14px;
+      border: 1px solid rgba(255, 255, 255, 0.25);
+      background: rgba(255, 255, 255, 0.08);
+      color: #fff;
+      font-size: 1rem;
+      outline: none;
+      font-family: inherit;
+    }
+    .btn {
+      background: linear-gradient(135deg, #7873f5, #3bd1d3);
+      border: none;
+      padding: 14px 28px;
+      border-radius: 50px;
+      font-size: 1.1rem;
+      font-weight: bold;
+      color: #fff;
+      cursor: pointer;
+      box-shadow: 0 10px 25px rgba(120, 115, 245, 0.5);
+      width: 100%;
+      margin-top: 6px;
+      transition: transform 0.2s;
+    }
+    .btn:active {
+      transform: scale(0.96);
+    }
+    .mode-selector {
+      display: flex;
+      gap: 10px;
+    }
+    .mode-btn {
+      flex: 1;
+      padding: 10px;
+      border-radius: 18px;
+      background: rgba(255, 255, 255, 0.08);
+      border: 2px solid transparent;
+      color: #ccc;
+      font-weight: bold;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+    .mode-btn.active {
+      border-color: #3bd1d3;
+      background: rgba(59, 209, 211, 0.2);
+      color: #fff;
+      box-shadow: 0 0 12px #3bd1d3;
+    }
+    .help-text {
+      font-size: 0.7rem;
+      color: #aaa;
+      margin-top: 8px;
+      max-height: 50px;
+      overflow-y: auto;
+      text-align: right;
+    }
+    .game-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 6px;
+      flex-shrink: 0;
+    }
+    .timer {
+      font-size: 1.2rem;
+      font-weight: bold;
+      background: rgba(0, 0, 0, 0.5);
+      padding: 4px 12px;
+      border-radius: 16px;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .score-display {
+      font-size: 1rem;
+      background: rgba(255, 215, 0, 0.2);
+      padding: 4px 12px;
+      border-radius: 16px;
+      color: #ffd966;
+    }
+    .word-display {
+      background: rgba(255, 255, 255, 0.12);
+      padding: 8px 18px;
+      border-radius: 20px;
+      margin: 4px 0;
+      font-size: 1.4rem;
+      font-weight: bold;
+      color: #ffd966;
+      word-break: break-word;
+      flex-shrink: 0;
+    }
+    .word-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 5px;
+      justify-content: center;
+      margin: 4px 0;
+      padding: 2px;
+      flex-shrink: 0;
+    }
+    .word-tag {
+      background: rgba(255, 255, 255, 0.12);
+      padding: 5px 14px;
+      border-radius: 16px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      box-shadow: 0 3px 8px rgba(0, 0, 0, 0.25);
+      transition: 0.2s;
+    }
+    .grid-wrapper {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 0;
+    }
+    .grid {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      touch-action: none;
+      flex-shrink: 0;
+    }
+    .grid-row {
+      display: flex;
+      gap: 2px;
+      width: 100%;
+      flex: 1;
+      min-height: 0;
+    }
+    .cell {
+      flex: 1;
+      aspect-ratio: 1 / 1;
+      background: rgba(255, 255, 255, 0.09);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: clamp(0.8rem, 5vw, 1.3rem);
+      font-weight: bold;
+      color: #fff;
+      text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+      transition: background 0.15s, transform 0.15s;
+      position: relative;
+    }
+    .cell.selected {
+      background: #7873f5 !important;
+      box-shadow: 0 0 12px #7873f5;
+      transform: scale(1.05);
+    }
+    .cell.timeout-flash {
+      background: #ff6ec4 !important;
+      box-shadow: 0 0 14px #ff6ec4;
+      animation: blink 0.3s infinite alternate;
+    }
+    @keyframes blink {
+      to {
+        opacity: 0.5;
+      }
+    }
+    .cell.hint-flash {
+      background: rgba(255, 217, 102, 0.35) !important;
+      box-shadow: 0 0 16px 3px #ffd966;
+      animation: hintPulse 0.7s ease-in-out infinite alternate;
+    }
+    @keyframes hintPulse {
+      to {
+        box-shadow: 0 0 26px 8px #ffd966;
+      }
+    }
+    .hint-btn {
+      width: auto;
+      padding: 8px 20px;
+      font-size: 0.85rem;
+      margin-top: 8px;
+      background: linear-gradient(135deg, #ffd966, #ff9f6e);
+      box-shadow: 0 8px 18px rgba(255, 217, 102, 0.4);
+    }
+    .hint-btn:disabled {
+      opacity: 0.4;
+      box-shadow: none;
+      cursor: not-allowed;
+    }
+    .message {
+      margin-top: 4px;
+      font-size: 0.95rem;
+      color: #ffd966;
+      min-height: 22px;
+      font-weight: bold;
+      flex-shrink: 0;
+    }
+    .progress-bar {
+      width: 100%;
+      height: 6px;
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: 3px;
+      margin: 4px 0;
+      overflow: hidden;
+      flex-shrink: 0;
+    }
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #3bd1d3, #ffd966, #ff6b6b);
+      transition: width 1s linear;
+      width: 100%;
+    }
+    .bricks-container {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 4px;
+      justify-content: center;
+      margin: 4px 0;
+      flex-shrink: 0;
+    }
+    .brick {
+      width: 18px;
+      height: 18px;
+      border-radius: 4px;
+      background: rgba(255, 255, 255, 0.3);
+      transition: background 0.2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+    }
+    .brick.green {
+      background: #3bd1d3;
+    }
+    .brick.red {
+      background: #ff6b6b;
+    }
+    .tutorial-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.8);
+      z-index: 99;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      backdrop-filter: blur(8px);
+    }
+    .tutorial-card {
+      background: rgba(255, 255, 255, 0.12);
+      backdrop-filter: blur(20px);
+      border-radius: 24px;
+      padding: 24px;
+      max-width: 360px;
+      text-align: center;
+      color: #fff;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
+    }
+    .tutorial-step {
+      font-size: 2.4rem;
+      margin-bottom: 12px;
+    }
+    .tutorial-text {
+      font-size: 1rem;
+      margin-bottom: 20px;
+      line-height: 1.6;
+    }
+    .hidden {
+      display: none !important;
+    }
+    .thank-you {
+      font-size: 1.4rem;
+      font-weight: bold;
+      color: #ffd966;
+      margin-bottom: 8px;
+    }
+    .motivation {
+      font-size: 1.2rem;
+      font-weight: bold;
+      color: #ffd966;
+      margin-top: 8px;
+      background: rgba(255, 215, 0, 0.1);
+      padding: 10px 20px;
+      border-radius: 16px;
+      display: inline-block;
+    }
+
+    /* ===== استایل‌های منوی شبکه‌های اجتماعی ===== */
+    :root {
+      --neon-primary: #0ff;
+      --neon-secondary: #f0f;
+      --bg-dark: #121212;
+    }
+
+    .circular-menu {
+      position: fixed;
+      bottom: 25px;
+      left: 25px;
+      width: 60px;
+      height: 60px;
+      z-index: 9999;
+      pointer-events: none;
+    }
+    .circular-menu * {
+      pointer-events: auto;
+    }
+
+    .circular-menu .menu-button {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 58px;
+      height: 58px;
+      border-radius: 50%;
+      background-color: var(--bg-dark);
+      color: var(--neon-primary);
+      border: 2px solid var(--neon-primary);
+      cursor: pointer;
+      z-index: 2;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      box-shadow: 0 0 8px var(--neon-primary),
+        0 0 15px var(--neon-primary),
+        0 0 30px var(--neon-primary),
+        inset 0 0 15px rgba(0, 255, 255, 0.2);
+      transition: all 0.4s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .circular-menu .menu-button:focus-visible {
+      outline: 3px solid #fff;
+      outline-offset: 3px;
+    }
+
+    .circular-menu.active .menu-button {
+      background-color: #1a0a1a;
+      color: var(--neon-secondary);
+      border-color: var(--neon-secondary);
+      transform: rotate(135deg);
+      box-shadow: 0 0 10px var(--neon-secondary),
+        0 0 20px var(--neon-secondary),
+        0 0 40px var(--neon-secondary),
+        inset 0 0 20px rgba(255, 0, 255, 0.3);
+    }
+
+    .circular-menu .menu-item {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 52px;
+      height: 52px;
+      border-radius: 50%;
+      background-color: #ffffff;
+      color: #2c3e50;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      opacity: 0;
+      transform: scale(0);
+      z-index: -1;
+      text-decoration: none;
+      -webkit-tap-highlight-color: transparent;
+      pointer-events: none;
+      visibility: hidden;
+      transition: all 0.3s ease;
+    }
+
+    .circular-menu.active .menu-item {
+      pointer-events: auto;
+      visibility: visible;
+    }
+
+    .menu-item:focus-visible {
+      outline: 3px solid #fff;
+      outline-offset: 2px;
+    }
+
+    .menu-item.instagram:hover,
+    .menu-item.instagram:focus-visible {
+      background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888);
+      color: white;
+    }
+    .menu-item.telegram:hover,
+    .menu-item.telegram:focus-visible {
+      background: #0088cc;
+      color: white;
+    }
+    .menu-item.aparat:hover,
+    .menu-item.aparat:focus-visible {
+      background: #ed1c24;
+      color: white;
+    }
+    .menu-item.website:hover,
+    .menu-item.website:focus-visible {
+      background: #4facfe;
+      color: white;
+    }
+    .menu-item.webapp:hover,
+    .menu-item.webapp:focus-visible {
+      background: #6c5ce7;
+      color: white;
+    }
+
+    .circular-menu.ready.active .menu-item {
+      animation-duration: 0.45s;
+      animation-timing-function: cubic-bezier(0.68, -0.55, 0.27, 1.55);
+      animation-fill-mode: forwards;
+    }
+    .circular-menu.ready.active .menu-item:nth-child(1) {
+      animation-name: expand1;
+      animation-delay: 0.00s;
+    }
+    .circular-menu.ready.active .menu-item:nth-child(2) {
+      animation-name: expand2;
+      animation-delay: 0.07s;
+    }
+    .circular-menu.ready.active .menu-item:nth-child(3) {
+      animation-name: expand3;
+      animation-delay: 0.14s;
+    }
+    .circular-menu.ready.active .menu-item:nth-child(4) {
+      animation-name: expand4;
+      animation-delay: 0.21s;
+    }
+    .circular-menu.ready.active .menu-item:nth-child(5) {
+      animation-name: expand5;
+      animation-delay: 0.28s;
+    }
+
+    .circular-menu.ready:not(.active) .menu-item {
+      animation-duration: 0.35s;
+      animation-timing-function: ease-in;
+      animation-fill-mode: forwards;
+    }
+    .circular-menu.ready:not(.active) .menu-item:nth-child(1) {
+      animation-name: collapse1;
+      animation-delay: 0.28s;
+    }
+    .circular-menu.ready:not(.active) .menu-item:nth-child(2) {
+      animation-name: collapse2;
+      animation-delay: 0.21s;
+    }
+    .circular-menu.ready:not(.active) .menu-item:nth-child(3) {
+      animation-name: collapse3;
+      animation-delay: 0.14s;
+    }
+    .circular-menu.ready:not(.active) .menu-item:nth-child(4) {
+      animation-name: collapse4;
+      animation-delay: 0.07s;
+    }
+    .circular-menu.ready:not(.active) .menu-item:nth-child(5) {
+      animation-name: collapse5;
+      animation-delay: 0.00s;
+    }
+
+    @keyframes expand1 {
+      0% {
+        opacity: 0;
+        transform: scale(0);
+        z-index: 1;
+      }
+      100% {
+        opacity: 1;
+        transform: translate(0, -150px) scale(1);
+        z-index: 1;
+      }
+    }
+    @keyframes expand2 {
+      0% {
+        opacity: 0;
+        transform: scale(0);
+        z-index: 1;
+      }
+      100% {
+        opacity: 1;
+        transform: translate(57px, -139px) scale(1);
+        z-index: 1;
+      }
+    }
+    @keyframes expand3 {
+      0% {
+        opacity: 0;
+        transform: scale(0);
+        z-index: 1;
+      }
+      100% {
+        opacity: 1;
+        transform: translate(106px, -106px) scale(1);
+        z-index: 1;
+      }
+    }
+    @keyframes expand4 {
+      0% {
+        opacity: 0;
+        transform: scale(0);
+        z-index: 1;
+      }
+      100% {
+        opacity: 1;
+        transform: translate(139px, -57px) scale(1);
+        z-index: 1;
+      }
+    }
+    @keyframes expand5 {
+      0% {
+        opacity: 0;
+        transform: scale(0);
+        z-index: 1;
+      }
+      100% {
+        opacity: 1;
+        transform: translate(150px, 0) scale(1);
+        z-index: 1;
+      }
+    }
+
+    @keyframes collapse1 {
+      0% {
+        opacity: 1;
+        transform: translate(0, -150px) scale(1);
+        z-index: 1;
+      }
+      100% {
+        opacity: 0;
+        transform: translate(0, -150px) scale(0);
+        z-index: -1;
+      }
+    }
+    @keyframes collapse2 {
+      0% {
+        opacity: 1;
+        transform: translate(57px, -139px) scale(1);
+        z-index: 1;
+      }
+      100% {
+        opacity: 0;
+        transform: translate(57px, -139px) scale(0);
+        z-index: -1;
+      }
+    }
+    @keyframes collapse3 {
+      0% {
+        opacity: 1;
+        transform: translate(106px, -106px) scale(1);
+        z-index: 1;
+      }
+      100% {
+        opacity: 0;
+        transform: translate(106px, -106px) scale(0);
+        z-index: -1;
+      }
+    }
+    @keyframes collapse4 {
+      0% {
+        opacity: 1;
+        transform: translate(139px, -57px) scale(1);
+        z-index: 1;
+      }
+      100% {
+        opacity: 0;
+        transform: translate(139px, -57px) scale(0);
+        z-index: -1;
+      }
+    }
+    @keyframes collapse5 {
+      0% {
+        opacity: 1;
+        transform: translate(150px, 0) scale(1);
+        z-index: 1;
+      }
+      100% {
+        opacity: 0;
+        transform: translate(150px, 0) scale(0);
+        z-index: -1;
+      }
+    }
+
+    .circular-menu svg {
+      width: 24px;
+      height: 24px;
+      fill: currentColor;
+    }
+  </style>
+</head>
+<body>
+  <canvas id="particlesCanvas"></canvas>
+
+  <div class="game-container" id="app">
+    <!-- منوی اصلی -->
+    <div id="menu" class="card visible">
+      <div class="owl">🦉</div>
+      <div class="title">📚 واژه‌یاب</div>
+      <div class="form-group">
+        <label>👤 نام و نام خانوادگی</label>
+        <input type="text" id="playerName" placeholder="مثال: علی رضایی" autocomplete="off" required>
+      </div>
+      <div class="form-group">
+        <label>📖 بازه درس (از - تا)</label>
+        <div style="display:flex; gap:6px;">
+          <select id="lessonFrom"></select>
+          <select id="lessonTo"></select>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>🎯 حالت بازی</label>
+        <div class="mode-selector">
+          <div class="mode-btn active" data-mode="free">🟢 آزاد</div>
+          <div class="mode-btn" data-mode="speed">🔵 سرعتی</div>
+        </div>
+      </div>
+      <button class="btn" id="startBtn">🚀 شروع ماجراجویی</button>
+      <div class="help-text">
+        🧩 <strong>راهنما:</strong><br>
+        • کلمات را با کشیدن انگشت روی حروف بیابید.<br>
+        • حالت آزاد: ۸ کلمه، ثبت زمان.<br>
+        • حالت سرعتی: ۲۰ ثانیه هر کلمه، هر پاسخ ۱ امتیاز.<br>
+        • رکوردها برای هر نام ذخیره می‌شود.<br>
+        • دروس آزاد (بدون واژه) در لیست نیستند.
+      </div>
+    </div>
+
+    <!-- صفحه بازی -->
+    <div id="gameScreen" class="card hidden">
+      <div class="owl" style="font-size:1.8rem;">🦉</div>
+      <div class="game-header">
+        <span class="timer">⏱ <span id="timerDisplay">۰۰:۰۰</span></span>
+        <span class="score-display hidden" id="scoreDisplay">⭐ <span id="scoreValue">۰</span></span>
+        <button class="btn" style="width:auto; padding:6px 16px; font-size:0.85rem;" id="backBtn">🔙 بازگشت</button>
+      </div>
+      <div class="progress-bar" id="progressBar"><div class="progress-fill" id="progressFill"></div></div>
+      <div id="speedUI" class="hidden">
+        <div class="word-display" id="targetWordDisplay"></div>
+        <div style="display:flex; justify-content:center; gap:20px; align-items:center;">
+          <span class="timer">⏳ <span id="roundTimerDisplay">۲۰</span> ثانیه</span>
+        </div>
+        <div class="bricks-container" id="bricksContainer"></div>
+      </div>
+      <div id="freeUI" class="hidden">
+        <div class="word-list" id="wordListContainer"></div>
+        <button class="btn hint-btn" id="hintBtn">💡 راهنمایی (۳)</button>
+      </div>
+      <div class="grid-wrapper">
+        <div class="grid" id="gridContainer"></div>
+      </div>
+      <div class="message" id="messageBox"></div>
+    </div>
+
+    <!-- نتیجه -->
+    <div id="resultScreen" class="card hidden">
+      <div class="owl">🦉</div>
+      <h2 style="color:#ffd966;">🏆 نتیجه</h2>
+      <p id="resultText" style="font-size:1.3rem; margin:16px 0;"></p>
+      <p id="recordText" style="color:#3bd1d3;"></p>
+      <div class="thank-you" id="thankYouMessage"></div>
+      <p id="motivationText" class="motivation"></p>
+      <button class="btn" id="playAgainBtn">🔄 بازی دوباره</button>
+    </div>
+  </div>
+
+  <!-- ===== منوی شبکه‌های اجتماعی ===== -->
+  <div class="circular-menu" id="circularMenu">
+    <a href="https://instagram.com/heydarzadehteacher" target="_blank" rel="noopener noreferrer"
+    class="menu-item instagram" title="اینستاگرام" aria-label="صفحه‌ی اینستاگرام" tabindex="-1">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.204-.012 3.583-.069 4.849-.148 3.227-1.664 4.771-4.919 4.919-1.266.058-1.645.069-4.849.069-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.791-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.209-1.791 4-4 4zm6.406-11.845c-.796 0-1.44.645-1.44 1.44s.644 1.44 1.44 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
+  </a>
+
+  <a href="https://t.me/bazieamouzeshi" target="_blank" rel="noopener noreferrer"
+  class="menu-item telegram" title="تلگرام" aria-label="کانال تلگرام" tabindex="-1">
+  <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.38-.94-2.23-1.5-.99-.65-.35-1.01.22-1.59.15-.15 2.71-2.48 2.76-2.69.01-.03.01-.14-.07-.2-.08-.06-.19-.04-.27-.02-.12.02-1.96 1.25-5.54 3.66-.52.36-1 .53-1.42.52-.47-.01-1.37-.26-2.03-.48-.82-.27-1.47-.42-1.41-.88.03-.24.37-.49 1.02-.74 3.98-1.73 6.63-2.87 7.96-3.42 3.79-1.58 4.58-1.85 5.09-1.86.11 0 .37.03.53.16.14.11.18.25.2.39-.01.06.01.23-.02.37z"/></svg>
+</a>
+
+<a href="https://www.aparat.com/heydarzadehteacher" target="_blank" rel="noopener noreferrer"
+class="menu-item aparat" title="آپارات" aria-label="صفحه‌ی آپارات" tabindex="-1">
+<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 8.64v6.72L15.27 12 10 8.64zM12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z"/></svg>
+</a>
+
+<a href="https://sites.google.com/view/heydarzadehteacher" target="_blank" rel="noopener noreferrer"
+class="menu-item website" title="وب‌سایت" aria-label="وب‌سایت" tabindex="-1">
+<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/></svg>
+</a>
+
+<a href="https://heydarzadehteacher.github.io/Educational-Games-app/index.html" target="_blank" rel="noopener noreferrer"
+class="menu-item webapp" title="وب‌اپ" aria-label="وب‌اپ آموزشی" tabindex="-1">
+<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M17 1.01L7 1c-1.1 0-2 .9-2 2v18c0 1.1.9 2 2 2h10c1.1 0 2-.9 2-2V3c0-1.1-.9-1.99-2-1.99zM17 19H7V5h10v14z"/></svg>
+</a>
+
+<button class="menu-button" title="شبکه‌های اجتماعی" aria-label="باز کردن منوی شبکه‌های اجتماعی"
+aria-haspopup="true" aria-expanded="false">
+<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92 1.61 0 2.92-1.31 2.92-2.92s-1.31-2.92-2.92-2.92z"/></svg>
+</button>
+</div>
+
+<script>
+  (function() {
+    // ==================== دیتابیس کلمات جدید (بدون درس ۱۳) ====================
+    const lessons = {
+      1: ["تابستان", "گوشه", "محله", "هنوز", "همراه", "اطراف", "بعضی", "قنادی", "صف", "گلدسته", "فضا", "انتها", "عظمت", "معرفی", "قبلا", "خاطرات", "لحظه", "نگاه", "بخواهید"],
+      2: ["هوا", "گذشته", "فعالیت", "بعضی", "موضوع", "مهم", "علاقه", "بحث", "بهتر", "نظم", "تعطیل", "طرف", "صورت", "چطور", "گفت", "گذاشت", "مخصوص", "استخر", "راهنمایی", "طول"],
+      3: ["هفته", "گذشته", "آموزگار", "همراه", "نگاه", "گزارش", "صدا", "بعد", "محیط", "علاوه", "گویا", "صبح", "پاکیزگی", "اهمیت"],
+      4: ["منتظر", "لحظه", "بهترین", "کنجکاو", "خواست", "تعجب", "توضیح", "عادت", "صوت", "ضبط", "بوق", "ترقه", "فشفشه", "گنجشک", "قشنگ", "نگاه"],
+      5: ["غذا", "صحرا", "صاحب", "نخواهد", "بخواهد", "خواهش", "خویش", "دهقان", "خطر", "تصمیم"],
+      6: ["ذهن", "حتی", "شهید", "موفقیت", "علت", "تحمیلی", "گلوله", "هنگام", "طفل", "قطار", "شعله", "خطر", "احترام", "گذاشت"],
+      7: ["معمولی", "عجب", "باصفا", "گودال", "عمر", "معلوم", "طول", "تعجب", "گفت", "همین"],
+      8: ["حضرت", "لطیف", "ضعیف", "فقیر", "تن", "دعا", "اتاق", "وقتی", "عطر", "بهشت"],
+      9: ["سفال", "نغمه", "رنگارنگ", "انتها", "چقدر", "فروغ", "حس", "عزیز", "غایب"],
+      10: ["لذت", "ضربان", "بعضی", "لحظه", "شعر", "فقط", "حقیقت", "همراه", "خلاصه", "حالت"],
+      11: ["حاتم", "قربانی", "عرب", "گوشه", "عمل", "حکایت", "تحصیلات", "اهل", "احادیث", "گلستان", "آثار", "حتما", "شاعر"],
+      12: ["نعمت", "مقدس", "جهان", "عاشق", "رونق", "حریص", "دهان", "حافظ", "طمع", "زر"],
+      // درس ۱۳ حذف شده است
+      14: ["گروه", "دقیقه", "میهن", "مناطق", "نگهبان", "اصلی", "اهمیت", "علم", "صنعت", "معروف", "همبستگی", "اعضا", "دفاع", "آموزگار", "وظیفه", "همدلی"],
+      15: ["افق", "تن", "ساحل", "خواب", "غوطه", "زلال", "زندگی", "مهربان", "ماهی", "مثل"],
+      16: ["پهناور", "بگذر", "گاه", "مشغول", "حاشیه", "تفریح", "بگو", "قایق", "تند", "هیچ", "روزگار"],
+      17: ["رخت", "خواب", "نقطه", "وصل", "هیجان", "نهایت", "مثل", "هدیه", "احوال", "عجیب", "فضا", "ناگهان"]
+    };
+
+    // درس ۱۳ را از لیست دروس حذف می‌کنیم
+    const excluded = [13];
+    const allNums = Object.keys(lessons).map(Number).filter(n => !excluded.includes(n)).sort((a, b) => a - b);
+
+    const SIZE = 10;
+    const DIRS = { H: [0, 1], V: [1, 0], D: [1, 1] };
+    const WORD_COLORS = ['#FF6B6B', '#4ECDC4', '#45B7D1', '#96CEB4', '#FFEAA7', '#DDA0DD', '#98D8C8', '#F7DC6F', '#BB8FCE',
+      '#85C1E9'
+    ];
+    let wordColorMap = new Map();
+
+    // DOM
+    const menu = document.getElementById('menu');
+    const gameScreen = document.getElementById('gameScreen');
+    const resultScreen = document.getElementById('resultScreen');
+    const nameInp = document.getElementById('playerName');
+    const fromSel = document.getElementById('lessonFrom');
+    const toSel = document.getElementById('lessonTo');
+    const startBtn = document.getElementById('startBtn');
+    const backBtn = document.getElementById('backBtn');
+    const againBtn = document.getElementById('playAgainBtn');
+    const timerDisp = document.getElementById('timerDisplay');
+    const gridCont = document.getElementById('gridContainer');
+    const msgBox = document.getElementById('messageBox');
+    const modeBtns = document.querySelectorAll('.mode-btn');
+    const speedUI = document.getElementById('speedUI');
+    const freeUI = document.getElementById('freeUI');
+    const wordListCont = document.getElementById('wordListContainer');
+    const targetWordDisp = document.getElementById('targetWordDisplay');
+    const roundTimerDisp = document.getElementById('roundTimerDisplay');
+    const scoreDisp = document.getElementById('scoreDisplay');
+    const scoreVal = document.getElementById('scoreValue');
+    const progressBar = document.getElementById('progressBar');
+    const progressFill = document.getElementById('progressFill');
+    const bricksContainer = document.getElementById('bricksContainer');
+    const motivationText = document.getElementById('motivationText');
+    const thankYouMessage = document.getElementById('thankYouMessage');
+    const hintBtn = document.getElementById('hintBtn');
+    const gridWrapper = document.querySelector('.grid-wrapper');
+
+    function sizeGrid() {
+      if (!gridWrapper) return;
+      const w = gridWrapper.clientWidth,
+        h = gridWrapper.clientHeight;
+      const size = Math.floor(Math.max(0, Math.min(w, h)));
+      if (size > 0) { gridCont.style.width = size + 'px';
+        gridCont.style.height = size + 'px'; }
+    }
+    window.addEventListener('resize', sizeGrid);
+    window.addEventListener('orientationchange', () => setTimeout(sizeGrid, 200));
+
+    let gameMode = 'free',
+      playerName = '',
+      gameActive = false;
+    let grid = [],
+      targetWords = [],
+      foundWords = new Set(),
+      wordPositions = [];
+    let selectedCells = [],
+      mainTimer = null,
+      roundTimer = null;
+    let totalSec = 0,
+      speedTimeLeft = 180,
+      speedScore = 0;
+    let speedPool = [],
+      usedWords = new Set(),
+      currentWord = null,
+      roundLeft = 20,
+      roundCells = [];
+    let speedBricks = [];
+    let hintsLeft = 3;
+    const MAX_HINTS = 3;
+
+    // ==================== Audio Context ====================
+    let audioCtx = null;
+
+    function initAudio() { if (!audioCtx) audioCtx = new(window.AudioContext || window.webkitAudioContext)(); }
+
+    function playBeep(freq, duration, type = 'sine', vol = 0.1) {
+      if (!audioCtx) return;
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      osc.type = type;
+      osc.frequency.value = freq;
+      gain.gain.setValueAtTime(vol, audioCtx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
+      osc.connect(gain);
+      gain.connect(audioCtx.destination);
+      osc.start();
+      osc.stop(audioCtx.currentTime + duration);
+    }
+
+    function sfxSuccess() { playBeep(660, 0.15, 'square', 0.08);
+      setTimeout(() => playBeep(880, 0.15, 'square', 0.08), 150); }
+
+    function sfxFail() { playBeep(200, 0.3, 'sawtooth', 0.05); }
+
+    function sfxClick() { playBeep(440, 0.08, 'sine', 0.06); }
+
+    // ==================== ذرات ====================
+    const canvas = document.getElementById('particlesCanvas');
+    const ctx = canvas.getContext('2d');
+    let particles = [];
+
+    function resizeCanvas() { canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight; }
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
+
+    class Particle {
+      constructor() { this.reset();
+        this.y = Math.random() * canvas.height; }
+      reset() { this.x = Math.random() * canvas.width;
+        this.y = -10;
+        this.size = Math.random() * 3 + 1;
+        this.speedY = Math.random() * 1.5 + 0.5;
+        this.opacity = Math.random() * 0.6 + 0.2;
+        this.color = `rgba(255,255,255,${this.opacity})`; }
+      update() { this.y += this.speedY; if (this.y > canvas.height + 10) this.reset(); }
+      draw() { ctx.beginPath();
+        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+        ctx.fillStyle = this.color;
+        ctx.fill(); }
+    }
+    for (let i = 0; i < 50; i++) particles.push(new Particle());
+
+    function animateParticles() { ctx.clearRect(0, 0, canvas.width, canvas.height);
+      particles.forEach(p => { p.update();
+        p.draw(); });
+      requestAnimationFrame(animateParticles); }
+    animateParticles();
+
+    // =================--- راهنما ====================
+    function showTutorial() {
+      if (localStorage.getItem('wordfinder_tutorial_done')) return;
+      const overlay = document.createElement('div');
+      overlay.className = 'tutorial-overlay';
+      const steps = [
+        { icon: '📖', text: '۱) نام و بازه درس را انتخاب کنید.' },
+        { icon: '👆', text: '۲) انگشت خود را روی حروف جدول بکشید (راست به چپ، بالا به پایین یا مورب).' },
+        { icon: '🎯', text: '۳) حالت آزاد: ۸ کلمه بدون زمان. حالت سرعتی: ۲۰ ثانیه برای هر کلمه، ۱ امتیاز.' }
+      ];
+      let stepIdx = 0;
+
+      function renderStep() {
+        overlay.innerHTML =
+          `<div class="tutorial-card"><div class="tutorial-step">${steps[stepIdx].icon}</div><div class="tutorial-text">${steps[stepIdx].text}</div><button class="btn" id="tutorialNext">${stepIdx < steps.length-1 ? 'بعدی ←' : 'متوجه شدم ✅'}</button></div>`;
+        overlay.querySelector('#tutorialNext').addEventListener('click', () => { sfxClick(); if (stepIdx < steps.length -
+            1) { stepIdx++;
+            renderStep(); } else { overlay.remove();
+            localStorage.setItem('wordfinder_tutorial_done', '1'); } });
+      }
+      renderStep();
+      document.body.appendChild(overlay);
+    }
+
+    // =================--- ابزار ====================
+    function populateSelects() {
+      fromSel.innerHTML = toSel.innerHTML = '';
+      allNums.forEach(n => { fromSel.add(new Option(`درس ${n}`, n));
+        toSel.add(new Option(`درس ${n}`, n)); });
+      toSel.value = allNums[allNums.length - 1];
+    }
+    populateSelects();
+    modeBtns.forEach(b => b.addEventListener('click', () => { modeBtns.forEach(b => b.classList.remove('active'));
+      b.classList.add('active');
+      gameMode = b.dataset.mode; }));
+
+    function toFa(input) {
+      const fa = ['۰', '۱', '۲', '۳', '۴', '۵', '۶', '۷', '۸', '۹'];
+      return String(input).replace(/[0-9]/g, d => fa[+d]);
+    }
+
+    function shuffle(a) { for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1));
+        [a[i], a[j]] = [a[j], a[i]]; } return a; }
+
+    function poolFromRange(f, t) { let p = []; for (let i = f; i <= t; i++)
+        if (lessons[i]) p.push(...lessons[i]); return [...new Set(p)]; }
+
+    function assignColors(words) { wordColorMap.clear();
+      words.forEach((w, i) => { wordColorMap.set(w, WORD_COLORS[i % WORD_COLORS.length]); }); }
+
+    // =================--- جدول ====================
+    function canPlace(g, w, r, c, dr, dc) { for (let i = 0; i < w.length; i++) { const nr = r + i * dr,
+          nc = c + i * dc; if (nr < 0 || nr >= SIZE || nc < 0 || nc >= SIZE) return false; if (g[nr][nc] !== '' && g[nr][
+            nc] !== w[i]) return false; } return true; }
+
+    function place(g, w, r, c, dr, dc) { const cells = []; for (let i = 0; i < w.length; i++) { const nr = r + i * dr,
+          nc = c + i * dc;
+        g[nr][nc] = w[i];
+        cells.push({ r: nr, c: nc }); } return cells; }
+
+    function fill(g) {
+      const w = 'آآآآآآآآایییننننننممممموووهههرررتتتتسسسششببببککککگگفففپپپچچجدححععققلممضضططصصثثذذظظغغ';
+      for (let r = 0; r < SIZE; r++)
+        for (let c = 0; c < SIZE; c++)
+          if (!g[r][c]) g[r][c] = w[Math.floor(Math.random() * w.length)];
+    }
+
+    function deduplicate(grid, positions) {
+      let changed = false;
+      for (const pos of positions) {
+        const word = pos.word,
+          mainCells = pos.cells;
+        for (const [dr, dc] of Object.values(DIRS)) {
+          for (let r = 0; r < SIZE; r++) {
+            for (let c = 0; c < SIZE; c++) {
+              if (r + dr * (word.length - 1) < 0 || r + dr * (word.length - 1) >= SIZE || c + dc * (word.length - 1) < 0 ||
+                c + dc * (word.length - 1) >= SIZE) continue;
+              let match = true;
+              for (let i = 0; i < word.length; i++)
+                if (grid[r + i * dr][c + i * dc] !== word[i]) { match = false; break; }
+              if (match) {
+                const isOriginal = mainCells.every((cell, i) => cell.r === r + i * dr && cell.c === c + i * dc);
+                if (!isOriginal) {
+                  const persian = 'آابپتثجدحخدرزسشعفقکگلمنوهی';
+                  let nl = persian[Math.floor(Math.random() * persian.length)];
+                  while (nl === word[0]) nl = persian[Math.floor(Math.random() * persian.length)];
+                  grid[r][c] = nl;
+                  changed = true;
+                  break;
+                }
+              }
+            }
+            if (changed) break;
+          }
+          if (changed) break;
+        }
+        if (changed) break;
+      }
+      return !changed;
+    }
+
+    function validateAll(grid, words) {
+      for (const w of words) {
+        let found = false;
+        for (const [dr, dc] of Object.values(DIRS)) {
+          for (let r = 0; r < SIZE; r++) {
+            for (let c = 0; c < SIZE; c++) {
+              if (r + dr * (w.length - 1) < 0 || r + dr * (w.length - 1) >= SIZE || c + dc * (w.length - 1) < 0 || c + dc *
+                (w.length - 1) >= SIZE) continue;
+              let ok = true;
+              for (let i = 0; i < w.length; i++)
+                if (grid[r + i * dr][c + i * dc] !== w[i]) { ok = false; break; }
+              if (ok) { found = true; break; }
+            }
+            if (found) break;
+          }
+          if (found) break;
+        }
+        if (!found) return false;
+      }
+      return true;
+    }
+
+    function generate(words) {
+      for (let attempt = 0; attempt < 800; attempt++) {
+        const g = Array(SIZE).fill().map(() => Array(SIZE).fill(''));
+        const pos = [];
+        const shuffled = shuffle([...words]);
+        let ok = true;
+        for (const w of shuffled) {
+          let placed = false;
+          const dirs = shuffle(Object.keys(DIRS));
+          for (const d of dirs) {
+            const [dr, dc] = DIRS[d];
+            const cand = [];
+            for (let r = 0; r < SIZE; r++)
+              for (let c = 0; c < SIZE; c++)
+                if (canPlace(g, w, r, c, dr, dc)) cand.push([r, c]);
+            if (cand.length) {
+              const [r, c] = cand[Math.floor(Math.random() * cand.length)];
+              const cells = place(g, w, r, c, dr, dc);
+              pos.push({ word: w, cells, dir: d });
+              placed = true;
+              break;
+            }
+          }
+          if (!placed) { ok = false; break; }
+        }
+        if (ok) {
+          fill(g);
+          let dA = 0;
+          while (!deduplicate(g, pos) && dA < 100) dA++;
+          if (dA === 100) continue;
+          if (validateAll(g, words)) return { grid: g, positions: pos };
+        }
+      }
+      if (words.length > 1) return generate(words.slice(0, -1));
+      throw new Error('ساخت جدول ممکن نشد');
+    }
+
+    // =================--- رندر ====================
+    function renderGrid(g) {
+      gridCont.innerHTML = '';
+      for (let r = 0; r < SIZE; r++) {
+        const row = document.createElement('div');
+        row.className = 'grid-row';
+        for (let c = 0; c < SIZE; c++) {
+          const cell = document.createElement('div');
+          cell.className = 'cell';
+          cell.textContent = g[r][c];
+          cell.dataset.row = r;
+          cell.dataset.col = c;
+          cell.addEventListener('pointerdown', onPointerDown);
+          row.appendChild(cell);
+        }
+        gridCont.appendChild(row);
+      }
+      requestAnimationFrame(sizeGrid);
+    }
+
+    function getCell(r, c) { return document.querySelector(`.cell[data-row="${r}"][data-col="${c}"]`); }
+
+    function clearSelection() { selectedCells.forEach(({ r, c }) => { const el = getCell(r, c); if (el) el.classList.remove(
+          'selected'); });
+      selectedCells = []; }
+
+    function isAdjacentLinear(nr, nc) {
+      if (selectedCells.length === 0) return true;
+      if (selectedCells.length === 1) { const { r, c } = selectedCells[0]; return Math.abs(nr - r) <= 1 && Math.abs(nc -
+          c) <= 1 && !(nr === r && nc === c); }
+      const f = selectedCells[0],
+        s = selectedCells[1];
+      const dr = s.r - f.r,
+        dc = s.c - f.c;
+      const last = selectedCells[selectedCells.length - 1];
+      return nr === last.r + dr && nc === last.c + dc;
+    }
+
+    function selectedWord() { return selectedCells.map(({ r, c }) => grid[r][c]).join(''); }
+
+    function markCellsFound(cells, color) { cells.forEach(({ r, c }) => { const el = getCell(r, c); if (el) { el.style
+            .backgroundColor = color;
+          el.style.color = '#000';
+          el.style.boxShadow = `0 0 8px ${color}`; } }); }
+
+    function checkFoundWord() {
+      const word = selectedWord();
+      if (gameMode === 'free' && targetWords.includes(word) && !foundWords.has(word)) {
+        foundWords.add(word);
+        const foundPos = wordPositions.find(p => p.word === word);
+        const color = wordColorMap.get(word) || '#3bd1d3';
+        if (foundPos) markCellsFound(foundPos.cells, color);
+        updateWordListUI();
+        msgBox.textContent = '🎉 ' + word;
+        sfxSuccess();
+        clearSelection();
+        if (foundWords.size === targetWords.length) onFreeComplete();
+      } else if (gameMode === 'speed' && currentWord && word === currentWord) {
+        clearRoundTimer();
+        const color = wordColorMap.get(currentWord) || '#3bd1d3';
+        markCellsFound(roundCells, color);
+        speedScore += 1;
+        scoreVal.textContent = toFa(speedScore);
+        speedBricks.push(true);
+        renderBricks();
+        msgBox.textContent = '✅ +۱ امتیاز';
+        sfxSuccess();
+        clearSelection();
+        setTimeout(nextSpeedRound, 800);
+      } else if (word.length > 1) { msgBox.textContent = '❌ کلمه درست نیست';
+        sfxFail();
+        setTimeout(() => msgBox.textContent = '', 1200);
+        clearSelection(); }
+    }
+
+    let prevPointer = { x: 0, y: 0 };
+
+    function onPointerDown(e) {
+      if (!gameActive) return;
+      e.preventDefault();
+      initAudio();
+      const cell = e.target.closest('.cell');
+      if (!cell) return;
+      prevPointer.x = e.clientX;
+      prevPointer.y = e.clientY;
+      clearSelection();
+      const r = +cell.dataset.row,
+        c = +cell.dataset.col;
+      selectedCells.push({ r, c });
+      cell.classList.add('selected');
+      cell.setPointerCapture(e.pointerId);
+      cell.addEventListener('pointermove', onPointerMove);
+      cell.addEventListener('pointerup', onPointerUp);
+      cell.addEventListener('pointercancel', onPointerUp);
+    }
+
+    function onPointerMove(e) {
+      e.preventDefault();
+      const fromX = prevPointer.x;
+      const fromY = prevPointer.y;
+      const toX = e.clientX;
+      const toY = e.clientY;
+      const dist = Math.hypot(toX - fromX, toY - fromY);
+      const steps = Math.max(5, Math.min(20, Math.floor(dist / 5)));
+      let lastValidCell = null;
+      for (let i = 1; i <= steps; i++) {
+        const t = i / steps;
+        const checkX = fromX + (toX - fromX) * t;
+        const checkY = fromY + (toY - fromY) * t;
+        const elem = document.elementFromPoint(checkX, checkY);
+        if (!elem || !elem.classList.contains('cell')) continue;
+        const r = +elem.dataset.row;
+        const c = +elem.dataset.col;
+        if (selectedCells.some(s => s.r === r && s.c === c)) { lastValidCell = elem; continue; }
+        if (isAdjacentLinear(r, c)) {
+          selectedCells.push({ r, c });
+          elem.classList.add('selected');
+          lastValidCell = elem;
+        }
+      }
+      prevPointer.x = toX;
+      prevPointer.y = toY;
+      if (lastValidCell && !lastValidCell.classList.contains('selected')) {
+        lastValidCell.classList.add('selected');
+      }
+    }
+
+    function onPointerUp(e) {
+      const cell = e.target.closest('.cell');
+      if (cell) {
+        cell.removeEventListener('pointermove', onPointerMove);
+        cell.removeEventListener('pointerup', onPointerUp);
+        cell.removeEventListener('pointercancel', onPointerUp);
+      }
+      if (selectedCells.length >= 2) checkFoundWord();
+      else clearSelection();
+    }
+
+    function updateHintBtn() { hintBtn.textContent = `💡 راهنمایی (${toFa(hintsLeft)})`;
+      hintBtn.disabled = hintsLeft <= 0; }
+
+    function useHint() {
+      if (!gameActive || gameMode !== 'free' || hintsLeft <= 0) return;
+      const remaining = targetWords.filter(w => !foundWords.has(w));
+      if (!remaining.length) return;
+      const word = remaining[Math.floor(Math.random() * remaining.length)];
+      const pos = wordPositions.find(p => p.word === word);
+      if (!pos) return;
+      hintsLeft--;
+      updateHintBtn();
+      sfxClick();
+      pos.cells.forEach(({ r, c }) => { const el = getCell(r, c); if (el) el.classList.add('hint-flash'); });
+      setTimeout(() => { pos.cells.forEach(({ r, c }) => { const el = getCell(r, c); if (el) el.classList.remove(
+            'hint-flash'); }); }, 1800);
+    }
+
+    function updateWordListUI() {
+      wordListCont.innerHTML = targetWords.map(w => {
+        const color = wordColorMap.get(w);
+        const style = foundWords.has(w) ?
+          `background:${color}; color:#000; text-decoration:line-through; font-weight:bold;` :
+          `border:2px solid ${color}; color:${color};`;
+        return `<span class="word-tag" style="${style}">${w}</span>`;
+      }).join('');
+    }
+
+    function renderBricks() { bricksContainer.innerHTML = speedBricks.map(b => { if (b === true) return '<div class="brick green">✔</div>'; if (
+          b === false) return '<div class="brick red">✖</div>'; return '<div class="brick"></div>'; }).join(''); }
+
+    function formatTime(s) { const m = Math.floor(s / 60).toString().padStart(2, '0'),
+        sec = (s % 60).toString().padStart(2, '0'); return toFa(`${m}:${sec}`); }
+
+    function showScreen(screen, callback) {
+      [menu, gameScreen, resultScreen].forEach(card => {
+        if (card === screen) { card.classList.remove('hidden');
+          requestAnimationFrame(() => { card.classList.add('visible'); if (screen === gameScreen) sizeGrid(); if (
+              callback) callback(); }); } else { card.classList.remove('visible');
+          card.classList.add('hidden'); }
+      });
+    }
+
+    function backToMenu() { stopAllTimers();
+      gameActive = false;
+      showScreen(menu); }
+
+    function startGame() {
+      initAudio();
+      sfxClick();
+      if (!nameInp.value.trim()) { alert('⚠️ لطفاً نام خود را وارد کنید.'); return; }
+      playerName = nameInp.value.trim();
+      const from = +fromSel.value,
+        to = +toSel.value;
+      if (from > to) { alert('بازه نامعتبر'); return; }
+      const pool = poolFromRange(from, to);
+      if (!pool.length) { alert('کلمه‌ای نیست'); return; }
+      if (gameMode === 'free') {
+        targetWords = shuffle([...pool]).slice(0, 8);
+        foundWords.clear();
+        assignColors(targetWords);
+        hintsLeft = MAX_HINTS;
+        updateHintBtn();
+        try {
+          const { grid: g, positions: pos } = generate(targetWords);
+          grid = g;
+          wordPositions = pos;
+          renderGrid(g);
+          freeUI.classList.remove('hidden');
+          speedUI.classList.add('hidden');
+          scoreDisp.classList.add('hidden');
+          progressBar.classList.add('hidden');
+          updateWordListUI();
+          msgBox.textContent = '';
+          timerDisp.textContent = '۰۰:۰۰';
+          gameActive = true;
+          totalSec = 0;
+          startMainTimer('free');
+          showScreen(gameScreen);
+        } catch (e) { alert(e.message); }
+      } else {
+        speedPool = [...pool];
+        usedWords.clear();
+        speedScore = 0;
+        speedTimeLeft = 180;
+        speedBricks = [];
+        renderBricks();
+        scoreVal.textContent = toFa(0);
+        scoreDisp.classList.remove('hidden');
+        freeUI.classList.add('hidden');
+        speedUI.classList.remove('hidden');
+        progressBar.classList.remove('hidden');
+        progressFill.style.width = '100%';
+        timerDisp.textContent = formatTime(speedTimeLeft);
+        startMainTimer('speed');
+        gameActive = true;
+        showScreen(gameScreen, () => nextSpeedRound());
+      }
+    }
+
+    let startTimeMs;
+
+    function startMainTimer(mode) {
+      stopMainTimer();
+      if (mode === 'free') { startTimeMs = Date.now();
+        mainTimer = setInterval(() => { totalSec = Math.floor((Date.now() - startTimeMs) / 1000);
+          timerDisp.textContent = formatTime(totalSec); }, 1000); } else { mainTimer = setInterval(() => { speedTimeLeft--;
+          timerDisp.textContent = formatTime(speedTimeLeft); const pct = (speedTimeLeft / 180) * 100;
+          progressFill.style.width = pct + '%'; if (speedTimeLeft <= 0) endSpeedGame(); }, 1000); }
+    }
+
+    function stopMainTimer() { clearInterval(mainTimer);
+      mainTimer = null; }
+
+    function clearRoundTimer() { clearInterval(roundTimer);
+      roundTimer = null; }
+
+    function stopAllTimers() { stopMainTimer();
+      clearRoundTimer(); }
+
+    function nextSpeedRound() {
+      if (speedTimeLeft <= 0) { endSpeedGame(); return; }
+      if (!speedPool.length) { speedPool = poolFromRange(+fromSel.value, +toSel.value);
+        usedWords.clear(); }
+      const available = speedPool.filter(w => !usedWords.has(w));
+      if (!available.length) { usedWords.clear(); return nextSpeedRound(); }
+      currentWord = available[Math.floor(Math.random() * available.length)];
+      usedWords.add(currentWord);
+      targetWordDisp.textContent = currentWord;
+      roundLeft = 20;
+      roundTimerDisp.textContent = toFa(roundLeft);
+      wordColorMap.set(currentWord, WORD_COLORS[usedWords.size % WORD_COLORS.length]);
+      try {
+        const { grid: g, positions } = generate([currentWord]);
+        grid = g;
+        renderGrid(g);
+        roundCells = positions[0].cells;
+        msgBox.textContent = '';
+        clearSelection();
+        startRoundTimer();
+      } catch (e) { msgBox.textContent = 'خطا، تلاش مجدد';
+        setTimeout(nextSpeedRound, 500); }
+    }
+
+    function startRoundTimer() {
+      clearRoundTimer();
+      roundTimer = setInterval(() => {
+        roundLeft--;
+        roundTimerDisp.textContent = toFa(roundLeft);
+        if (roundLeft <= 0) {
+          clearRoundTimer();
+          speedBricks.push(false);
+          renderBricks();
+          const color = wordColorMap.get(currentWord) || '#ff6ec4';
+          roundCells.forEach(({ r, c }) => { const el = getCell(r, c); if (el) { el.style.backgroundColor = color;
+              el.classList.add('timeout-flash'); } });
+          msgBox.textContent = `⏰ وقت تمام! پاسخ: ${currentWord}`;
+          sfxFail();
+          gameActive = false;
+          setTimeout(() => { roundCells.forEach(({ r, c }) => { const el = getCell(r, c); if (el) { el.style
+                  .backgroundColor = '';
+                el.classList.remove('timeout-flash'); } });
+            gameActive = true;
+            nextSpeedRound(); }, 1500);
+        }
+      }, 1000);
+    }
+
+    function onFreeComplete() { stopAllTimers();
+      gameActive = false;
+      showScreen(resultScreen); const taken = totalSec;
+      showResult(`⏱ زمان: ${formatTime(taken)}`, 'free', taken); }
+
+    function endSpeedGame() { stopAllTimers();
+      gameActive = false;
+      showScreen(resultScreen);
+      showResult(`⭐ امتیاز نهایی: ${toFa(speedScore)}`, 'speed', speedScore); }
+
+    function showResult(detail, mode, value) {
+      document.getElementById('resultText').textContent = detail;
+      const key = `wordfinder_${mode}_${playerName}`;
+      const prev = localStorage.getItem(key);
+      let recText = '';
+
+      if (mode === 'free') {
+        if (!prev || value < +prev) { localStorage.setItem(key, value);
+          recText = '🎉 رکورد جدید!'; } else recText = `🏅 بهترین قبلی: ${formatTime(+prev)}`;
+      } else {
+        if (!prev || value > +prev) { localStorage.setItem(key, value);
+          recText = '🎉 رکورد جدید!'; } else recText = `🏅 بهترین امتیاز قبلی: ${toFa(prev)}`;
+      }
+      document.getElementById('recordText').textContent = recText;
+
+      thankYouMessage.textContent = `🙏 ${playerName} جان، از بازی شما سپاسگزاریم!`;
+
+      let motivation = '';
+      if (mode === 'free') {
+        if (value < 45) motivation = '🌟 باورنکردنی! تو یک جغد دانای تمام‌عیاری!';
+        else if (value < 90) motivation = '👏 عالی بود! سرعتت فوق‌العاده‌ست.';
+        else if (value < 150) motivation = '💪 خیلی خوب! داری بهتر و بهتر می‌شی.';
+        else motivation = '🌱 آفرین! هر بار تمرین کنی سریع‌تر می‌شی.';
+      } else {
+        if (value >= 20) motivation = '🏆 تو یک اسطوره‌ای! هیچ کلمه‌ای جلودارت نیست.';
+        else if (value >= 12) motivation = '🔥 آفرین! حسابی کلمات رو شکار کردی.';
+        else if (value >= 6) motivation = '👏 خوب داری پیش می‌ری، ادامه بده تا قوی‌تر بشی.';
+        else motivation = '🌼 تلاشت عالیه! دوباره بازی کن و رکورد بزن.';
+      }
+      motivationText.textContent = motivation;
+    }
+
+    hintBtn.addEventListener('click', useHint);
+    startBtn.addEventListener('click', startGame);
+    backBtn.addEventListener('click', backToMenu);
+    againBtn.addEventListener('click', () => showScreen(menu));
+
+    window.addEventListener('load', () => {
+      if (!localStorage.getItem('wordfinder_tutorial_done')) setTimeout(showTutorial, 600);
+    });
+  })();
+</script>
+
+<!-- ===== اسکریپت منوی شبکه‌های اجتماعی ===== -->
+<script>
+  (function() {
+    const menu = document.getElementById('circularMenu');
+    const menuButton = document.querySelector('.menu-button');
+    const menuItems = Array.from(document.querySelectorAll('.menu-item'));
+    let isMenuOpen = false;
+    let isInitialized = false;
+    let isAnimating = false;
+    const ANIMATION_LOCK_MS = 730;
+
+    function setMenuState(open) {
+      isMenuOpen = open;
+      menu.classList.toggle('active', open);
+      menuButton.setAttribute('aria-expanded', String(open));
+      menuItems.forEach(item => item.setAttribute('tabindex', open ? '0' : '-1'));
+    }
+
+    function toggleMenu() {
+      if (isAnimating) return;
+      if (!isInitialized) {
+        menu.classList.add('ready');
+        isInitialized = true;
+      }
+      isAnimating = true;
+      setMenuState(!isMenuOpen);
+      setTimeout(() => { isAnimating = false; }, ANIMATION_LOCK_MS);
+    }
+
+    menuButton.addEventListener('click', function(e) {
+      e.stopPropagation();
+      toggleMenu();
+    });
+
+    document.addEventListener('click', function(e) {
+      if (isMenuOpen && !menu.contains(e.target)) {
+        setMenuState(false);
+      }
+    });
+
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape' && isMenuOpen) {
+        setMenuState(false);
+        menuButton.focus();
+      }
+    });
+
+    menu.addEventListener('click', function(e) {
+      e.stopPropagation();
+    });
+  })();
+</script>
+
+</body>
+</html>

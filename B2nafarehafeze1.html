@@ -1,0 +1,642 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🧠 بازی حافظه دو نفره</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0f0c29 0%, #302b63 50%, #24243e 100%);
+            min-height: 100vh;
+            padding: 15px;
+            color: #fff;
+        }
+        .container { max-width: 850px; margin: 0 auto; }
+        h1 { text-align: center; margin-bottom: 15px; color: #ffd700; text-shadow: 0 0 15px rgba(255,215,0,0.4); font-size: 28px; }
+
+        /* ─── Setup ─── */
+        .setup-panel {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 22px;
+            border-radius: 20px;
+            margin-bottom: 15px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.4);
+        }
+        .setup-panel h2 { text-align: center; margin-bottom: 15px; font-size: 22px; }
+
+        .guide-box {
+            background: rgba(0,0,0,0.25);
+            border-radius: 14px;
+            padding: 15px;
+            margin-bottom: 18px;
+            max-height: 240px;
+            overflow-y: auto;
+            border: 1px solid rgba(255,255,255,0.15);
+        }
+        .guide-box h3 { color: #ffd700; margin-bottom: 10px; font-size: 17px; display: flex; align-items: center; gap: 8px; }
+        .guide-box p { margin-bottom: 10px; line-height: 1.7; font-size: 14px; }
+        .guide-box ul { padding-right: 20px; margin-bottom: 10px; }
+        .guide-box li { margin-bottom: 6px; line-height: 1.6; font-size: 13.5px; }
+        .guide-box::-webkit-scrollbar { width: 6px; }
+        .guide-box::-webkit-scrollbar-track { background: rgba(255,255,255,0.05); border-radius: 3px; }
+        .guide-box::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.3); border-radius: 3px; }
+
+        .difficulty-row {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-bottom: 18px;
+            flex-wrap: wrap;
+        }
+        .diff-btn {
+            padding: 14px 28px;
+            border: 3px solid transparent;
+            border-radius: 14px;
+            font-size: 17px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-family: inherit;
+            color: white;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .diff-btn.easy { background: linear-gradient(135deg, #11998e, #38ef7d); }
+        .diff-btn.hard { background: linear-gradient(135deg, #ff416c, #ff4b2b); }
+        .diff-btn:hover { transform: translateY(-3px); box-shadow: 0 8px 25px rgba(0,0,0,0.3); }
+        .diff-btn.selected { border-color: #ffd700; box-shadow: 0 0 20px rgba(255,215,0,0.4); transform: scale(1.05); }
+
+        .input-row {
+            display: flex;
+            gap: 18px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-bottom: 18px;
+        }
+        .input-group { display: flex; flex-direction: column; align-items: center; gap: 6px; }
+        .input-group label { font-size: 13px; opacity: 0.9; font-weight: 600; }
+        .input-group input {
+            width: 110px; padding: 11px; border: none; border-radius: 10px;
+            text-align: center; font-size: 17px; font-weight: bold; color: #333; outline: none;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+        }
+        .btn {
+            padding: 13px 32px; border: none; border-radius: 12px;
+            font-size: 17px; font-weight: bold; cursor: pointer; transition: all 0.3s;
+            margin: 4px; font-family: inherit;
+        }
+        .btn-start {
+            background: #00d2ff; color: #1a1a2e; display: block; margin: 0 auto;
+            box-shadow: 0 5px 20px rgba(0,210,255,0.35);
+        }
+        .btn-start:hover { background: #00e5ff; transform: translateY(-3px); box-shadow: 0 8px 25px rgba(0,210,255,0.5); }
+
+        /* ─── Game Area ─── */
+        .status-bar {
+            display: flex; justify-content: space-between; align-items: center;
+            background: rgba(255,255,255,0.08); backdrop-filter: blur(12px);
+            padding: 14px 20px; border-radius: 16px; margin-bottom: 12px;
+            font-size: 16px; box-shadow: 0 4px 20px rgba(0,0,0,0.25);
+            flex-wrap: wrap; gap: 10px; border: 1px solid rgba(255,255,255,0.1);
+        }
+        .player-box { display: flex; align-items: center; gap: 8px; flex-direction: column; min-width: 90px; }
+        .player-tag {
+            padding: 8px 16px; border-radius: 25px; font-weight: bold; font-size: 15px;
+            transition: all 0.4s; display: flex; align-items: center; gap: 6px;
+        }
+        .active-p1 { background: linear-gradient(135deg, #ff6b6b, #ee5a5a); color: white; box-shadow: 0 0 20px rgba(255,107,107,0.5); transform: scale(1.08); }
+        .active-p2 { background: linear-gradient(135deg, #4ecdc4, #44a08d); color: white; box-shadow: 0 0 20px rgba(78,205,196,0.5); transform: scale(1.08); }
+        .inactive { background: #3a3a52; opacity: 0.5; }
+
+        .target-box { text-align: center; flex: 1; min-width: 140px; }
+        .target-label { font-size: 14px; opacity: 0.8; margin-bottom: 4px; }
+        .target-num { color: #ffd700; font-size: 34px; font-weight: bold; text-shadow: 0 0 12px rgba(255,215,0,0.4); display: flex; align-items: center; justify-content: center; gap: 8px; }
+        .diff-badge { font-size: 12px; padding: 3px 10px; border-radius: 10px; margin-top: 4px; display: inline-block; }
+        .diff-badge.easy { background: #11998e; }
+        .diff-badge.hard { background: #ff416c; }
+
+        .timer-wrap { width: 100%; margin-top: 10px; }
+        .timer-label { display: flex; justify-content: space-between; font-size: 12px; margin-bottom: 4px; opacity: 0.8; }
+        .timer-track { width: 100%; height: 8px; background: rgba(255,255,255,0.15); border-radius: 4px; overflow: hidden; }
+        .timer-bar { height: 100%; width: 100%; background: linear-gradient(90deg, #00d2ff, #00ff88); border-radius: 4px; transition: width 0.05s linear; }
+        .timer-bar.warning { background: linear-gradient(90deg, #ff9966, #ff5e62); }
+        .timer-bar.danger { background: linear-gradient(90deg, #ff416c, #ff4b2b); }
+
+        /* ─── Cards (Fixed Flip) ─── */
+        .cards-grid {
+            display: grid; grid-template-columns: repeat(5, 1fr); gap: 14px;
+            max-width: 620px; margin: 0 auto;
+        }
+        .card {
+            aspect-ratio: 1; perspective: 1000px; cursor: pointer;
+            user-select: none; position: relative;
+        }
+        .card-inner {
+            position: relative; width: 100%; height: 100%;
+            transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            transform-style: preserve-3d;
+        }
+        .card.flipped .card-inner { transform: rotateY(180deg); }
+        .card.matched .card-inner { transform: rotateY(180deg); }
+        .card.matched .card-front {
+            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%) !important;
+            border-color: rgba(255,255,255,0.5);
+        }
+        .card.wrong .card-inner { animation: shake 0.5s ease; }
+        @keyframes shake {
+            0%, 100% { transform: rotateY(180deg) translateX(0); }
+            20% { transform: rotateY(180deg) translateX(-10px); }
+            40% { transform: rotateY(180deg) translateX(10px); }
+            60% { transform: rotateY(180deg) translateX(-10px); }
+            80% { transform: rotateY(180deg) translateX(10px); }
+        }
+
+        .card-face {
+            position: absolute; width: 100%; height: 100%; backface-visibility: hidden;
+            display: flex; align-items: center; justify-content: center;
+            border-radius: 16px; font-size: 26px; font-weight: bold;
+            box-shadow: 0 6px 18px rgba(0,0,0,0.35); border: 2px solid rgba(255,255,255,0.1);
+        }
+        .card-front {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white; transform: rotateY(180deg);
+            border: 2px solid rgba(255,255,255,0.3);
+        }
+        .card-back {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        .card-back::after { content: "❓"; font-size: 32px; opacity: 0.8; }
+
+        .card:hover:not(.flipped) { transform: translateY(-4px) scale(1.02); }
+        .card:hover:not(.flipped) .card-inner { box-shadow: 0 12px 30px rgba(0,0,0,0.45); }
+
+        /* ─── Overlay ─── */
+        .overlay {
+            position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.92); display: none;
+            align-items: center; justify-content: center; z-index: 100;
+            flex-direction: column; text-align: center; padding: 20px;
+        }
+        .overlay.show { display: flex; }
+        .overlay h1 { font-size: 48px; margin-bottom: 12px; }
+        .overlay p { color: white; font-size: 22px; margin-bottom: 25px; line-height: 1.8; }
+
+        .round-msg {
+            position: fixed; top: 50%; left: 50%;
+            transform: translate(-50%, -50%) scale(0);
+            background: linear-gradient(135deg, #11998e, #38ef7d);
+            padding: 20px 40px; border-radius: 20px; font-size: 22px; font-weight: bold;
+            z-index: 90; box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            pointer-events: none; text-align: center;
+        }
+        .round-msg.show { transform: translate(-50%, -50%) scale(1); }
+
+        .hidden { display: none !important; }
+
+        @media (max-width: 600px) {
+            .cards-grid { gap: 10px; }
+            .card-face { font-size: 20px; border-radius: 12px; }
+            .status-bar { font-size: 13px; padding: 10px; }
+            .target-num { font-size: 26px; }
+            h1 { font-size: 22px; }
+            .diff-btn { padding: 10px 20px; font-size: 15px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🧠🎮 بازی حافظه دو نفره</h1>
+
+        <!-- ═══ SETUP ═══ -->
+        <div id="setup" class="setup-panel">
+            <h2>⚙️ تنظیمات بازی</h2>
+
+            <!-- راهنما -->
+            <div class="guide-box">
+                <h3>📖 راهنمای بازی</h3>
+                <p>🎯 <b>هدف کلی:</b> آزمایش حافظه دیداری! کارت‌های پشت‌رو حاوی اعدادی هستند که به صورت تصادفی پخش شدند. شما باید <b>جایگاه هر عدد</b> را به خاطر بسپارید.</p>
+
+                <h3>🟢 سطح آسان</h3>
+                <ul>
+                    <li>بازیکنان <b>نوبتی</b> یک کارت انتخاب می‌کنند.</li>
+                    <li>اگر عدد <b>درست</b> (کوچک‌ترین باقی‌مانده) باشد: کارت <b>ثابت و سبز</b> می‌شود، امتیاز می‌گیرید و نوبت ادامه دارد.</li>
+                    <li>اگر <b>اشتباه</b> باشد: نوبت به حریف می‌رسد.</li>
+                    <li>برنده = کسی که <b>بیشترین امتیاز</b> دارد.</li>
+                </ul>
+
+                <h3>🔴 سطح سخت</h3>
+                <ul>
+                    <li>در هر نوبت، بازیکن باید <b>همه اعداد را به ترتیب صعودی</b> یکی‌یکی پیدا کند.</li>
+                    <li>کارت‌های درست در آن نوبت <b>باز می‌مانند</b> تا یادتان بماند کجا بودند.</li>
+                    <li>اگر <b>اشتباه</b> کنید یا <b>زمان تمام</b> شود: همه کارت‌های بازشده <b>دوباره پشت‌رو</b> می‌شوند و نوبت حریف است!</li>
+                    <li>برنده = کسی که <b>یک دور کامل</b> (همه اعداد به ترتیب) را درست حدس بزند.</li>
+                </ul>
+
+                <p>⏱️ <b>زمان:</b> برای هر انتخاب فقط <b>۵ ثانیه</b> وقت دارید!</p>
+                <p>💡 <b>نکته طلایی:</b> با دقت به تلاش‌های خود و حریف نگاه کنید و جای اعداد را در ذهن نقشه‌برداری کنید!</p>
+            </div>
+
+            <!-- انتخاب سطح -->
+            <div class="difficulty-row">
+                <button id="btnEasy" class="diff-btn easy selected" onclick="selectDiff('easy')">🟢 آسان</button>
+                <button id="btnHard" class="diff-btn hard" onclick="selectDiff('hard')">🔴 سخت</button>
+            </div>
+
+            <div class="input-row">
+                <div class="input-group">
+                    <label>🔢 عدد شروع</label>
+                    <input type="number" id="startNum" value="1" min="1" max="990">
+                </div>
+                <div class="input-group">
+                    <label>📏 فاصله اعداد</label>
+                    <input type="number" id="stepNum" value="1" min="1" max="100">
+                </div>
+                <div class="input-group">
+                    <label>🃏 تعداد کارت‌ها</label>
+                    <input type="number" id="countNum" value="10" min="3" max="20">
+                </div>
+            </div>
+            <button class="btn btn-start" onclick="startGame()">▶️ شروع بازی</button>
+        </div>
+
+        <!-- ═══ GAME AREA ═══ -->
+        <div id="gameArea" class="hidden">
+            <div class="status-bar">
+                <div class="player-box">
+                    <span id="p1Tag" class="player-tag active-p1">👤 بازیکن ۱</span>
+                    <span id="p1ScoreWrap">⭐ <span id="p1Score">۰</span></span>
+                </div>
+
+                <div class="target-box">
+                    <div class="target-label">🎯 عدد بعدی</div>
+                    <div class="target-num" id="targetNum">۱</div>
+                    <span id="diffBadge" class="diff-badge easy">🟢 آسان</span>
+                    <div class="timer-wrap">
+                        <div class="timer-label">
+                            <span>⏱️ زمان</span>
+                            <span id="timerText">۵</span>
+                        </div>
+                        <div class="timer-track">
+                            <div id="timerBar" class="timer-bar"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="player-box">
+                    <span id="p2Tag" class="player-tag inactive">👤 بازیکن ۲</span>
+                    <span id="p2ScoreWrap">⭐ <span id="p2Score">۰</span></span>
+                </div>
+            </div>
+
+            <div id="cardsGrid" class="cards-grid"></div>
+        </div>
+    </div>
+
+    <!-- ═══ OVERLAYS ═══ -->
+    <div id="overlay" class="overlay">
+        <h1>🏆 پایان بازی!</h1>
+        <p id="winnerText"></p>
+        <button class="btn btn-start" onclick="resetToSetup()">🔄 بازی جدید</button>
+    </div>
+
+    <div id="roundMsg" class="round-msg"></div>
+
+    <script>
+        /* ─── Audio Engine ─── */
+        let audioCtx;
+        function initAudio() {
+            if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            if (audioCtx.state === 'suspended') audioCtx.resume();
+        }
+        function playTone(freq, type, duration, delay=0, vol=0.25) {
+            if (!audioCtx) return;
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.type = type;
+            osc.frequency.setValueAtTime(freq, audioCtx.currentTime + delay);
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            const t = audioCtx.currentTime + delay;
+            gain.gain.setValueAtTime(vol, t);
+            gain.gain.exponentialRampToValueAtTime(0.001, t + duration);
+            osc.start(t); osc.stop(t + duration);
+        }
+        function soundFlip() {
+            playTone(350, 'sine', 0.08, 0, 0.15);
+            playTone(500, 'sine', 0.1, 0.05, 0.1);
+        }
+        function soundCorrect() {
+            playTone(523, 'sine', 0.12, 0, 0.2);
+            playTone(659, 'sine', 0.15, 0.1, 0.2);
+        }
+        function soundWrong() {
+            playTone(180, 'sawtooth', 0.35, 0, 0.2);
+            playTone(150, 'sawtooth', 0.4, 0.15, 0.2);
+        }
+        function soundTimeout() {
+            playTone(200, 'square', 0.3, 0, 0.15);
+        }
+        function soundWinRound() {
+            playTone(523, 'sine', 0.12, 0, 0.2);
+            playTone(659, 'sine', 0.12, 0.12, 0.2);
+            playTone(784, 'sine', 0.12, 0.24, 0.2);
+            playTone(1047, 'sine', 0.3, 0.36, 0.2);
+        }
+        function soundTick() {
+            playTone(900, 'sine', 0.04, 0, 0.08);
+        }
+        function soundLoseTurn() {
+            playTone(250, 'sawtooth', 0.25, 0, 0.18);
+            playTone(200, 'sawtooth', 0.3, 0.12, 0.18);
+        }
+
+        /* ─── State ─── */
+        let difficulty = 'easy';
+        let cards = [];
+        let gameNumbers = [];
+        let currentTargetIdx = 0;
+        let currentPlayer = 1;
+        let scores = {1: 0, 2: 0};
+        let isProcessing = false;
+        let timerInterval = null;
+        let timeLeft = 5000;
+        const TURN_TIME = 5000;
+        let openedInTurn = []; // hard mode: indices opened in current turn
+
+        function toPersianNum(n) {
+            const p = ['۰','۱','۲','۳','۴','۵','۶','۷','۸','۹'];
+            return String(n).split('').map(d => p[parseInt(d)] || d).join('');
+        }
+
+        function selectDiff(d) {
+            difficulty = d;
+            document.getElementById('btnEasy').classList.toggle('selected', d === 'easy');
+            document.getElementById('btnHard').classList.toggle('selected', d === 'hard');
+        }
+
+        /* ─── Timer ─── */
+        function startTimer() {
+            clearInterval(timerInterval);
+            timeLeft = TURN_TIME;
+            updateTimerUI();
+            timerInterval = setInterval(() => {
+                timeLeft -= 50;
+                if (timeLeft <= 3000 && timeLeft > 2900) soundTick();
+                if (timeLeft <= 2000 && timeLeft > 1900) soundTick();
+                if (timeLeft <= 1000 && timeLeft > 900) soundTick();
+                updateTimerUI();
+                if (timeLeft <= 0) {
+                    clearInterval(timerInterval);
+                    handleTimeout();
+                }
+            }, 50);
+        }
+        function stopTimer() { clearInterval(timerInterval); }
+        function updateTimerUI() {
+            const pct = (timeLeft / TURN_TIME) * 100;
+            const bar = document.getElementById('timerBar');
+            bar.style.width = pct + '%';
+            document.getElementById('timerText').textContent = toPersianNum(Math.ceil(timeLeft/1000));
+            bar.classList.remove('warning','danger');
+            if (pct < 30) bar.classList.add('danger');
+            else if (pct < 60) bar.classList.add('warning');
+        }
+        function handleTimeout() {
+            if (isProcessing) return;
+            isProcessing = true;
+            soundTimeout();
+            if (difficulty === 'hard') {
+                setTimeout(() => {
+                    soundLoseTurn();
+                    closeOpenedCards();
+                    switchPlayer();
+                    currentTargetIdx = 0;
+                    updateUI();
+                    startTurn();
+                }, 700);
+            } else {
+                setTimeout(() => {
+                    switchPlayer();
+                    updateUI();
+                    startTurn();
+                }, 600);
+            }
+        }
+
+        /* ─── Game Logic ─── */
+        function startGame() {
+            initAudio();
+            const start = parseInt(document.getElementById('startNum').value) || 1;
+            const step  = parseInt(document.getElementById('stepNum').value)  || 1;
+            const count = parseInt(document.getElementById('countNum').value) || 10;
+
+            if (start < 1) { alert('❌ عدد شروع باید حداقل ۱ باشد'); return; }
+            if (step < 1)  { alert('❌ فاصله باید حداقل ۱ باشد'); return; }
+            if (count < 3 || count > 20) { alert('❌ تعداد کارت باید بین ۳ تا ۲۰ باشد'); return; }
+            if (start + (count-1)*step > 999) { alert('❌ بازه اعداد از ۹۹۹ بیشتر می‌شود!'); return; }
+
+            gameNumbers = [];
+            for (let i=0; i<count; i++) gameNumbers.push(start + i*step);
+
+            shuffleCards();
+            currentTargetIdx = 0;
+            currentPlayer = 1;
+            scores = {1:0, 2:0};
+            openedInTurn = [];
+            isProcessing = false;
+
+            document.getElementById('setup').classList.add('hidden');
+            document.getElementById('gameArea').classList.remove('hidden');
+            document.getElementById('overlay').classList.remove('show');
+
+            const badge = document.getElementById('diffBadge');
+            badge.textContent = difficulty === 'easy' ? '🟢 آسان' : '🔴 سخت';
+            badge.className = 'diff-badge ' + difficulty;
+
+            // Show/hide scores based on difficulty
+            const s1 = document.getElementById('p1ScoreWrap');
+            const s2 = document.getElementById('p2ScoreWrap');
+            s1.style.visibility = difficulty === 'easy' ? 'visible' : 'hidden';
+            s2.style.visibility = difficulty === 'easy' ? 'visible' : 'hidden';
+
+            updateUI();
+            renderCards();
+            startTurn();
+        }
+
+        function shuffleCards() {
+            cards = [...gameNumbers];
+            for (let i=cards.length-1; i>0; i--) {
+                const j = Math.floor(Math.random()*(i+1));
+                [cards[i], cards[j]] = [cards[j], cards[i]];
+            }
+        }
+
+        function renderCards() {
+            const grid = document.getElementById('cardsGrid');
+            grid.innerHTML = '';
+            const cols = Math.ceil(Math.sqrt(cards.length));
+            grid.style.gridTemplateColumns = `repeat(${cols}, 1fr)`;
+
+            cards.forEach((num, idx) => {
+                const card = document.createElement('div');
+                card.className = 'card';
+                card.dataset.index = idx;
+                card.dataset.value = num;
+                card.innerHTML = `
+                    <div class="card-inner">
+                        <div class="card-face card-front">${toPersianNum(num)}</div>
+                        <div class="card-face card-back"></div>
+                    </div>
+                `;
+                card.onclick = () => handleCardClick(idx);
+                grid.appendChild(card);
+            });
+        }
+
+        function startTurn() {
+            isProcessing = false;
+            startTimer();
+        }
+
+        function handleCardClick(idx) {
+            if (isProcessing) return;
+            const cardEl = document.querySelector(`.card[data-index="${idx}"]`);
+            if (!cardEl || cardEl.classList.contains('flipped') || cardEl.classList.contains('matched')) return;
+
+            stopTimer();
+            isProcessing = true;
+            const val = cards[idx];
+            soundFlip();
+
+            // Flip open
+            cardEl.classList.add('flipped');
+
+            setTimeout(() => {
+                if (val === gameNumbers[currentTargetIdx]) {
+                    // ✅ Correct
+                    soundCorrect();
+
+                    if (difficulty === 'easy') {
+                        // Easy: stay open + green + score
+                        cardEl.classList.add('matched');
+                        scores[currentPlayer]++;
+                        currentTargetIdx++;
+                        updateUI();
+
+                        if (currentTargetIdx >= gameNumbers.length) {
+                            setTimeout(endGame, 700);
+                        } else {
+                            startTurn();
+                        }
+                    } else {
+                        // Hard: stay open (no green), track opened
+                        openedInTurn.push(idx);
+                        currentTargetIdx++;
+                        updateUI();
+
+                        if (currentTargetIdx >= gameNumbers.length) {
+                            // Full round completed!
+                            soundWinRound();
+                            setTimeout(() => endGame(currentPlayer), 800);
+                        } else {
+                            startTurn();
+                        }
+                    }
+                } else {
+                    // ❌ Wrong
+                    cardEl.classList.add('wrong');
+                    soundWrong();
+
+                    setTimeout(() => {
+                        if (difficulty === 'hard') {
+                            // Hard: close ALL opened in this turn + wrong card
+                            soundLoseTurn();
+                            closeOpenedCards();
+                            // Also close the wrong card if not already in list
+                            if (!openedInTurn.includes(idx)) {
+                                cardEl.classList.remove('flipped', 'wrong');
+                            } else {
+                                cardEl.classList.remove('wrong');
+                            }
+                            openedInTurn = [];
+                            currentTargetIdx = 0;
+                            switchPlayer();
+                            updateUI();
+                            startTurn();
+                        } else {
+                            // Easy: just close wrong card, switch player
+                            cardEl.classList.remove('flipped', 'wrong');
+                            switchPlayer();
+                            updateUI();
+                            startTurn();
+                        }
+                    }, 900);
+                }
+            }, 500);
+        }
+
+        function closeOpenedCards() {
+            openedInTurn.forEach(idx => {
+                const c = document.querySelector(`.card[data-index="${idx}"]`);
+                if (c) c.classList.remove('flipped');
+            });
+        }
+
+        function switchPlayer() {
+            currentPlayer = currentPlayer === 1 ? 2 : 1;
+        }
+
+        function updateUI() {
+            document.getElementById('p1Score').textContent = toPersianNum(scores[1]);
+            document.getElementById('p2Score').textContent = toPersianNum(scores[2]);
+            const targetEl = document.getElementById('targetNum');
+            if (gameNumbers[currentTargetIdx] !== undefined) {
+                targetEl.textContent = toPersianNum(gameNumbers[currentTargetIdx]);
+            } else {
+                targetEl.textContent = '—';
+            }
+
+            const p1Tag = document.getElementById('p1Tag');
+            const p2Tag = document.getElementById('p2Tag');
+            if (currentPlayer === 1) {
+                p1Tag.className = 'player-tag active-p1';
+                p2Tag.className = 'player-tag inactive';
+            } else {
+                p1Tag.className = 'player-tag inactive';
+                p2Tag.className = 'player-tag active-p2';
+            }
+        }
+
+        function endGame(winner = null) {
+            const overlay = document.getElementById('overlay');
+            const txt = document.getElementById('winnerText');
+            overlay.classList.add('show');
+
+            if (difficulty === 'easy') {
+                if (scores[1] > scores[2]) {
+                    txt.innerHTML = `🎉 <span style="color:#ff6b6b">بازیکن ۱</span> برنده شد!<br>⭐ ${toPersianNum(scores[1])} - ${toPersianNum(scores[2])}`;
+                } else if (scores[2] > scores[1]) {
+                    txt.innerHTML = `🎉 <span style="color:#4ecdc4">بازیکن ۲</span> برنده شد!<br>⭐ ${toPersianNum(scores[2])} - ${toPersianNum(scores[1])}`;
+                } else {
+                    txt.innerHTML = `🤝 مساوی!<br>⭐ هر دو ${toPersianNum(scores[1])} امتیاز`;
+                }
+            } else {
+                const color = winner === 1 ? '#ff6b6b' : '#4ecdc4';
+                txt.innerHTML = `🎉🎉🎉<br><span style="color:${color}; font-size:32px">بازیکن ${winner}</span><br>یک دور کامل را درست حدس زد و برنده شد!`;
+            }
+        }
+
+        function resetToSetup() {
+            stopTimer();
+            document.getElementById('setup').classList.remove('hidden');
+            document.getElementById('gameArea').classList.add('hidden');
+            document.getElementById('overlay').classList.remove('show');
+        }
+    </script>
+</body>
+</html>
